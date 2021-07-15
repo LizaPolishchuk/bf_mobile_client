@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "883762712602",
+    "firebase_url": "https://salons-5012c.firebaseio.com",
+    "project_id": "salons-5012c",
+    "storage_bucket": "salons-5012c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883762712602:android:751c629cb61b46558641a3",
+        "android_client_info": {
+          "package_name": "pea.salonsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883762712602-ncev4dc9d4vsbqet2an0oeuij7mp3fl8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pea.salonsapp",
+            "certificate_hash": "c0c6273d8a706ebbe324a5042c6b3d282d3e886c"
+          }
+        },
+        {
+          "client_id": "883762712602-pph87gtt9pded8rlptinvo9rpfcpjnf4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ9SPMbD7mZ1UPhlcM64CHIlyjZAN3dRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883762712602-pph87gtt9pded8rlptinvo9rpfcpjnf4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "883762712602-ct924c23kjrbqvs001id9rda0krmb757.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "pea.salonsapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883762712602:android:ce5649642d68bb6c8641a3",
+        "android_client_info": {
+          "package_name": "pea.salonsapp.web"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883762712602-r2bd6v1umu50ru9nj99i073fco1coqeq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pea.salonsapp.web",
+            "certificate_hash": "af71f7bcf5d4c08b127fdc8bac7b6e80f4cc0a46"
+          }
+        },
+        {
+          "client_id": "883762712602-umsf1so7r7h6g1jceqpn1t8307jrg1k8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pea.salonsapp.web",
+            "certificate_hash": "c0c6273d8a706ebbe324a5042c6b3d282d3e886c"
+          }
+        },
+        {
+          "client_id": "883762712602-pph87gtt9pded8rlptinvo9rpfcpjnf4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ9SPMbD7mZ1UPhlcM64CHIlyjZAN3dRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883762712602-pph87gtt9pded8rlptinvo9rpfcpjnf4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "883762712602-ct924c23kjrbqvs001id9rda0krmb757.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "pea.salonsapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
