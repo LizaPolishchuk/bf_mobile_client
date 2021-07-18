@@ -20,7 +20,7 @@ void main() async {
   await di.init();
   await appDi.init();
 
-  await initHive();
+  // await initHive();
 
   runApp(MyApp());
 }
@@ -50,7 +50,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      // home: MyHomePage(),
+      home: HomePage(),
     );
   }
 }
