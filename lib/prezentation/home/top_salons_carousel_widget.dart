@@ -19,12 +19,9 @@ class TopSalonsCarouselWidget extends StatelessWidget {
               width: 280,
               height: 120,
               decoration: BoxDecoration(
-                color: Colors.amber,
                 borderRadius: BorderRadius.circular(25),
                 image: DecorationImage(
-                  //TODO: Заменить на svg
                   image: AssetImage('assets/images/TopSalonCard.png'),
-                  fit: BoxFit.cover,
                 ),
               ),
             ),

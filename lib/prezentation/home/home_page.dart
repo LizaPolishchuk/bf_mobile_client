@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:salons_app_mobile/prezentation/home/order_alert_widget.dart';
-import 'package:salons_app_mobile/prezentation/home/order_options_widget.dart';
+import 'package:salons_app_mobile/prezentation/home/empty_list_image.dart';
 import 'package:salons_app_mobile/prezentation/home/orders_tile_widget.dart';
 import 'package:salons_app_mobile/prezentation/home/top_salons_carousel_widget.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
@@ -71,33 +69,18 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Slidable(
-            child: OrdersTileWidget(),
-            actionPane: SlidableDrawerActionPane(),
-            secondaryActions: [
-              OrderOptionsWidget(
-                text: 'Закрепить',
-                icon: Icons.push_pin_outlined,
-                color: Color(0xFFF2C420),
-                isRounded: false,
-                onTap: () {},
-              ),
-              OrderOptionsWidget(
-                text: 'Отменить запись',
-                icon: Icons.cancel,
-                color: Color(0xFFE1440E),
-                isRounded: true,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => OrderAlertWidget(),
-                  );
-                },
-              ),
-            ],
+          OrdersTileWidget(
+            orderText: 'Маникюр в Example Salon',
+            orderDate: 'Вт. 23 мая',
+            masterImage: 'assets/images/MasterImage.png',
+            masterName: 'Olha',
+            orderPrice: '300',
           ),
+          EmptyListImageWidget(),
         ],
       ),
     );
   }
 }
+
+
