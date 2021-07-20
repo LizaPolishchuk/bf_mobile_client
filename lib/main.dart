@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
@@ -27,10 +24,7 @@ void main() async {
 
 
 Future<void> initHive() async {
-  // final dir = await getApplicationDocumentsDirectory();
-  final Directory directory = await getApplicationDocumentsDirectory();
-
-  await Hive.initFlutter(directory.path);
+  await Hive.initFlutter();
   
   Hive.registerAdapter(SalonAdapter());
   Hive.registerAdapter(MasterAdapter());
