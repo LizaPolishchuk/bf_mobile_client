@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
+import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 
 import 'login_bloc.dart';
@@ -85,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            onTap: () => _loginBloc.loginWithGoogle,
+            onTap: () => _loginBloc..add(LoginWithGoogleEvent()),
           ),
         ),
         Flexible(
@@ -101,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            onTap: () => _loginBloc.loginWithFacebook,
+            onTap: () => _loginBloc.add(LoginWithFacebookEvent()),
           ),
         ),
       ],
