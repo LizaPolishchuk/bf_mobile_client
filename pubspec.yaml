@@ -64,7 +64,7 @@ dependencies:
   dartz: ^0.10.0-nullsafety.2
 
   #---- DateTime Formatter ----
-  #  intl: 0.16.0
+  intl: ^0.17.0
 
   #----- Checking internet connection -----
   #  data_connection_checker: ^0.3.4

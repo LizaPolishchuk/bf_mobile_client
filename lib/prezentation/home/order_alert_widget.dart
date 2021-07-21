@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 
 class OrderAlertWidget extends StatelessWidget {
-  const OrderAlertWidget({
+ OrderAlertWidget({
     Key? key,
+    required this.onPressed,
   }) : super(key: key);
+
+VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,7 @@ class OrderAlertWidget extends StatelessWidget {
               ),
               SizedBox(height: 24),
               ElevatedButton(
-                onPressed: (){},
+                onPressed: onPressed,
                 child: Text(
                   'Да',
                   style: text16W400.copyWith(

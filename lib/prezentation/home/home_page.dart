@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:salons_app_mobile/prezentation/home/empty_list_image.dart';
+import 'package:intl/intl.dart';
+import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/prezentation/home/orders_tile_widget.dart';
 import 'package:salons_app_mobile/prezentation/home/top_salons_carousel_widget.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
@@ -13,6 +14,50 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<OrderEntity> orders = [
+    OrderEntity(
+      'id',
+      'clientId',
+      'clientName',
+      'salonId',
+      'Example Salon',
+      'masterId',
+      'Olha',
+      'masterAvatar',
+      'serviceId',
+      'Маникюр',
+      DateTime.now(),
+    ),
+    OrderEntity(
+      'id2',
+      'clientId',
+      'clientName',
+      'salonId',
+      'Salon 2',
+      'masterId',
+      'Liza',
+      'masterAvatar',
+      'serviceId',
+      'Стрижка',
+      DateTime.now(),
+    ),
+    OrderEntity(
+      'id3',
+      'clientId',
+      'clientName',
+      'salonId',
+      'Salon 3',
+      'masterId',
+      'Sofia',
+      'masterAvatar',
+      'serviceId',
+      'Ресницы',
+      DateTime.now(),
+    ),
+  ];
+  List<OrderEntity> pinnedOrders = [];
+  late bool pinned;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,18 +114,70 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          OrdersTileWidget(
-            orderText: 'Маникюр в Example Salon',
-            orderDate: 'Вт. 23 мая',
-            masterImage: 'assets/images/MasterImage.png',
-            masterName: 'Olha',
-            orderPrice: '300',
+          if (pinnedOrders.isNotEmpty)
+            Container(
+              height: 110 * pinnedOrders.length.toDouble(),
+              child: ListView.builder(
+                itemCount: pinnedOrders.length,
+                itemBuilder: (context, index) {
+                  return OrdersTileWidget(
+                    isPinned: true,
+                    serviceName: pinnedOrders[index].serviceName,
+                    salonName: pinnedOrders[index].salonName,
+                    orderDate:
+                        DateFormat('EE dd-MM-yyyy').format(DateTime.now()),
+                    masterImage: 'assets/images/MasterImage.png',
+                    masterName: pinnedOrders[index].masterName,
+                    orderPrice: '300',
+                    onTap: () {
+                      setState(() {
+                        orders.add(pinnedOrders[index]);
+                        pinnedOrders.removeAt(index);
+                      });
+                    },
+                    onPressed: () {
+                      setState(() {
+                        orders.removeAt(index);
+                        Navigator.pop(context);
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+          Container(
+            height: 110 * orders.length.toDouble(),
+            child: ListView.builder(
+              itemCount: orders.length,
+              itemBuilder: (context, index) {
+                return OrdersTileWidget(
+                  isPinned: false,
+                  serviceName: orders[index].serviceName,
+                  salonName: orders[index].salonName,
+                  orderDate: DateFormat('EE dd-MM-yyyy').format(DateTime.now()),
+                  masterImage: 'assets/images/MasterImage.png',
+                  masterName: orders[index].masterName,
+                  orderPrice: '300',
+                  onTap: () {
+                    setState(() {
+                      pinnedOrders.add(orders[index]);
+                      orders.removeAt(index);
+                      pinned = true;
+                    });
+                  },
+                  onPressed: () {
+                    setState(() {
+                      orders.removeAt(index);
+                      Navigator.pop(context);
+                    });
+                  },
+                );
+              },
+            ),
           ),
-          EmptyListImageWidget(),
+          // EmptyListImageWidget(),
         ],
       ),
     );
   }
 }
-
-
