@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:salons_app_mobile/prezentation/home/order_alert_widget.dart';
 
 class OrderOptionsWidget extends StatelessWidget {
   const OrderOptionsWidget({
@@ -21,8 +19,7 @@ class OrderOptionsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      radius: 10,
-     onTap: onTap,
+      onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -42,8 +39,8 @@ class OrderOptionsWidget extends StatelessWidget {
             Text(
               text,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 8,
+              style: TextStyle(
+                fontSize: 10,
                 fontWeight: FontWeight.w400,
                 color: Colors.white,
               ),

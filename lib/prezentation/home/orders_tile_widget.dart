@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:salons_app_mobile/prezentation/home/order_alert_widget.dart';
 import 'package:salons_app_mobile/prezentation/home/order_options_widget.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
+import 'package:salons_app_mobile/utils/app_components.dart';
+import 'package:salons_app_mobile/utils/app_images.dart';
+import 'package:salons_app_mobile/utils/app_styles.dart';
 
 class OrdersTileWidget extends StatelessWidget {
+  ///todo Сюда на вход будет передаваться только обьект Order и с него все текстовки берем
   const OrdersTileWidget({
     Key? key,
     required this.orderText,
@@ -26,8 +29,7 @@ class OrdersTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Slidable(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        width: 340,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         height: 95,
         decoration: BoxDecoration(
             color: Colors.white,
@@ -49,12 +51,8 @@ class OrdersTileWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundImage: AssetImage(masterImage),
-                  // child: Image.network(masterImage),
-                ),
-                SizedBox(width: 8),
+                imageWithPlaceholder(masterImage, masterPlaceholder),
+                marginHorizontal(8),
                 Text('Мастер $masterName', style: text12W500),
                 Spacer(),
                 Text('$orderPrice грн', style: text12W600),

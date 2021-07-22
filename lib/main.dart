@@ -1,10 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/localization/app_translation_delegate.dart';
+import 'package:salons_app_mobile/localization/application.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
+import 'package:salons_app_mobile/utils/app_styles.dart';
 
 import 'injection_container_app.dart' as appDi;
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
@@ -17,7 +21,7 @@ void main() async {
   await di.init();
   await appDi.init();
 
-  // await initHive();
+  await initHive();
 
   runApp(MyApp());
 }
@@ -35,18 +39,66 @@ Future<void> initHive() async {
 }
 
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late LocalTranslationsDelegate _newLocaleDelegate;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _newLocaleDelegate = LocalTranslationsDelegate(
+      newLocale: Locale( application.defaultLocaleCode),
+      onLocaleLoaded: _onLocaleLoaded,
+    );
+    application.onLocaleChanged = _onLocaleChange;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Salons App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: mainTheme,
+      localeListResolutionCallback: (locales, supportedLocales) {
+        return application.resolveLocale(updatedDeviceLocaleList: locales);
+      },
+      localizationsDelegates: [
+        _newLocaleDelegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: application.supportedLocales(),
+      localeResolutionCallback: (locale, supportedLocales) {
+        for (var supportedLocaleLanguage in supportedLocales) {
+          if (supportedLocaleLanguage.languageCode == locale!.languageCode &&
+              supportedLocaleLanguage.countryCode == locale.countryCode) {
+            return supportedLocaleLanguage;
+          }
+        }
+        return supportedLocales.first;
+      },
       // home: MyHomePage(),
       home: HomePage(),
     );
+  }
+
+  void _onLocaleLoaded() {
+    // BlocProvider.of<AuthenticationBloc>(context).add(AppStartedEvent());
+    // locator<ConnectedAppsDataService>().onChangeLocale();
+  }
+
+  void _onLocaleChange(Locale locale) {
+    setState(() {
+      _newLocaleDelegate = LocalTranslationsDelegate(
+        newLocale: locale,
+        onLocaleLoaded: _onLocaleLoaded,
+      );
+    });
   }
 }
 
@@ -56,6 +108,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late LocalTranslationsDelegate _newLocaleDelegate;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
