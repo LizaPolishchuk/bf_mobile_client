@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
+import 'package:salons_app_mobile/utils/app_styles.dart';
 
 class OrderAlertWidget extends StatelessWidget {
  OrderAlertWidget({
