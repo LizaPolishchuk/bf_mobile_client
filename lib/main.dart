@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
         return supportedLocales.first;
       },
       // home: MyHomePage(),
-      home: HomePage(),
+      home: MyHomePage(),
     );
   }
 
@@ -113,35 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Salons App'),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.lightGreen,
-//                  image: DecorationImage(
-//                      image: AssetImage("images/header.jpeg"),
-//                      fit: BoxFit.cover),
-              ),
-              child: Text("Header"),
-            ),
-            ListTile(
-              title: Text("Home"),
-            ),
-            ListTile(
-              title: Text("Выйти"),
-              onTap: () {
-                // getIt<LoginBloc>().add(LogoutEvent());
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ),
+
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, snapshot) {

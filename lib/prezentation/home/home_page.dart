@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/prezentation/home/home_bloc.dart';
+import 'package:salons_app_mobile/prezentation/home/home_event.dart';
 import 'package:salons_app_mobile/prezentation/home/orders_tile_widget.dart';
 import 'package:salons_app_mobile/prezentation/home/top_salons_carousel_widget.dart';
+import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
+import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+
+import 'empty_list_image.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,50 +23,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<OrderEntity> orders = [
-    OrderEntity(
-        'id',
-        'clientId',
-        'clientName',
-        'salonId',
-        'Example Salon',
-        'masterId',
-        'Olha',
-        'masterAvatar',
-        'serviceId',
-        'Маникюр',
-        DateTime.now(),
-        300,
-        false),
-    OrderEntity(
-        'id2',
-        'clientId',
-        'clientName',
-        'salonId',
-        'Salon 2',
-        'masterId',
-        'Liza',
-        'masterAvatar',
-        'serviceId',
-        'Стрижка',
-        DateTime.now(),
-        200,
-        false),
-    OrderEntity(
-        'id3',
-        'clientId',
-        'clientName',
-        'salonId',
-        'Salon 3',
-        'masterId',
-        'Sofia',
-        'masterAvatar',
-        'serviceId',
-        'Ресницы',
-        DateTime.now(),
-        100,
-        true),
-  ];
+  late HomeBloc _homeBloc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _homeBloc = getItApp<HomeBloc>();
+    _homeBloc.add(LoadOrdersForCurrentUserEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +47,32 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         elevation: 0,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.lightGreen,
+//                  image: DecorationImage(
+//                      image: AssetImage("images/header.jpeg"),
+//                      fit: BoxFit.cover),
+              ),
+              child: Text("Header"),
+            ),
+            ListTile(
+              title: Text("Home"),
+            ),
+            ListTile(
+              title: Text("Выйти"),
+              onTap: () {
+                getIt<LoginBloc>().add(LogoutEvent());
+                // Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -111,33 +109,40 @@ class _HomePageState extends State<HomePage> {
             ),
             marginVertical(16),
             Expanded(
-              child: ListView.builder(
-                itemCount: orders.length,
-                itemBuilder: (context, index) {
-                  return OrdersTileWidget(
-                    order: orders[index],
-                    onPressedPin: (order) {
-                      setState(() {
-                        order.isPinned = !order.isPinned;
-                        orders[index] = order;
-                        
-                        // orders.removeAt(index);
-                      });
-                    },
-                    onPressedRemove: (order) {
-                      setState(() {
-                        // orders.removeAt(index);
-                        // Navigator.pop(context);
-                      });
-                    },
-                  );
+              child: StreamBuilder<List<OrderEntity>>(
+                stream: _homeBloc.streamOrders,
+                builder: (context, snapshot) {
+                  if (snapshot.data != null && snapshot.data!.length > 0) {
+                    var orders = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        return OrdersTileWidget(
+                          order: orders[index],
+                          onPressedPin: (order) {
+                            _homeBloc.add(PinOrderEvent(order));
+                          },
+                          onPressedRemove: (order) {
+                            _homeBloc.add(CancelOrderEvent(order));
+                          },
+                        );
+                      },
+                    );
+                  } else {
+                    return EmptyListImageWidget();
+                  }
                 },
               ),
             ),
-            // EmptyListImageWidget(),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _homeBloc.dispose();
+    super.dispose();
   }
 }

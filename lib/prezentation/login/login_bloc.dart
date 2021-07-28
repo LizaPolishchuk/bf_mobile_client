@@ -10,15 +10,11 @@ import 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginWithGoogleUseCase loginWithGoogle;
   LoginWithFacebookUseCase loginWithFacebook;
-  LoginWithEmailAndPasswordUseCase loginWithEmailAndPasswordUseCase;
-  SignUpWithEmailAndPasswordUseCase signUpWithEmailAndPasswordUseCase;
   SignOutUseCase signOut;
 
   LoginBloc(
       this.loginWithGoogle,
       this.loginWithFacebook,
-      this.loginWithEmailAndPasswordUseCase,
-      this.signUpWithEmailAndPasswordUseCase,
       this.signOut) : super(InitialLoginState());
 
   @override
@@ -36,17 +32,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield LoadingLoginState();
       final loginResult = await loginWithFacebook();
       yield* _loggedInOrFailure(loginResult);
-    } else if (event is LoginWithEmailAndPasswordEvent) {
-      yield LoadingLoginState();
-      final loginResult =
-          await loginWithEmailAndPasswordUseCase(event.email, event.password);
-      yield* _loggedInOrFailure(loginResult);
-    } else if (event is SignUpWithEmailAndPasswordEvent) {
-      yield LoadingLoginState();
-      final loginResult =
-          await signUpWithEmailAndPasswordUseCase(event.email, event.password);
-      yield* _loggedInOrFailure(loginResult);
-    } else if (event is LogoutEvent) {
+    }else if (event is LogoutEvent) {
       yield LoadingLoginState();
       final signoutResult = await signOut();
       yield* _signedOutOrFailure(signoutResult);

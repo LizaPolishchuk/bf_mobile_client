@@ -42,33 +42,35 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: BlocBuilder<LoginBloc, LoginState>(
-            bloc: _loginBloc,
-            builder: (BuildContext context, LoginState state) {
-              if (state is LoadingLoginState) {
-                return Text("Loading...");
-                // SchedulerBinding.instance?.addPostFrameCallback((_) {
-                //   showLoaderDialog(context);
-                // });
-              } else if (state is ErrorLoginState) {
-                print(
-                    "ErrorLoginState code:  ${state.errorCode}, message: ${state.errorMessage}");
+    return SafeArea(
+      child: Container(
+          child: BlocBuilder<LoginBloc, LoginState>(
+              bloc: _loginBloc,
+              builder: (BuildContext context, LoginState state) {
+                if (state is LoadingLoginState) {
+                  return Text("Loading...");
+                  // SchedulerBinding.instance?.addPostFrameCallback((_) {
+                  //   showLoaderDialog(context);
+                  // });
+                } else if (state is ErrorLoginState) {
+                  print(
+                      "ErrorLoginState code:  ${state.errorCode}, message: ${state.errorMessage}");
 
-                // stopLoaderDialog(context);
+                  // stopLoaderDialog(context);
 
-                // if (state.errorCode == "user-not-found") {
-                //   _emailErrorText = tr(AppStrings.wrong_email);
-                // } else if (state.errorCode == "wrong-password") {
-                //   _passwordErrorText = tr(AppStrings.wrong_password);
-                // } else {
-                //   SchedulerBinding.instance?.addPostFrameCallback((_) {
-                //     showAlertDialog(context, description: state.errorMessage);
-                //   });
-                // }
-              }
-              return buildLoginPage();
-            }));
+                  // if (state.errorCode == "user-not-found") {
+                  //   _emailErrorText = tr(AppStrings.wrong_email);
+                  // } else if (state.errorCode == "wrong-password") {
+                  //   _passwordErrorText = tr(AppStrings.wrong_password);
+                  // } else {
+                  //   SchedulerBinding.instance?.addPostFrameCallback((_) {
+                  //     showAlertDialog(context, description: state.errorMessage);
+                  //   });
+                  // }
+                }
+                return buildLoginPage();
+              })),
+    );
   }
 
   Widget buildLoginPage() {

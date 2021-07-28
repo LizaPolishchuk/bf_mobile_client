@@ -3,7 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/prezentation/home/order_alert_widget.dart';
+import 'package:salons_app_mobile/prezentation/alerts/cancel_order_alert_widget.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
@@ -96,8 +96,8 @@ class OrdersTileWidget extends StatelessWidget {
           onTap: () {
             showDialog(
               context: context,
-              builder: (context) => OrderAlertWidget(
-                onPressed: () => onPressedRemove(order),
+              builder: (context) => CancelOrderAlertWidget(
+                onPressedConfirm: () => onPressedRemove(order),
               ),
             );
           },
@@ -128,7 +128,9 @@ class OrderOptionsWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(14),
+        height: 95,
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: color,
           borderRadius: isRounded
@@ -147,7 +149,7 @@ class OrderOptionsWidget extends StatelessWidget {
               text,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 8,
+                fontSize: 10,
                 fontWeight: FontWeight.w400,
                 color: Colors.white,
               ),
