@@ -82,8 +82,7 @@ class _MyAppState extends State<MyApp> {
         }
         return supportedLocales.first;
       },
-      // home: MyHomePage(),
-      home: MyHomePage(),
+      home: InitialPage(),
     );
   }
 
@@ -102,12 +101,12 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class InitialPage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _InitialPageState createState() => _InitialPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _InitialPageState extends State<InitialPage> {
   late LocalTranslationsDelegate _newLocaleDelegate;
 
   @override
