@@ -72,7 +72,6 @@ class _HomePageState extends State<HomePage> {
               title: Text("Выйти"),
               onTap: () {
                 getIt<LoginBloc>().add(LogoutEvent());
-                // Navigator.of(context).pop();
               },
             ),
           ],
