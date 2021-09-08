@@ -7,6 +7,6 @@ final getItApp = GetIt.instance;
 Future<void> init() async {
   ///Bloc
   // getItApp.registerLazySingleton(() => NavBloc());
-  getItApp.registerFactory(() => LoginBloc(getItApp(), getItApp(), getItApp()));
+  getItApp.registerFactory(() => LoginBloc(getItApp(), getItApp(), getItApp(), getItApp(), getItApp()));
   getItApp.registerFactory(() => HomeBloc(getItApp(), getItApp(), getItApp()));
 }

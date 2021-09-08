@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
+import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 
@@ -21,8 +23,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // late NavBloc navBloc;
 
-  late TextEditingController _teControllerEmail;
-  late TextEditingController _teControllerPassword;
+  late TextEditingController _teControllerPhone;
 
   bool rememberMe = false;
 
@@ -36,8 +37,7 @@ class _LoginPageState extends State<LoginPage> {
     _loginBloc = getItApp<LoginBloc>();
     // navBloc = getItWeb<NavBloc>();
 
-    _teControllerEmail = new TextEditingController();
-    _teControllerPassword = new TextEditingController();
+    _teControllerPhone = new TextEditingController();
   }
 
   @override
@@ -47,6 +47,13 @@ class _LoginPageState extends State<LoginPage> {
           child: BlocBuilder<LoginBloc, LoginState>(
               bloc: _loginBloc,
               builder: (BuildContext context, LoginState state) {
+                if (state is VerifyCodeSentState) {
+                  SchedulerBinding.instance?.addPostFrameCallback((_) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CodeVerificationPage(),
+                    ));
+                  });
+                }
                 if (state is LoadingLoginState) {
                   return Text("Loading...");
                   // SchedulerBinding.instance?.addPostFrameCallback((_) {
@@ -107,6 +114,14 @@ class _LoginPageState extends State<LoginPage> {
             onTap: () => _loginBloc.add(LoginWithFacebookEvent()),
           ),
         ),
+        TextField(
+          controller: _teControllerPhone,
+        ),
+        TextButton(
+            onPressed: () {
+              _loginBloc.add(LoginWithPhoneEvent(_teControllerPhone.text));
+            },
+            child: Text("Login")),
       ],
     );
   }

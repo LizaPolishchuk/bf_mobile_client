@@ -10,12 +10,17 @@ import 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginWithGoogleUseCase loginWithGoogle;
   LoginWithFacebookUseCase loginWithFacebook;
+  LoginWithPhoneUseCase loginWithPhoneUseCase;
+  LoginWithPhoneVerifyCodeUseCase loginWithPhoneVerifyCodeUseCase;
   SignOutUseCase signOut;
 
   LoginBloc(
       this.loginWithGoogle,
       this.loginWithFacebook,
-      this.signOut) : super(InitialLoginState());
+      this.loginWithPhoneUseCase,
+      this.loginWithPhoneVerifyCodeUseCase,
+      this.signOut)
+      : super(InitialLoginState());
 
   @override
   LoginState get initialState => InitialLoginState();
@@ -32,7 +37,24 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield LoadingLoginState();
       final loginResult = await loginWithFacebook();
       yield* _loggedInOrFailure(loginResult);
-    }else if (event is LogoutEvent) {
+    } else if (event is LoginWithPhoneEvent) {
+      yield LoadingLoginState();
+      final loginResult = await loginWithPhoneUseCase(event.phone);
+      bool noError = loginResult.getOrElse(() => false) ?? false;
+      if (noError) {
+        yield VerifyCodeSentState();
+      } else {
+        yield ErrorLoginState(null, null, "Something went wrong");
+      }
+    } else if (event is LoginWithPhoneVerifyCodeEvent) {
+      yield LoadingLoginState();
+      final loginResult = await loginWithPhoneVerifyCodeUseCase(event.code);
+      yield* _loggedInOrFailure(loginResult);
+    } else if (event is LoginWithPhoneVerifyCodeEvent) {
+      yield LoadingLoginState();
+      final loginResult = await loginWithFacebook();
+      yield* _loggedInOrFailure(loginResult);
+    } else if (event is LogoutEvent) {
       yield LoadingLoginState();
       final signoutResult = await signOut();
       yield* _signedOutOrFailure(signoutResult);
@@ -42,7 +64,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> _loggedInOrFailure(
     Either<Failure, String> failureOrUserId,
   ) async* {
-    yield failureOrUserId.fold((failure) => ErrorLoginState(failure.codeStr, failure.message), (userId) {
+    yield failureOrUserId
+        .fold((failure) => ErrorLoginState(failure.code, failure.codeStr, failure.message),
+            (userId) {
       return LoggedInState();
     });
   }
@@ -51,6 +75,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Either<Failure, void> failureOrUserId,
   ) async* {
     yield failureOrUserId.fold(
-        (failure) => ErrorLoginState(failure.codeStr, failure.message), (voidResult) => LoggedOutState());
+        (failure) => ErrorLoginState(failure.code, failure.codeStr, failure.message),
+        (voidResult) => LoggedOutState());
   }
 }
