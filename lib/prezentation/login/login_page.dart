@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
+import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
+import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
+import 'package:salons_app_mobile/utils/app_strings.dart';
+import 'package:salons_app_mobile/utils/app_styles.dart';
 
 import 'login_bloc.dart';
 import 'login_state.dart';
@@ -20,128 +25,130 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late LoginBloc _loginBloc;
-
-  // late NavBloc navBloc;
-
   late TextEditingController _teControllerPhone;
-
-  bool rememberMe = false;
-
-  String? _emailErrorText;
-  String? _passwordErrorText;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
 
     _loginBloc = getItApp<LoginBloc>();
-    // navBloc = getItWeb<NavBloc>();
-
     _teControllerPhone = new TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-          child: BlocBuilder<LoginBloc, LoginState>(
-              bloc: _loginBloc,
-              builder: (BuildContext context, LoginState state) {
-                if (state is VerifyCodeSentState) {
-                  SchedulerBinding.instance?.addPostFrameCallback((_) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CodeVerificationPage(),
-                    ));
-                  });
-                }
-                if (state is LoadingLoginState) {
-                  return Text("Loading...");
-                  // SchedulerBinding.instance?.addPostFrameCallback((_) {
-                  //   showLoaderDialog(context);
-                  // });
-                } else if (state is ErrorLoginState) {
-                  print(
-                      "ErrorLoginState code:  ${state.errorCode}, message: ${state.errorMessage}");
+    return Container(
+      child: BlocBuilder<LoginBloc, LoginState>(
+          bloc: _loginBloc,
+          builder: (BuildContext context, LoginState state) {
+            if (state is VerifyCodeSentState) {
+              SchedulerBinding.instance?.addPostFrameCallback((_) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => CodeVerificationPage(),
+                ));
+              });
+            }
+            if (state is LoadingLoginState) {
+              SchedulerBinding.instance?.addPostFrameCallback((_) {
+                showLoaderDialog(context);
+              });
+            } else if (state is ErrorLoginState) {
+              print("ErrorLoginState code:  ${state.errorCode}, message: ${state.errorMessage}");
 
-                  // stopLoaderDialog(context);
+              stopLoaderDialog(context);
 
-                  // if (state.errorCode == "user-not-found") {
-                  //   _emailErrorText = tr(AppStrings.wrong_email);
-                  // } else if (state.errorCode == "wrong-password") {
-                  //   _passwordErrorText = tr(AppStrings.wrong_password);
-                  // } else {
-                  //   SchedulerBinding.instance?.addPostFrameCallback((_) {
-                  //     showAlertDialog(context, description: state.errorMessage);
-                  //   });
-                  // }
-                }
-                return buildLoginPage();
-              })),
+              SchedulerBinding.instance?.addPostFrameCallback((_) {
+                Fluttertoast.showToast(
+                    msg: "This is Error Toast", toastLength: Toast.LENGTH_LONG);
+              });
+            }
+            return buildLoginPage();
+          }),
     );
   }
 
   Widget buildLoginPage() {
-    return Column(
+    return Stack(
       children: [
-        Flexible(
-          flex: 1,
-          child: InkWell(
-            child: Container(
-              height: 60,
-              child: Row(
-                children: [
-                  SvgPicture.asset(icGoogle),
-                  Text("Google"),
-                ],
+        Image.asset(
+          loginPlaceholder,
+          fit: BoxFit.fill,
+          width: MediaQuery.of(context).size.width,
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
               ),
             ),
-            onTap: () => _loginBloc..add(LoginWithGoogleEvent()),
+            child: buildPageContent(),
           ),
         ),
-        Flexible(
-          flex: 1,
-          child: InkWell(
-            child: Container(
-              color: Color(0xff3B5998),
-              height: 60,
-              child: Row(
-                children: [
-                  SvgPicture.asset(icFacebook),
-                  Text("Facebook"),
-                ],
-              ),
-            ),
-            onTap: () => _loginBloc.add(LoginWithFacebookEvent()),
-          ),
-        ),
-        TextField(
-          controller: _teControllerPhone,
-        ),
-        TextButton(
-            onPressed: () {
-              _loginBloc.add(LoginWithPhoneEvent(_teControllerPhone.text));
-            },
-            child: Text("Login")),
       ],
     );
   }
 
-// bool validateFields() {
-//   setState(() {
-//     _emailErrorText = _teControllerEmail.text.isEmpty ||
-//             !_teControllerEmail.text.isEmailValid()
-//         ? 'Error email'
-//         : null;
-//     _passwordErrorText =
-//         _teControllerPassword.text.isEmpty ? 'Error password' : null;
-//   });
-//
-//   return _passwordErrorText == null && _emailErrorText == null;
-// }
-//
-// Widget buildError() {
-//   return Center(
-//     child: Text('Error login'),
-//   );
-// }
+  Widget buildPageContent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Form(
+            key: _formKey,
+            child: textFieldWithBorders(
+              tr(AppStrings.phoneNumber),
+              _teControllerPhone,
+              prefixText: "+380",
+              keyboardType: TextInputType.phone,
+              validator: (String? arg) {
+                return (arg?.length == null || arg!.length < 9)
+                    ? tr(AppStrings.phoneError)
+                    : null;
+              },
+            ),
+          ),
+          marginVertical(22),
+          buttonWithText(
+            context,
+            tr(AppStrings.signIn),
+            () {
+              if (_formKey.currentState!.validate())
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CodeVerificationPage(),
+              ));
+              // _loginBloc.add(LoginWithPhoneEvent(_teControllerPhone.text));
+            },
+            width: 220,
+          ),
+          marginVertical(22),
+          Text(
+            tr(AppStrings.continueWith).toUpperCase(),
+            style: bodyText1,
+          ),
+          marginVertical(22),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                child: SvgPicture.asset(icGoogle),
+                onTap: () => _loginBloc..add(LoginWithGoogleEvent()),
+              ),
+              marginHorizontal(10),
+              InkWell(
+                child: SvgPicture.asset(icFacebook),
+                onTap: () => _loginBloc.add(LoginWithFacebookEvent()),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
