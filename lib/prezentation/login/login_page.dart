@@ -54,21 +54,19 @@ class _LoginPageState extends State<LoginPage> {
                 showLoaderDialog(context);
               });
             } else if (state is ErrorLoginState) {
-              print("ErrorLoginState code:  ${state.errorCode}, message: ${state.errorMessage}");
-
               stopLoaderDialog(context);
 
               SchedulerBinding.instance?.addPostFrameCallback((_) {
                 Fluttertoast.showToast(
-                    msg: "This is Error Toast", toastLength: Toast.LENGTH_LONG);
+                    msg: "Something went wrong", toastLength: Toast.LENGTH_LONG);
               });
             }
-            return buildLoginPage();
+            return buildPage();
           }),
     );
   }
 
-  Widget buildLoginPage() {
+  Widget buildPage() {
     return Stack(
       children: [
         Image.asset(
@@ -86,14 +84,14 @@ class _LoginPageState extends State<LoginPage> {
                 topRight: Radius.circular(25),
               ),
             ),
-            child: buildPageContent(),
+            child: buildLogin(),
           ),
         ),
       ],
     );
   }
 
-  Widget buildPageContent() {
+  Widget buildLogin() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
       child: Column(
@@ -120,12 +118,8 @@ class _LoginPageState extends State<LoginPage> {
             tr(AppStrings.signIn),
             () {
               if (_formKey.currentState!.validate())
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => CodeVerificationPage(),
-              ));
-              // _loginBloc.add(LoginWithPhoneEvent(_teControllerPhone.text));
+              _loginBloc.add(LoginWithPhoneEvent(_teControllerPhone.text));
             },
-            width: 220,
           ),
           marginVertical(22),
           Text(

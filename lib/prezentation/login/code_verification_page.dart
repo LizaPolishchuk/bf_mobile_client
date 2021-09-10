@@ -2,14 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/prezentation/login/login_event.dart';
+import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/utils/app_colors.dart';
+import 'package:salons_app_mobile/utils/app_components.dart';
+import 'package:salons_app_mobile/utils/app_strings.dart';
+import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 import 'login_bloc.dart';
+import 'login_event.dart';
 import 'login_state.dart';
 
 class CodeVerificationPage extends StatefulWidget {
-  static const routeName = '/code-varification';
+  static const routeName = '/code-verification';
 
   @override
   _CodeVerificationPageState createState() => _CodeVerificationPageState();
@@ -17,32 +24,40 @@ class CodeVerificationPage extends StatefulWidget {
 
 class _CodeVerificationPageState extends State<CodeVerificationPage> {
   late LoginBloc _loginBloc;
-
-  // late NavBloc navBloc;
-
-  late TextEditingController _teControllerPhone;
-
-  bool rememberMe = false;
-
-  String? _codeErrorText;
+  late TextEditingController _teControllerCode;
+  bool _isDialogShowed = false;
 
   @override
   void initState() {
     super.initState();
 
-    _loginBloc = getItApp<LoginBloc>();
-    // navBloc = getItWeb<NavBloc>();
+    listenForCode();
 
-    _teControllerPhone = new TextEditingController();
+    _teControllerCode = TextEditingController();
+    _loginBloc = getItApp<LoginBloc>();
+  }
+
+  @override
+  void dispose() {
+    SmsAutoFill().unregisterListener();
+    super.dispose();
+  }
+
+  void listenForCode() async {
+    await SmsAutoFill().listenForCode;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: bgGrey,
+        title: Text(
+          tr(AppStrings.appName),
+        ),
+      ),
       body: SafeArea(
-        child:
-
-        BlocBuilder<LoginBloc, LoginState>(
+        child: BlocBuilder<LoginBloc, LoginState>(
             bloc: _loginBloc,
             builder: (BuildContext context, LoginState state) {
               if (state is LoggedInState) {
@@ -51,27 +66,25 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                 });
               }
               if (state is LoadingLoginState) {
-                return Text("Loading...");
-                // SchedulerBinding.instance?.addPostFrameCallback((_) {
-                //   showLoaderDialog(context);
-                // });
-              } else if (state is ErrorLoginState) {
-                if (state.errorCode == 400) {
-                  _codeErrorText = "Error code";
+                if (!_isDialogShowed) {
+                  SchedulerBinding.instance?.addPostFrameCallback((_) {
+                    showLoaderDialog(context);
+                  });
+                  _isDialogShowed = true;
                 }
-                print("ErrorLoginState code:  ${state.errorCode}, message: ${state.errorMessage}");
+              } else if (state is ErrorLoginState) {
+                if(_isDialogShowed) {
+                  stopLoaderDialog(context);
+                  _isDialogShowed = false;
 
-                // stopLoaderDialog(context);
-
-                // if (state.errorCode == "user-not-found") {
-                //   _emailErrorText = tr(AppStrings.wrong_email);
-                // } else if (state.errorCode == "wrong-password") {
-                //   _passwordErrorText = tr(AppStrings.wrong_password);
-                // } else {
-                //   SchedulerBinding.instance?.addPostFrameCallback((_) {
-                //     showAlertDialog(context, description: state.errorMessage);
-                //   });
-                // }
+                  SchedulerBinding.instance?.addPostFrameCallback((_) {
+                    Fluttertoast.showToast(
+                        msg: (state.errorCode == 400)
+                            ? "Не верный код"
+                            : "Something went wrong",
+                        toastLength: Toast.LENGTH_LONG);
+                  });
+                }
               }
               return buildPage();
             }),
@@ -80,24 +93,77 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
   }
 
   Widget buildPage() {
-    return Column(
+    return Stack(
       children: [
-        Text("Code verification"),
-        Flexible(
-          flex: 1,
-          child:TextField(
-            decoration: InputDecoration(
-              errorText: _codeErrorText,
+        Container(
+          height: MediaQuery.of(context).size.height,
+          color: bgGrey,
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            margin: const EdgeInsets.only(top: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
             ),
-            controller: _teControllerPhone,
-          ),),
-        TextButton(
-            onPressed: () {
-              _loginBloc.add(LoginWithPhoneVerifyCodeEvent(_teControllerPhone.text));
-            },
-            child: Text("Login")),
+            child: buildContent(),
+          ),
+        ),
       ],
     );
   }
 
+  Widget buildContent() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(
+            tr(AppStrings.phoneVerification),
+            style: titleText1,
+          ),
+          marginVertical(7),
+          Text(
+            tr(AppStrings.phoneVerificationDescription),
+            style: bodyText2,
+            textAlign: TextAlign.center,
+          ),
+          marginVertical(64),
+          PinFieldAutoFill(
+            controller: _teControllerCode,
+            codeLength: 6,
+            decoration: UnderlineDecoration(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+              colorBuilder: FixedColorBuilder(Colors.black.withOpacity(0.3)),
+            ),
+            cursor: Cursor(
+                color: primaryColor, height: 26, enabled: true, width: 3),
+            currentCode: "",
+            onCodeSubmitted: (code) {},
+            onCodeChanged: (code) {
+              if (code!.length == 6) {
+                _loginBloc
+                    .add(LoginWithPhoneVerifyCodeEvent(_teControllerCode.text));
+              }
+            },
+          ),
+          marginVertical(42),
+          buttonWithText(context, tr(AppStrings.continueTxt), () {
+            _loginBloc
+                .add(LoginWithPhoneVerifyCodeEvent(_teControllerCode.text));
+          }),
+        ],
+      ),
+    );
+  }
 }

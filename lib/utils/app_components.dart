@@ -41,7 +41,7 @@ Widget buttonWithText(BuildContext context, String text, VoidCallback onPressed,
     {Color? buttonColor, double? width}) {
   return SizedBox(
     height: 50,
-    width: width ?? double.infinity,
+    width: 226,
     child: ElevatedButton(
       onPressed: onPressed,
       style: buttonColor != null
@@ -62,7 +62,6 @@ Widget imageWithPlaceholder(String? imageUrl, String placeholder) {
       placeholder: AssetImage(placeholder));
 }
 
-///Dialogs
 
 /// Dialogs
 showLoaderDialog(BuildContext context) {

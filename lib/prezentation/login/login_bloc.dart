@@ -50,10 +50,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield LoadingLoginState();
       final loginResult = await loginWithPhoneVerifyCodeUseCase(event.code);
       yield* _loggedInOrFailure(loginResult);
-    } else if (event is LoginWithPhoneVerifyCodeEvent) {
-      yield LoadingLoginState();
-      final loginResult = await loginWithFacebook();
-      yield* _loggedInOrFailure(loginResult);
     } else if (event is LogoutEvent) {
       yield LoadingLoginState();
       final signoutResult = await signOut();
@@ -64,9 +60,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> _loggedInOrFailure(
     Either<Failure, String> failureOrUserId,
   ) async* {
-    yield failureOrUserId
-        .fold((failure) => ErrorLoginState(failure.code, failure.codeStr, failure.message),
-            (userId) {
+    yield failureOrUserId.fold(
+        (failure) =>
+            ErrorLoginState(failure.code, failure.codeStr, failure.message),
+        (userId) {
       return LoggedInState();
     });
   }
@@ -75,7 +72,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Either<Failure, void> failureOrUserId,
   ) async* {
     yield failureOrUserId.fold(
-        (failure) => ErrorLoginState(failure.code, failure.codeStr, failure.message),
+        (failure) =>
+            ErrorLoginState(failure.code, failure.codeStr, failure.message),
         (voidResult) => LoggedOutState());
   }
 }

@@ -4,5 +4,8 @@
   "phone_number": "Номер телефона",
   "sign_in": "Войти",
   "continue_with": "Или продолжить с помощью",
-  "phone_error": "Не верный ввод"
+  "phone_error": "Не верный ввод",
+  "phone_verification": "Верификация номера",
+  "phone_verification_description": "Введите код, который мы отправили вам на номер телефона",
+  "continue": "Продолжить"
 }
