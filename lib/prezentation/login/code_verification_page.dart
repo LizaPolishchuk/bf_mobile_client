@@ -61,9 +61,9 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             bloc: _loginBloc,
             builder: (BuildContext context, LoginState state) {
               if (state is LoggedInState) {
-                SchedulerBinding.instance?.addPostFrameCallback((_) {
-                  Navigator.of(context).pop();
-                });
+                if (_isDialogShowed) {
+                  stopLoaderDialog(context);
+                }
               }
               if (state is LoadingLoginState) {
                 if (!_isDialogShowed) {
@@ -73,7 +73,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                   _isDialogShowed = true;
                 }
               } else if (state is ErrorLoginState) {
-                if(_isDialogShowed) {
+                if (_isDialogShowed) {
                   stopLoaderDialog(context);
                   _isDialogShowed = false;
 

@@ -10,12 +10,14 @@ Widget textFieldWithBorders(
   String? errorText,
   String? prefixText,
   TextInputType? keyboardType,
+  int? maxLength,
   FormFieldValidator<String>? validator,
 }) {
   return TextFormField(
     controller: controller,
     style: bodyText1,
     validator: validator,
+    maxLength: maxLength,
     keyboardType: keyboardType ?? TextInputType.text,
     decoration: InputDecoration(
       prefixText: prefixText,
@@ -23,6 +25,7 @@ Widget textFieldWithBorders(
       errorText: errorText,
       labelStyle: hintText1,
       prefixStyle: bodyText1,
+      counterText: "",
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: lightGrey, width: 1),

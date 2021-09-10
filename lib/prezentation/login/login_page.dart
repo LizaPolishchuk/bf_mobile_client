@@ -16,6 +16,7 @@ import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'login_bloc.dart';
 import 'login_state.dart';
 
+const uaCode = "+380";
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
 
@@ -44,6 +45,8 @@ class _LoginPageState extends State<LoginPage> {
           builder: (BuildContext context, LoginState state) {
             if (state is VerifyCodeSentState) {
               SchedulerBinding.instance?.addPostFrameCallback((_) {
+                stopLoaderDialog(context);
+
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => CodeVerificationPage(),
                 ));
@@ -103,7 +106,8 @@ class _LoginPageState extends State<LoginPage> {
             child: textFieldWithBorders(
               tr(AppStrings.phoneNumber),
               _teControllerPhone,
-              prefixText: "+380",
+              maxLength:9,
+              prefixText: uaCode,
               keyboardType: TextInputType.phone,
               validator: (String? arg) {
                 return (arg?.length == null || arg!.length < 9)
@@ -118,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
             tr(AppStrings.signIn),
             () {
               if (_formKey.currentState!.validate())
-              _loginBloc.add(LoginWithPhoneEvent(_teControllerPhone.text));
+              _loginBloc.add(LoginWithPhoneEvent(uaCode + _teControllerPhone.text));
             },
           ),
           marginVertical(22),
