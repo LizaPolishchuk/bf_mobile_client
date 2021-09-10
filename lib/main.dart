@@ -6,8 +6,8 @@ import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
 import 'package:salons_app_mobile/localization/app_translation_delegate.dart';
 import 'package:salons_app_mobile/localization/application.dart';
-import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
+import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
 import 'injection_container_app.dart' as appDi;
@@ -114,7 +114,7 @@ class _InitialPageState extends State<InitialPage> {
           builder: (BuildContext context, Box<dynamic> box, Widget? child) {
             String token = box.get(LocalStorage.accessToken, defaultValue: "");
             if (token.isNotEmpty) {
-              return HomePage();
+              return RegistrationPage();
             } else {
               return CodeVerificationPage();
             }

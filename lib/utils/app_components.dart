@@ -7,7 +7,7 @@ import 'app_styles.dart';
 Widget textFieldWithBorders(
   String labelText,
   TextEditingController controller, {
-  String? errorText,
+  String? errorStr,
   String? prefixText,
   TextInputType? keyboardType,
   int? maxLength,
@@ -22,7 +22,8 @@ Widget textFieldWithBorders(
     decoration: InputDecoration(
       prefixText: prefixText,
       labelText: labelText,
-      errorText: errorText,
+      errorText: errorStr,
+      errorStyle: errorText,
       labelStyle: hintText1,
       prefixStyle: bodyText1,
       counterText: "",
@@ -64,7 +65,6 @@ Widget imageWithPlaceholder(String? imageUrl, String placeholder) {
       image: NetworkImage(imageUrl ?? ""),
       placeholder: AssetImage(placeholder));
 }
-
 
 /// Dialogs
 showLoaderDialog(BuildContext context) {

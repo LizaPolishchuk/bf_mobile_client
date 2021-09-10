@@ -7,5 +7,10 @@
   "phone_error": "Не верный ввод",
   "phone_verification": "Верификация номера",
   "phone_verification_description": "Введите код, который мы отправили вам на номер телефона",
-  "continue": "Продолжить"
+  "continue": "Продолжить",
+  "enter_name": "Введите своё имя",
+  "choose_gender": "Выберите свой пол",
+  "man": "Мужской",
+  "woman": "Женский",
+  "name": "Имя"
 }
