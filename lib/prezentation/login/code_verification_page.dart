@@ -9,6 +9,7 @@ import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/loader.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import 'login_bloc.dart';
@@ -25,7 +26,7 @@ class CodeVerificationPage extends StatefulWidget {
 class _CodeVerificationPageState extends State<CodeVerificationPage> {
   late LoginBloc _loginBloc;
   late TextEditingController _teControllerCode;
-  bool _isDialogShowed = false;
+  final AlertBuilder _loader = new AlertBuilder();
 
   @override
   void initState() {
@@ -61,31 +62,22 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             bloc: _loginBloc,
             builder: (BuildContext context, LoginState state) {
               if (state is LoggedInState) {
-                if (_isDialogShowed) {
-                  stopLoaderDialog(context);
-                }
+                _loader.stopLoaderDialog(context);
               }
               if (state is LoadingLoginState) {
-                if (!_isDialogShowed) {
-                  SchedulerBinding.instance?.addPostFrameCallback((_) {
-                    showLoaderDialog(context);
-                  });
-                  _isDialogShowed = true;
-                }
+                _loader.showLoaderDialog(context);
               } else if (state is ErrorLoginState) {
-                if (_isDialogShowed) {
-                  stopLoaderDialog(context);
-                  _isDialogShowed = false;
+                _loader.stopLoaderDialog(context);
 
-                  SchedulerBinding.instance?.addPostFrameCallback((_) {
-                    Fluttertoast.showToast(
-                        msg: (state.errorCode == 400)
-                            ? "Не верный код"
-                            : "Something went wrong",
-                        toastLength: Toast.LENGTH_LONG);
-                  });
-                }
+                SchedulerBinding.instance?.addPostFrameCallback((_) {
+                  Fluttertoast.showToast(
+                      msg: (state.failure.code == 400)
+                          ? "Не верный код"
+                          : "Something went wrong",
+                      toastLength: Toast.LENGTH_LONG);
+                });
               }
+
               return buildPage();
             }),
       ),

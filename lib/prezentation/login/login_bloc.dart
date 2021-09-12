@@ -44,7 +44,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (noError) {
         yield VerifyCodeSentState();
       } else {
-        yield ErrorLoginState(null, null, "Something went wrong");
+        yield ErrorLoginState(Failure(message: "Something went wrong"));
       }
     } else if (event is LoginWithPhoneVerifyCodeEvent) {
       yield LoadingLoginState();
@@ -58,13 +58,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Stream<LoginState> _loggedInOrFailure(
-    Either<Failure, String> failureOrUserId,
+    Either<Failure, Map<UserEntity, bool?>> failureOrUserId,
   ) async* {
     yield failureOrUserId.fold(
         (failure) =>
-            ErrorLoginState(failure.code, failure.codeStr, failure.message),
-        (userId) {
-      return LoggedInState();
+            ErrorLoginState(failure),
+        (response) {
+      return LoggedInState(response.keys.first, response.values.first);
     });
   }
 
@@ -73,7 +73,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async* {
     yield failureOrUserId.fold(
         (failure) =>
-            ErrorLoginState(failure.code, failure.codeStr, failure.message),
+            ErrorLoginState(failure),
         (voidResult) => LoggedOutState());
   }
 }

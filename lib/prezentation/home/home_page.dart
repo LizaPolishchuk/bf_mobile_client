@@ -9,6 +9,7 @@ import 'package:salons_app_mobile/prezentation/home/orders_tile_widget.dart';
 import 'package:salons_app_mobile/prezentation/home/top_salons_carousel_widget.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
+import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
@@ -72,6 +73,10 @@ class _HomePageState extends State<HomePage> {
               title: Text("Выйти"),
               onTap: () {
                 getIt<LoginBloc>().add(LogoutEvent());
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                  builder: (context) => LoginPage(),
+                ),
+                        (Route<dynamic> route) => false);
               },
             ),
           ],

@@ -3,20 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
+import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/loader.dart';
 
 import 'login_bloc.dart';
 import 'login_state.dart';
 
 const uaCode = "+380";
+
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
 
@@ -28,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   late LoginBloc _loginBloc;
   late TextEditingController _teControllerPhone;
   final _formKey = GlobalKey<FormState>();
+  final AlertBuilder _alertBuilder = new AlertBuilder();
 
   @override
   void initState() {
@@ -39,30 +43,35 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: BlocBuilder<LoginBloc, LoginState>(
+    return Scaffold(
+      body: BlocBuilder<LoginBloc, LoginState>(
           bloc: _loginBloc,
           builder: (BuildContext context, LoginState state) {
+            if (state is LoadingLoginState) {
+              _alertBuilder.showLoaderDialog(context);
+            } else {
+              _alertBuilder.stopLoaderDialog(context);
+              _alertBuilder.stopErrorDialog(context);
+            }
+
             if (state is VerifyCodeSentState) {
               SchedulerBinding.instance?.addPostFrameCallback((_) {
-                stopLoaderDialog(context);
-
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => CodeVerificationPage(),
                 ));
               });
-            }
-            if (state is LoadingLoginState) {
+            } else if (state is LoggedInState) {
               SchedulerBinding.instance?.addPostFrameCallback((_) {
-                showLoaderDialog(context);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => (state.isNewUser ?? false)
+                          ? RegistrationPage(state.user)
+                          : HomePage(),
+                    ),
+                    (Route<dynamic> route) => false);
               });
             } else if (state is ErrorLoginState) {
-              stopLoaderDialog(context);
-
-              SchedulerBinding.instance?.addPostFrameCallback((_) {
-                Fluttertoast.showToast(
-                    msg: "Something went wrong", toastLength: Toast.LENGTH_LONG);
-              });
+              _alertBuilder.showErrorDialog(context, state.failure.message);
             }
             return buildPage();
           }),
@@ -106,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
             child: textFieldWithBorders(
               tr(AppStrings.phoneNumber),
               _teControllerPhone,
-              maxLength:9,
+              maxLength: 9,
               prefixText: uaCode,
               keyboardType: TextInputType.phone,
               validator: (String? arg) {
@@ -122,7 +131,8 @@ class _LoginPageState extends State<LoginPage> {
             tr(AppStrings.signIn),
             () {
               if (_formKey.currentState!.validate())
-              _loginBloc.add(LoginWithPhoneEvent(uaCode + _teControllerPhone.text));
+                _loginBloc
+                    .add(LoginWithPhoneEvent(uaCode + _teControllerPhone.text));
             },
           ),
           marginVertical(22),

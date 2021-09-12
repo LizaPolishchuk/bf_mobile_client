@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'app_colors.dart';
 import 'app_styles.dart';
@@ -64,30 +65,6 @@ Widget imageWithPlaceholder(String? imageUrl, String placeholder) {
       },
       image: NetworkImage(imageUrl ?? ""),
       placeholder: AssetImage(placeholder));
-}
-
-/// Dialogs
-showLoaderDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) => AlertDialog(
-      content: new Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircularProgressIndicator(),
-          Container(
-            margin: EdgeInsets.only(top: 12),
-            child: Text("Loading..."),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-stopLoaderDialog(BuildContext context) {
-  Navigator.of(context).pop();
 }
 
 /// Margins

@@ -6,7 +6,10 @@ import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
 import 'package:salons_app_mobile/localization/app_translation_delegate.dart';
 import 'package:salons_app_mobile/localization/application.dart';
-import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
+import 'package:salons_app_mobile/prezentation/home/home_page.dart';
+import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
+import 'package:salons_app_mobile/prezentation/login/login_event.dart';
+import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
@@ -32,6 +35,7 @@ Future<void> initHive() async {
   Hive.registerAdapter(MasterAdapter());
   Hive.registerAdapter(ServiceAdapter());
   Hive.registerAdapter(OrderEntityAdapter());
+  Hive.registerAdapter(UserEntityAdapter());
 
   await getIt<LocalStorage>().openBox();
 }
@@ -105,20 +109,32 @@ class InitialPage extends StatefulWidget {
 
 class _InitialPageState extends State<InitialPage> {
   late LocalTranslationsDelegate _newLocaleDelegate;
+  String? token;
+  UserEntity? user;
+
+  @override
+  void initState() {
+    super.initState();
+
+    LocalStorage localStorage = getIt<LocalStorage>();
+    user = localStorage.getCurrentUser();
+    token = localStorage.getAccessToken();
+
+    print("Main: user: $user, token: $token, isRegistered: ${user?.isRegistered}");
+
+    if (token != null && user == null) {
+      token = null;
+      getIt<LoginBloc>().add(LogoutEvent());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ValueListenableBuilder(
-          valueListenable: Hive.box(LocalStorage.preferencesBox).listenable(),
-          builder: (BuildContext context, Box<dynamic> box, Widget? child) {
-            String token = box.get(LocalStorage.accessToken, defaultValue: "");
-            if (token.isNotEmpty) {
-              return RegistrationPage();
-            } else {
-              return CodeVerificationPage();
-            }
-          }),
-    );
+        body: (token?.isNotEmpty != true)
+            ? LoginPage()
+            : (user?.isRegistered != true)
+                ? RegistrationPage(user!)
+                : HomePage());
   }
 }
