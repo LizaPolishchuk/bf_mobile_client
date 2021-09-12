@@ -50,39 +50,45 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<RegistrationBloc, RegistrationState>(
-          bloc: _registrationBloc,
-          builder: (BuildContext context, RegistrationState state) {
-            if (state is LoadingRegistrationState) {
-              _alertBuilder.showLoaderDialog(context);
-            } else {
-              _alertBuilder.stopLoaderDialog(context);
-              _alertBuilder.stopErrorDialog(context);
-            }
+      body: SingleChildScrollView(
+        reverse: true,
+        child: BlocBuilder<RegistrationBloc, RegistrationState>(
+            bloc: _registrationBloc,
+            builder: (BuildContext context, RegistrationState state) {
+              if (state is LoadingRegistrationState) {
+                _alertBuilder.showLoaderDialog(context);
+              } else {
+                _alertBuilder.stopLoaderDialog(context);
+                _alertBuilder.stopErrorDialog(context);
+              }
 
-            if (state is UserUpdatedState) {
-              SchedulerBinding.instance?.addPostFrameCallback((_) {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ),
-                    (Route<dynamic> route) => false);
-              });
-            } else if (state is ErrorRegistrationState) {
-              _alertBuilder.showErrorDialog(context, state.failure.message);
-            }
+              if (state is UserUpdatedState) {
+                SchedulerBinding.instance?.addPostFrameCallback((_) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ),
+                      (Route<dynamic> route) => false);
+                });
+              } else if (state is ErrorRegistrationState) {
+                _alertBuilder.showErrorDialog(context, state.failure.message);
+              }
 
-            return _buildPage();
-          }),
+              return _buildPage();
+            }),
+      ),
     );
   }
 
   Widget _buildPage() {
+    final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return Padding(
       padding: const EdgeInsets.only(
         left: 28,
         right: 28,
-        top: 60,
+        top: 120,
+        bottom: 28
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -113,7 +119,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   : null,
             ),
           ),
-          marginVertical(66),
+          marginVertical(isKeyboard ? 33 : 66),
           Text(
             tr(AppStrings.chooseGender),
             style: (_showGenderError == null || _showGenderError == false)
@@ -122,7 +128,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           marginVertical(48),
           _buildGenderSelector(),
-          marginVertical(80),
+          marginVertical(isKeyboard ? 40: 80),
           buttonWithText(context, tr(AppStrings.continueTxt), () {
             bool validName = _formKey.currentState!.validate();
             bool validGender = checkIsGenderSelected();
