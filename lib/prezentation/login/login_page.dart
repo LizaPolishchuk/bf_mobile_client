@@ -9,11 +9,11 @@ import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
+import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
-import 'package:salons_app_mobile/utils/loader.dart';
 
 import 'login_bloc.dart';
 import 'login_state.dart';

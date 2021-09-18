@@ -5,11 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
-import 'package:salons_app_mobile/utils/loader.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import 'login_bloc.dart';

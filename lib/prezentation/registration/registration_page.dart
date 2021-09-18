@@ -11,12 +11,12 @@ import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_event.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_state.dart';
+import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
-import 'package:salons_app_mobile/utils/loader.dart';
 
 import '../../injection_container_app.dart';
 
