@@ -7,6 +7,8 @@ abstract class HomeEvent {}
 
 class LoadOrdersForCurrentUserEvent extends HomeEvent{}
 
+class SignOutEvent extends HomeEvent {}
+
 class PinOrderEvent extends HomeEvent {
   final OrderEntity orderEntity;
 

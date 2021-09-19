@@ -15,7 +15,11 @@ class AppStrings {
   static const String chooseGender = "choose_gender";
   static const String woman = "woman";
   static const String man = "man";
-
+  static const String history = "history";
+  static const String promo = "promo";
+  static const String bonusCards = "bonus_cards";
+  static const String settings = "settings";
+  static const String exit = "exit";
 }
 
 // Tool to quick set text to camelCase https://textedit.tools/camelcase

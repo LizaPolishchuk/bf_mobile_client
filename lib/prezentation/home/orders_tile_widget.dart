@@ -90,7 +90,7 @@ class OrdersTileWidget extends StatelessWidget {
         ),
         OrderOptionsWidget(
           text: 'Отменить запись',
-          myIcon: 'assets/icons/cancel.svg',
+          myIcon: 'assets/icons/ic_cancel.svg',
           color: Color(0xFFE1440E),
           isRounded: true,
           onTap: () {

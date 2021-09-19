@@ -9,6 +9,7 @@ import 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetOrdersListForCurrentUser getOrdersListForCurrentUser;
   final UpdateOrderUseCase updateOrderUseCase;
+  final SignOutUseCase signOutUseCase;
   final LocalStorage localStorage;
 
   List<OrderEntity> ordersList = [];
@@ -19,7 +20,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<List<OrderEntity>> get streamOrders => streamController.stream;
 
-  HomeBloc(this.getOrdersListForCurrentUser, this.updateOrderUseCase,
+  HomeBloc(this.getOrdersListForCurrentUser, this.updateOrderUseCase, this.signOutUseCase,
       this.localStorage)
       : super(InitialHomeState()) {
     streamController = StreamController<List<OrderEntity>>.broadcast();
@@ -65,6 +66,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         localStorage.setOrdersList(ordersList);
         ordersStreamSink.add(ordersList);
       }
+    } else if (event is SignOutEvent) {
+      final signoutResult = await signOutUseCase();
+      yield signoutResult.fold(
+              (failure) =>
+              ErrorHomeState(failure),
+              (voidResult) => LoggedOutState());
     }
   }
 }
