@@ -60,7 +60,7 @@ class AlertBuilder {
                   ],
                 ),
               ),
-        );
+        ).then((value) => _isErrorDialogShowed = false);
       });
     }
   }

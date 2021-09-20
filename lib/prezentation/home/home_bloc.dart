@@ -35,7 +35,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     HomeEvent event,
   ) async* {
     if (event is LoadOrdersForCurrentUserEvent) {
-      // if(localStorage.order)
       final ordersListOrError = await getOrdersListForCurrentUser();
       ordersListOrError.fold((failure) {
         ordersStreamSink.addError(failure.message);

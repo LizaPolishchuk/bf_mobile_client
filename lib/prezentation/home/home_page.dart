@@ -9,7 +9,7 @@ import 'package:salons_app_mobile/prezentation/home/home_bloc.dart';
 import 'package:salons_app_mobile/prezentation/home/home_event.dart';
 import 'package:salons_app_mobile/prezentation/home/home_state.dart';
 import 'package:salons_app_mobile/prezentation/home/orders_tile_widget.dart';
-import 'package:salons_app_mobile/prezentation/home/top_salons_carousel_widget.dart';
+import 'package:salons_app_mobile/prezentation/home/top_salons_widget.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -80,11 +80,8 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  tr(AppStrings.topSalons),
-                  style: text16W600,
-                ),
-                TopSalonsCarouselWidget(),
+
+                TopSalonsWidget(),
                 marginVertical(16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -20,6 +20,7 @@ class AppStrings {
   static const String bonusCards = "bonus_cards";
   static const String settings = "settings";
   static const String exit = "exit";
+  static const String more = "more";
 }
 
 // Tool to quick set text to camelCase https://textedit.tools/camelcase
