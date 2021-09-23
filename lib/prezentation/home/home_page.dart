@@ -2,23 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/home/home_bloc.dart';
-import 'package:salons_app_mobile/prezentation/home/home_event.dart';
-import 'package:salons_app_mobile/prezentation/home/home_state.dart';
-import 'package:salons_app_mobile/prezentation/home/orders_tile_widget.dart';
+import 'package:salons_app_mobile/prezentation/home/coming_orders_widget.dart';
 import 'package:salons_app_mobile/prezentation/home/top_salons_widget.dart';
+import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
+import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
+import 'package:salons_app_mobile/prezentation/login/login_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
-
-import 'empty_list_image.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -28,7 +25,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late HomeBloc _homeBloc;
+  late LoginBloc _loginBloc;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final AlertBuilder _alertBuilder = AlertBuilder();
 
@@ -36,8 +33,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _homeBloc = getItApp<HomeBloc>();
-    _homeBloc.add(LoadOrdersForCurrentUserEvent());
+    _loginBloc = getItApp<LoginBloc>();
   }
 
   @override
@@ -51,19 +47,18 @@ class _HomePageState extends State<HomePage> {
           },
           icon: Icon(Icons.menu, color: Colors.black),
         ),
-        title: Text(
-          tr(AppStrings.appName),
-          style: text16W600.copyWith(fontSize: 20),
-        ),
-        centerTitle: true,
-        elevation: 0,
+        title: Text(tr(AppStrings.appName)),
       ),
       drawer: _buildDrawerMenu(),
       body: BlocProvider(
-        create: (context) => _homeBloc,
-        child: BlocListener<HomeBloc, HomeState>(
+        create: (context) => _loginBloc,
+        child: BlocListener<LoginBloc, LoginState>(
           listener: (BuildContext context, state) {
-            _alertBuilder.stopErrorDialog(context);
+            if (state is ErrorLoginState) {
+              _alertBuilder.showErrorDialog(context, state.failure.message);
+            } else {
+              _alertBuilder.stopErrorDialog(context);
+            }
 
             if (state is LoggedOutState) {
               Navigator.of(context).pushAndRemoveUntil(
@@ -71,8 +66,6 @@ class _HomePageState extends State<HomePage> {
                     builder: (context) => LoginPage(),
                   ),
                   (Route<dynamic> route) => false);
-            } else if (state is ErrorHomeState) {
-              _alertBuilder.showErrorDialog(context, state.failure.message);
             }
           },
           child: Padding(
@@ -80,59 +73,9 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 TopSalonsWidget(),
-                marginVertical(16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Ближайшие записи', style: text16W600),
-                    InkWell(
-                      onTap: () {},
-                      child: Row(
-                        children: [
-                          Text(
-                            'Все',
-                            style:
-                                text12W500.copyWith(color: Color(0xff6B7280)),
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_right,
-                            size: 18,
-                            color: Color(0xff6B7280),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                marginVertical(16),
-                Expanded(
-                  child: StreamBuilder<List<OrderEntity>>(
-                    stream: _homeBloc.streamOrders,
-                    builder: (context, snapshot) {
-                      if (snapshot.data != null && snapshot.data!.length > 0) {
-                        var orders = snapshot.data!;
-                        return ListView.builder(
-                          itemCount: orders.length,
-                          itemBuilder: (context, index) {
-                            return OrdersTileWidget(
-                              order: orders[index],
-                              onPressedPin: (order) {
-                                _homeBloc.add(PinOrderEvent(order));
-                              },
-                              onPressedRemove: (order) {
-                                _homeBloc.add(CancelOrderEvent(order));
-                              },
-                            );
-                          },
-                        );
-                      } else {
-                        return EmptyListImageWidget();
-                      }
-                    },
-                  ),
-                ),
+                marginVertical(46),
+                Expanded(child: ComingOrdersWidget())
               ],
             ),
           ),
@@ -187,7 +130,7 @@ class _HomePageState extends State<HomePage> {
           _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),
           _buildDrawerItem(tr(AppStrings.settings), icSettings),
           _buildDrawerItem(tr(AppStrings.exit), icExit,
-              onClick: () => _homeBloc.add(SignOutEvent())),
+              onClick: () => _loginBloc.add(LogoutEvent())),
         ],
       ),
     );
@@ -216,11 +159,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _homeBloc.dispose();
-    super.dispose();
   }
 }

@@ -21,6 +21,15 @@ class AppStrings {
   static const String settings = "settings";
   static const String exit = "exit";
   static const String more = "more";
+  static const String all = "all";
+  static const String comingOrders = "coming_orders";
+  static const String noOrdersYet = "no_orders_yet";
+  static const String inTxt = "in";
+  static const String master = "master";
+  static const String uah = "uah";
+  static const String pin = "pin";
+  static const String cancelOrder = "cancel_order";
+
 }
 
 // Tool to quick set text to camelCase https://textedit.tools/camelcase

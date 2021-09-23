@@ -2,14 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
+import 'package:salons_app_mobile/prezentation/orders/orders_state.dart';
 
-import 'home_event.dart';
-import 'home_state.dart';
-
-class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final GetOrdersListForCurrentUser getOrdersListForCurrentUser;
+class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
+  final GetOrdersListUseCase getOrdersListUseCase;
   final UpdateOrderUseCase updateOrderUseCase;
-  final SignOutUseCase signOutUseCase;
   final LocalStorage localStorage;
 
   List<OrderEntity> ordersList = [];
@@ -20,9 +18,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<List<OrderEntity>> get streamOrders => streamController.stream;
 
-  HomeBloc(this.getOrdersListForCurrentUser, this.updateOrderUseCase, this.signOutUseCase,
+  OrdersBloc(this.getOrdersListUseCase, this.updateOrderUseCase,
       this.localStorage)
-      : super(InitialHomeState()) {
+      : super(InitialOrdersState()) {
     streamController = StreamController<List<OrderEntity>>.broadcast();
   }
 
@@ -31,11 +29,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   @override
-  Stream<HomeState> mapEventToState(
-    HomeEvent event,
+  Stream<OrdersState> mapEventToState(
+    OrdersEvent event,
   ) async* {
     if (event is LoadOrdersForCurrentUserEvent) {
-      final ordersListOrError = await getOrdersListForCurrentUser();
+      String userId = localStorage.getUserId();
+      final ordersListOrError = await getOrdersListUseCase(userId, OrderForType.USER);
+      print("LoadOrdersForCurrentUserEvent");
       ordersListOrError.fold((failure) {
         ordersStreamSink.addError(failure.message);
       }, (ordersList) {
@@ -65,12 +65,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         localStorage.setOrdersList(ordersList);
         ordersStreamSink.add(ordersList);
       }
-    } else if (event is SignOutEvent) {
-      final signoutResult = await signOutUseCase();
-      yield signoutResult.fold(
-              (failure) =>
-              ErrorHomeState(failure),
-              (voidResult) => LoggedOutState());
     }
   }
 }

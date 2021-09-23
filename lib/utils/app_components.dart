@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:salons_app_mobile/utils/app_images.dart';
 
 import 'app_colors.dart';
 import 'app_styles.dart';
@@ -57,6 +59,23 @@ Widget buttonWithText(BuildContext context, String text, VoidCallback onPressed,
   );
 }
 
+Widget textWithArrowRight(String text, VoidCallback onPressed,
+    {Color? buttonColor, double? width}) {
+  return InkWell(
+    child: Row(
+      children: [
+        Text(text, style: bodyText1),
+        marginHorizontal(4),
+        SvgPicture.asset(
+          icArrowRight,
+          color: primaryColor,
+        ),
+      ],
+    ),
+    onTap: onPressed,
+  );
+}
+
 ///Image
 Widget imageWithPlaceholder(String? imageUrl, String placeholder) {
   return FadeInImage(
@@ -65,6 +84,10 @@ Widget imageWithPlaceholder(String? imageUrl, String placeholder) {
       },
       image: NetworkImage(imageUrl ?? ""),
       placeholder: AssetImage(placeholder));
+}
+
+Widget emptyListPlaceholderW(String imagePlaceholder, String text) {
+  return Column();
 }
 
 /// Margins

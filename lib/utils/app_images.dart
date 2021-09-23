@@ -10,8 +10,11 @@ const String icPromo = 'assets/icons/ic_promo.svg';
 const String icHistory = 'assets/icons/ic_history.svg';
 const String icCancel = 'assets/icons/ic_cancel.svg';
 const String icArrowRight = 'assets/icons/ic_arrow_right.svg';
+const String icPin = 'assets/icons/ic_pin.svg';
+const String icUnpin = 'assets/icons/ic_unpin.svg';
 
 ///Images
 const String masterPlaceholder = 'assets/images/master_image.png';
 const String avatarPlaceholder = 'assets/images/avatar_placeholder.png';
 const String loginPlaceholder = 'assets/images/login_placeholder.png';
+const String emptyListPlaceholder = 'assets/images/empty_list_placeholder.png';

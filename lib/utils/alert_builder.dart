@@ -6,7 +6,7 @@ class AlertBuilder {
   bool _isErrorDialogShowed = false;
 
   showLoaderDialog(BuildContext context) {
-    if(!_isLoaderDialogShowed) {
+    if (!_isLoaderDialogShowed) {
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         _isLoaderDialogShowed = true;
 
@@ -32,7 +32,7 @@ class AlertBuilder {
   }
 
   stopLoaderDialog(BuildContext context) {
-    if(_isLoaderDialogShowed) {
+    if (_isLoaderDialogShowed) {
       _isLoaderDialogShowed = false;
 
       Navigator.of(context).pop();
@@ -40,7 +40,9 @@ class AlertBuilder {
   }
 
   showErrorDialog(BuildContext context, String errorMessage) {
-    if(!_isErrorDialogShowed) {
+    print("showErrorDialog $_isErrorDialogShowed");
+
+    if (!_isErrorDialogShowed) {
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         _isErrorDialogShowed = true;
 
@@ -60,13 +62,19 @@ class AlertBuilder {
                   ],
                 ),
               ),
-        ).then((value) => _isErrorDialogShowed = false);
+        ).then((value) {
+          print("showDialog then");
+
+          _isErrorDialogShowed = false;
+        });
       });
     }
   }
 
   stopErrorDialog(BuildContext context) {
-    if(_isErrorDialogShowed) {
+    print("stopErrorDialog: _isErrorDialogShowed $_isErrorDialogShowed");
+
+    if (_isErrorDialogShowed) {
       _isErrorDialogShowed = false;
 
       Navigator.of(context).pop();

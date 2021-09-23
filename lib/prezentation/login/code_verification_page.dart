@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/prezentation/home/home_page.dart';
+import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -19,6 +19,10 @@ import 'login_state.dart';
 class CodeVerificationPage extends StatefulWidget {
   static const routeName = '/code-verification';
 
+  final bool? isCreator;
+
+  const CodeVerificationPage(this.isCreator);
+
   @override
   _CodeVerificationPageState createState() => _CodeVerificationPageState();
 }
@@ -26,7 +30,7 @@ class CodeVerificationPage extends StatefulWidget {
 class _CodeVerificationPageState extends State<CodeVerificationPage> {
   late LoginBloc _loginBloc;
   late TextEditingController _teControllerCode;
-  final AlertBuilder _loader = new AlertBuilder();
+  final AlertBuilder _alertBuilder = new AlertBuilder();
 
   @override
   void initState() {
@@ -58,28 +62,38 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
         ),
       ),
       body: SafeArea(
-        child: BlocBuilder<LoginBloc, LoginState>(
-            bloc: _loginBloc,
-            builder: (BuildContext context, LoginState state) {
-              if (state is LoggedInState) {
-                _loader.stopLoaderDialog(context);
-              }
-              if (state is LoadingLoginState) {
-                _loader.showLoaderDialog(context);
-              } else if (state is ErrorLoginState) {
-                _loader.stopLoaderDialog(context);
+        child: BlocListener<LoginBloc, LoginState>(
+          listener: (BuildContext context, state) {
+            if (state is LoadingLoginState) {
+              _alertBuilder.showLoaderDialog(context);
+            } else {
+              _alertBuilder.stopLoaderDialog(context);
+            }
 
-                SchedulerBinding.instance?.addPostFrameCallback((_) {
-                  Fluttertoast.showToast(
-                      msg: (state.failure.code == 400)
-                          ? "Не верный код"
-                          : "Something went wrong",
-                      toastLength: Toast.LENGTH_LONG);
-                });
-              }
+            if (state is ErrorLoginState) {
+              _alertBuilder.showErrorDialog(
+                context,
+                (state.failure.code == 400)
+                    ? "Не верный код"
+                    : state.failure.message,
+              );
+            } else {
+              _alertBuilder.stopErrorDialog(context);
+            }
 
-              return buildPage();
-            }),
+            if (state is LoggedInState) {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => (widget.isCreator ?? false)
+                        ? RegistrationPage(state.user)
+                        : HomePage(),
+                  ),
+                  (Route<dynamic> route) => false);
+            }
+          },
+          bloc: _loginBloc,
+          child: buildPage(),
+        ),
       ),
     );
   }

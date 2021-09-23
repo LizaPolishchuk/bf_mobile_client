@@ -12,7 +12,11 @@ class LoggedInState extends LoginState {
 
   LoggedInState(this.user, this.isNewUser);
 }
-class VerifyCodeSentState extends LoginState {}
+class VerifyCodeSentState extends LoginState {
+  final bool? isCreator;
+
+  VerifyCodeSentState(this.isCreator);
+}
 class LoggedOutState extends LoginState {}
 class ErrorLoginState extends LoginState {
   final Failure failure;

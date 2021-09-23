@@ -8,7 +8,6 @@ import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
-
 //   var salons = [
 //     Salon("","Good girl", null, null, "", "Nails studio. Cherkasy", true),
 //     Salon("","Afrodita", null, null, "", "Cherkasy", true),
@@ -28,6 +27,7 @@ class TopSalonsWidget extends StatefulWidget {
 
 class _TopSalonsWidgetState extends State<TopSalonsWidget> {
   late SalonsBloc _salonsBloc;
+  bool isEmptyList = false;
 
   @override
   void initState() {
@@ -39,37 +39,37 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          tr(AppStrings.topSalons),
-          style: bodyText3,
-        ),
-        marginVertical(16),
-        Container(
-          height: 140,
-          child: StreamBuilder<List<Salon>>(
-            stream: _salonsBloc.streamSalons,
-            builder: (context, snapshot) {
+    return StreamBuilder<List<Salon>>(
+      stream: _salonsBloc.streamSalons,
+      builder: (context, snapshot) {
+        //todo add here animation to better showing
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SizedBox(height: 160);
+        } else if (snapshot.data != null && snapshot.data!.length > 0) {
+          var salons = snapshot.data!;
 
-              if (snapshot.data != null && snapshot.data!.length > 0) {
-                var salons = snapshot.data!;
-
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: salons.length,
-                  itemBuilder: (context, index) {
-                    return _buildTopSalonItem(salons[index]);
-                  },
-                );
-              } else {
-                return Text("empty");
-              }
-            },
-          ),
-        ),
-      ],
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tr(AppStrings.topSalons),
+                  style: bodyText3,
+                ),
+                marginVertical(16),
+                Container(
+                    height: 140,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: salons.length,
+                      itemBuilder: (context, index) {
+                        return _buildTopSalonItem(salons[index]);
+                      },
+                    )),
+              ]);
+        } else {
+          return SizedBox.shrink();
+        }
+      },
     );
   }
 
@@ -82,7 +82,8 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
         borderRadius: BorderRadius.circular(25),
         image: DecorationImage(
           fit: BoxFit.fill,
-          image: NetworkImage(salon.photoPath ?? "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg"),
+          image: NetworkImage(salon.photoPath ??
+              "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg"),
         ),
       ),
       child: InkWell(

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
@@ -44,37 +43,40 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<LoginBloc, LoginState>(
-          bloc: _loginBloc,
-          builder: (BuildContext context, LoginState state) {
+      body: BlocProvider(
+        create: (context) => _loginBloc,
+        child: BlocListener<LoginBloc, LoginState>(
+          listener: (BuildContext context, state) {
             if (state is LoadingLoginState) {
               _alertBuilder.showLoaderDialog(context);
             } else {
               _alertBuilder.stopLoaderDialog(context);
+            }
+
+            if (state is ErrorLoginState) {
+              _alertBuilder.showErrorDialog(context, state.failure.message);
+            } else {
               _alertBuilder.stopErrorDialog(context);
             }
 
             if (state is VerifyCodeSentState) {
-              SchedulerBinding.instance?.addPostFrameCallback((_) {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => CodeVerificationPage(),
-                ));
-              });
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CodeVerificationPage(state.isCreator),
+              ));
             } else if (state is LoggedInState) {
-              SchedulerBinding.instance?.addPostFrameCallback((_) {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => (state.isNewUser ?? false)
-                          ? RegistrationPage(state.user)
-                          : HomePage(),
-                    ),
-                    (Route<dynamic> route) => false);
-              });
-            } else if (state is ErrorLoginState) {
-              _alertBuilder.showErrorDialog(context, state.failure.message);
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => (state.isNewUser ?? false)
+                        ? RegistrationPage(state.user)
+                        : HomePage(),
+                  ),
+                  (Route<dynamic> route) => false);
             }
-            return buildPage();
-          }),
+          },
+          bloc: _loginBloc,
+          child: buildPage(),
+        ),
+      ),
     );
   }
 
