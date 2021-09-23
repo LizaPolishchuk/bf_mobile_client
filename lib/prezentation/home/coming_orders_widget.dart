@@ -1,8 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
@@ -17,9 +18,10 @@ import 'package:salons_app_mobile/utils/app_styles.dart';
 import '../orders/order_item_widget.dart';
 
 class ComingOrdersWidget extends StatefulWidget {
-  const ComingOrdersWidget({
-    Key? key,
-  }) : super(key: key);
+  final OrdersBloc ordersBloc;
+  final RefreshController refreshController;
+
+  const ComingOrdersWidget(this.ordersBloc, this.refreshController);
 
   @override
   _ComingOrdersWidgetState createState() => _ComingOrdersWidgetState();
@@ -33,7 +35,8 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
   void initState() {
     super.initState();
 
-    _ordersBloc = getItApp<OrdersBloc>();
+    // _ordersBloc = getItApp<OrdersBloc>();
+    _ordersBloc = widget.ordersBloc;
     _ordersBloc.add(LoadOrdersForCurrentUserEvent());
   }
 
@@ -64,6 +67,12 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
                   stream: _ordersBloc.streamOrders,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.waiting) {
+                      
+                      SchedulerBinding.instance?.addPostFrameCallback((_) {
+                        if (widget.refreshController.isRefresh)
+                          widget.refreshController.refreshCompleted();
+                      });
+
                       if (snapshot.data != null && snapshot.data!.length > 0) {
                         var orders = snapshot.data!;
                         return ListView.builder(

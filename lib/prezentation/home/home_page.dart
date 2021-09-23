@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/home/coming_orders_widget.dart';
@@ -10,6 +11,10 @@ import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_state.dart';
+import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
+import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
+import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
+import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -26,6 +31,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late LoginBloc _loginBloc;
+  late OrdersBloc _ordersBloc;
+  late SalonsBloc _salonsBloc;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final AlertBuilder _alertBuilder = AlertBuilder();
 
@@ -34,6 +42,15 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     _loginBloc = getItApp<LoginBloc>();
+    _ordersBloc = getItApp<OrdersBloc>();
+    _salonsBloc = getItApp<SalonsBloc>();
+  }
+
+  RefreshController _refreshController = RefreshController(initialRefresh: true);
+
+  void _onRefresh() async{
+    _ordersBloc.add(LoadOrdersForCurrentUserEvent());
+    _salonsBloc.add(LoadTopSalonsEvent());
   }
 
   @override
@@ -68,15 +85,19 @@ class _HomePageState extends State<HomePage> {
                   (Route<dynamic> route) => false);
             }
           },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TopSalonsWidget(),
-                marginVertical(46),
-                Expanded(child: ComingOrdersWidget())
-              ],
+          child: SmartRefresher(
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TopSalonsWidget(_salonsBloc),
+                  marginVertical(46),
+                  Expanded(child: ComingOrdersWidget(_ordersBloc, _refreshController))
+                ],
+              ),
             ),
           ),
         ),

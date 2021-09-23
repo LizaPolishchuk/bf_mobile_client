@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
@@ -17,9 +16,9 @@ import 'package:salons_app_mobile/utils/app_styles.dart';
 //   ];
 
 class TopSalonsWidget extends StatefulWidget {
-  const TopSalonsWidget({
-    Key? key,
-  }) : super(key: key);
+  final SalonsBloc salonsBloc;
+
+  const TopSalonsWidget(this.salonsBloc,);
 
   @override
   _TopSalonsWidgetState createState() => _TopSalonsWidgetState();
@@ -33,7 +32,7 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
   void initState() {
     super.initState();
 
-    _salonsBloc = getItApp<SalonsBloc>();
+    _salonsBloc = widget.salonsBloc;
     _salonsBloc.add(LoadTopSalonsEvent());
   }
 
@@ -43,31 +42,34 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
       stream: _salonsBloc.streamSalons,
       builder: (context, snapshot) {
         //todo add here animation to better showing
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox(height: 160);
-        } else if (snapshot.data != null && snapshot.data!.length > 0) {
-          var salons = snapshot.data!;
 
-          return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  tr(AppStrings.topSalons),
-                  style: bodyText3,
-                ),
-                marginVertical(16),
-                Container(
-                    height: 140,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: salons.length,
-                      itemBuilder: (context, index) {
-                        return _buildTopSalonItem(salons[index]);
-                      },
-                    )),
-              ]);
+        if (snapshot.connectionState != ConnectionState.waiting) {
+          if (snapshot.data != null && snapshot.data!.length > 0) {
+            var salons = snapshot.data!;
+
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    tr(AppStrings.topSalons),
+                    style: bodyText3,
+                  ),
+                  marginVertical(16),
+                  Container(
+                      height: 140,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: salons.length,
+                        itemBuilder: (context, index) {
+                          return _buildTopSalonItem(salons[index]);
+                        },
+                      )),
+                ]);
+          } else {
+            return SizedBox.shrink();
+          }
         } else {
-          return SizedBox.shrink();
+          return SizedBox(height: 160);
         }
       },
     );
