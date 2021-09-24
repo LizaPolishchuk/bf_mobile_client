@@ -12,6 +12,8 @@ const String icCancel = 'assets/icons/ic_cancel.svg';
 const String icArrowRight = 'assets/icons/ic_arrow_right.svg';
 const String icPin = 'assets/icons/ic_pin.svg';
 const String icUnpin = 'assets/icons/ic_unpin.svg';
+const String icSearch = 'assets/icons/ic_search.svg';
+const String icHome = 'assets/icons/ic_home.svg';
 
 ///Images
 const String masterPlaceholder = 'assets/images/master_image.png';

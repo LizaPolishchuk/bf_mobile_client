@@ -7,4 +7,5 @@ const Color greyText = Color(0xff7C797B);
 const Color darkGreyText = Color(0xff605D5F);
 const Color darkGreyTitle = Color(0xff777575);
 const Color bgGrey = Color(0xffF6F6F6);
+const Color grey = Color(0xff979797);
 const Color errorRed = Color(0xFFE82521);

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 ThemeData mainTheme = ThemeData(
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: bgGrey,
   appBarTheme: AppBarTheme(
     backwardsCompatibility: false,
-    backgroundColor: Colors.white,
+    backgroundColor: bgGrey,
     iconTheme: IconThemeData(
       color: Colors.black, //change your color here
     ),

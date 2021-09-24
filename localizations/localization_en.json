@@ -26,6 +26,8 @@
   "master": "Мастер",
   "uah": "грн",
   "pin": "Закрепить",
-  "cancel_order": "Отменить запись"
+  "cancel_order": "Отменить запись",
+  "home": "Home",
+  "search": "Search"
 
 }

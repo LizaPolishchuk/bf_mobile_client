@@ -6,7 +6,7 @@ import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
 import 'package:salons_app_mobile/localization/app_translation_delegate.dart';
 import 'package:salons_app_mobile/localization/application.dart';
-import 'package:salons_app_mobile/prezentation/home/home_page.dart';
+import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
@@ -135,6 +135,6 @@ class _InitialPageState extends State<InitialPage> {
             ? LoginPage()
             : (user?.isRegistered != true)
                 ? RegistrationPage(user!)
-                : HomePage());
+                : HomeContainer());
   }
 }

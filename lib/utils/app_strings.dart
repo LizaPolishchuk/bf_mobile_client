@@ -29,6 +29,8 @@ class AppStrings {
   static const String uah = "uah";
   static const String pin = "pin";
   static const String cancelOrder = "cancel_order";
+  static const String home = "home";
+  static const String search = "search";
 
 }
 

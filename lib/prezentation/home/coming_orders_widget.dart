@@ -37,7 +37,7 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
 
     // _ordersBloc = getItApp<OrdersBloc>();
     _ordersBloc = widget.ordersBloc;
-    _ordersBloc.add(LoadOrdersForCurrentUserEvent());
+    // _ordersBloc.add(LoadOrdersForCurrentUserEvent());
   }
 
   @override
@@ -67,7 +67,7 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
                   stream: _ordersBloc.streamOrders,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.waiting) {
-                      
+
                       SchedulerBinding.instance?.addPostFrameCallback((_) {
                         if (widget.refreshController.isRefresh)
                           widget.refreshController.refreshCompleted();

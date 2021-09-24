@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
@@ -33,7 +32,7 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
     super.initState();
 
     _salonsBloc = widget.salonsBloc;
-    _salonsBloc.add(LoadTopSalonsEvent());
+    // _salonsBloc.add(LoadTopSalonsEvent());
   }
 
   @override
