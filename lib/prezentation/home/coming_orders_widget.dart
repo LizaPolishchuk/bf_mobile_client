@@ -58,7 +58,7 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(tr(AppStrings.comingOrders), style: bodyText3),
-                textWithArrowRight(tr(AppStrings.all), () {}),
+                buttonMoreWithRightArrow(onPressed: () {}, text: tr(AppStrings.all)),
               ],
             ),
             marginVertical(16),

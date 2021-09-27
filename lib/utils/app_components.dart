@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 
 import 'app_colors.dart';
+import 'app_strings.dart';
 import 'app_styles.dart';
 
 ///TextInputs
@@ -43,6 +45,45 @@ Widget textFieldWithBorders(
   );
 }
 
+Widget searchTextField(TextEditingController controller, {String? hintText}) {
+  return Material(
+    color: bgGrey,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(50))),
+    elevation: 12.0,
+    shadowColor: blurColor,
+    child: TextFormField(
+      controller: controller,
+      textCapitalization: TextCapitalization.sentences,
+      style: hintText2.copyWith(color: Colors.black),
+      decoration: InputDecoration(
+        hintText: hintText ?? tr(AppStrings.search),
+        hintStyle: hintText2,
+        prefixIcon: Padding(
+            padding:
+                const EdgeInsets.only(top: 14, bottom: 14, right: 6, left: 22),
+            // add padding to adjust icon
+            child: SvgPicture.asset(icSearch)),
+        contentPadding: const EdgeInsets.all(0),
+        fillColor: Colors.white,
+        filled: true,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0x17000000), width: 0.2),
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+        ),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0x17000000), width: 0.2),
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0x17000000), width: 0.2),
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+        ),
+      ),
+    ),
+  );
+}
+
 ///Buttons
 Widget buttonWithText(BuildContext context, String text, VoidCallback onPressed,
     {Color? buttonColor, double? width}) {
@@ -59,16 +100,20 @@ Widget buttonWithText(BuildContext context, String text, VoidCallback onPressed,
   );
 }
 
-Widget textWithArrowRight(String text, VoidCallback onPressed,
-    {Color? buttonColor, double? width}) {
+Widget buttonMoreWithRightArrow(
+    {required VoidCallback onPressed,
+    String? text,
+    Color? color,
+    double? width}) {
   return InkWell(
     child: Row(
       children: [
-        Text(text, style: bodyText1),
+        Text(text ?? tr(AppStrings.more),
+            style: bodyText1.copyWith(color: color ?? primaryColor)),
         marginHorizontal(4),
         SvgPicture.asset(
           icArrowRight,
-          color: primaryColor,
+          color: color ?? primaryColor,
         ),
       ],
     ),

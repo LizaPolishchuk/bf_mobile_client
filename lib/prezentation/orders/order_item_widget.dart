@@ -32,7 +32,7 @@ class OrdersItemWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-                color: Color(0xffE9E9E9), blurRadius: 8, offset: Offset(0, 2))
+                color: blurColor, blurRadius: 8, offset: Offset(0, 3))
           ]),
       child: Slidable(
         child: Container(

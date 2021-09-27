@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 import 'salons_event.dart';
@@ -33,12 +34,20 @@ class SalonsBloc extends Bloc<SalonsEvent, SalonsState> {
   ) async* {
     if (event is LoadTopSalonsEvent) {
       final salonsListOrError = await getSalonsListUseCase(loadTop: true);
-      salonsListOrError.fold((failure) {
-        salonsStreamSink.addError(failure.message);
-      }, (ordersList) {
-        this.salonsList = ordersList;
-        salonsStreamSink.add(ordersList);
-      });
-    } else if (event is SearchSalonsEvent) {}
+      _parseSalonsResponse(salonsListOrError);
+    } else if (event is LoadSalonsEvent) {
+      final salonsListOrError = await getSalonsListUseCase(searchText: event.searchText);
+      _parseSalonsResponse(salonsListOrError);
+    }
+  }
+
+
+  void _parseSalonsResponse(Either<Failure, List<Salon>> salonsListOrError){
+    salonsListOrError.fold((failure) {
+      salonsStreamSink.addError(failure.message);
+    }, (ordersList) {
+      this.salonsList = ordersList;
+      salonsStreamSink.add(ordersList);
+    });
   }
 }

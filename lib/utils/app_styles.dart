@@ -27,10 +27,12 @@ ThemeData mainTheme = ThemeData(
 );
 
 final TextStyle hintText1 = TextStyle(color: greyText, fontSize: 13);
+final TextStyle hintText2 = TextStyle(color: greyText, fontSize: 16, fontWeight: FontWeight.w400);
 
 final TextStyle bodyText1 = TextStyle(color: darkGreyText, fontSize: 13);
 final TextStyle bodyText2 = TextStyle(color: greyText, fontSize: 18, fontWeight: FontWeight.w300);
 final TextStyle bodyText3 = TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600);
+final TextStyle bodyText4 = TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500);
 
 final TextStyle titleText1 = TextStyle(color: darkGreyTitle, fontSize: 25, fontWeight: FontWeight.bold);
 final TextStyle titleText2 = TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.w600);

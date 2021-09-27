@@ -130,13 +130,13 @@ class _HomeContainerState extends State<HomeContainer> {
                   flex: 1,
                   fit: FlexFit.tight,
                   child: _buildBottomMenuItem(
-                      tr(AppStrings.home), icHome, TabItem.home),
+                      "Home", icHome, TabItem.home),
                 ),
                 Flexible(
                   flex: 1,
                   fit: FlexFit.tight,
                   child: _buildBottomMenuItem(
-                      tr(AppStrings.search), icSearch, TabItem.search),
+                     "Search", icSearch, TabItem.search),
                 ),
               ],
             ),
