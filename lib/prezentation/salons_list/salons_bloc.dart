@@ -18,6 +18,10 @@ class SalonsBloc extends Bloc<SalonsEvent, SalonsState> {
 
   List<Salon> salonsList = [];
 
+  int page = 1;
+  int limit = 5;
+  bool noMoreData = false;
+
   late StreamController<List<Salon>> streamController;
 
   StreamSink<List<Salon>> get salonsStreamSink => streamController.sink;
@@ -36,18 +40,30 @@ class SalonsBloc extends Bloc<SalonsEvent, SalonsState> {
       final salonsListOrError = await getSalonsListUseCase(loadTop: true);
       _parseSalonsResponse(salonsListOrError);
     } else if (event is LoadSalonsEvent) {
-      final salonsListOrError = await getSalonsListUseCase(searchText: event.searchText);
+      final salonsListOrError =
+          await getSalonsListUseCase(searchText: event.searchText, page: page, limit: limit);
       _parseSalonsResponse(salonsListOrError);
     }
   }
 
-
-  void _parseSalonsResponse(Either<Failure, List<Salon>> salonsListOrError){
+  void _parseSalonsResponse(Either<Failure, List<Salon>> salonsListOrError) {
     salonsListOrError.fold((failure) {
       salonsStreamSink.addError(failure.message);
-    }, (ordersList) {
-      this.salonsList = ordersList;
-      salonsStreamSink.add(ordersList);
+    }, (salonsList) {
+      print("_parseSalonsResponse");
+      noMoreData = false;
+
+      if (page == 1) {
+        this.salonsList = salonsList;
+      } else {
+        if(salonsList.length == 0) {
+          print("_parseSalonsResponse no more data set tot true");
+
+          noMoreData = true;
+        }
+        this.salonsList.addAll(salonsList);
+      }
+      salonsStreamSink.add(this.salonsList);
     });
   }
 }

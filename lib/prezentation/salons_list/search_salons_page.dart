@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/prezentation/salons_list/salon_item_widget.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_state.dart';
@@ -35,14 +37,29 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
 
     _salonsBloc = getItApp<SalonsBloc>();
 
-    _onRefresh();
-
     _refreshController = RefreshController();
     _searchController = TextEditingController();
+
+    _onRefresh();
+
+    _searchController.addListener(() {
+      _salonsBloc.page = 1;
+      _salonsBloc.add(LoadSalonsEvent(_searchController.text));
+    });
   }
 
   void _onRefresh() async {
-    _salonsBloc.add(LoadSalonsEvent(""));
+    _salonsBloc.page = 1;
+    _salonsBloc.add(LoadSalonsEvent(_searchController.text));
+  }
+
+  void _onLoading() async {
+    if (!_salonsBloc.noMoreData) {
+      _salonsBloc.page += 1;
+      _salonsBloc.add(LoadSalonsEvent(_searchController.text));
+    } else {
+      _refreshController.loadComplete();
+    }
   }
 
   @override
@@ -74,26 +91,52 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                     stream: _salonsBloc.streamSalons,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.waiting) {
+                        var salons = snapshot.data ?? [];
+
                         SchedulerBinding.instance?.addPostFrameCallback((_) {
                           if (_refreshController.isRefresh)
                             _refreshController.refreshCompleted();
+                          if (_refreshController.isLoading) {
+                            if (salons.length > 0) {
+                              _refreshController.loadComplete();
+                            } else {
+                              _refreshController.loadNoData();
+                            }
+                          }
                         });
 
-                        var salons = snapshot.data ?? [];
                         return SmartRefresher(
+                          enablePullDown: true,
+                          enablePullUp: true,
                           controller: _refreshController,
                           onRefresh: _onRefresh,
+                          onLoading: _onLoading,
+                          footer: CustomFooter(
+                            builder: (BuildContext? context, LoadStatus? mode) {
+                              Widget body;
+                              if (mode == LoadStatus.loading) {
+                                body = CupertinoActivityIndicator();
+                              } else {
+                                body = SizedBox.shrink();
+                              }
+                              // else if (mode == LoadStatus.failed) {
+                              //   body = Text("Load Failed!Click retry!");
+                              // } else {
+                              //   body = Text("No more Data");
+                              // }
+                              return Container(
+                                height: 55.0,
+                                child: Center(child: body),
+                              );
+                            },
+                          ),
                           child: ListView.builder(
                             shrinkWrap: true,
-                            itemCount:
-                                // salons.length > 0 ? salons.length :
-                                1,
+                            itemCount: salons.length > 0 ? salons.length : 1,
                             itemBuilder: (context, index) {
-                              return
-                                  // salons.length > 0
-                                  //   ? CardItemWidget(salons[index], () {})
-                                  //   :
-                                  _buildEmptyList();
+                              return salons.length > 0
+                                  ? CardItemWidget(salons[index], () {})
+                                  : _buildEmptyList();
                             },
                           ),
                         );
@@ -117,5 +160,13 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
       alignment: Alignment.center,
       child: Text("Empty list"),
     );
+  }
+
+  @override
+  void dispose() {
+    _salonsBloc.dispose();
+    _refreshController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 }
