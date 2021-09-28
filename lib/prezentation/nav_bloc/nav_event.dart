@@ -22,8 +22,8 @@ class NavLogin extends NavEvent {
   NavLogin(args) : super(args);
 }
 
-class NavRatingDetails extends NavEvent {
-  NavRatingDetails(args) : super(args);
+class NavSalonDetails extends NavEvent {
+  NavSalonDetails(args) : super(args);
 }
 
 class NavEditRatingDetails extends NavEvent {

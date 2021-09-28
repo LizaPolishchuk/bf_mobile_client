@@ -86,10 +86,10 @@ Widget searchTextField(TextEditingController controller, {String? hintText}) {
 
 ///Buttons
 Widget buttonWithText(BuildContext context, String text, VoidCallback onPressed,
-    {Color? buttonColor, double? width}) {
+    {Color? buttonColor, double? width, double? height}) {
   return SizedBox(
-    height: 50,
-    width: 226,
+    height: height ?? 50,
+    width: width ?? 226,
     child: ElevatedButton(
       onPressed: onPressed,
       style: buttonColor != null

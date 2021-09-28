@@ -32,6 +32,9 @@ class AppStrings {
   static const String home = "home";
   static const String search = "search";
   static const String salons = "salons";
+  static const String signUp = "sign_up";
+  static const String aboutUs = "about_us";
+  static const String bonuses = "bonuses";
 
 }
 

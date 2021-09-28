@@ -60,85 +60,83 @@ class _HomeContainerState extends State<HomeContainer> {
     setState(() => _currentTab = tabItem);
   }
 
-//       WillPopScope(
-//         onWillPop: () async {
-//       final isFirstRouteInCurrentTab = !await _navBloc
-//           .tabNavigatorKeys[_navBloc.currentTab]!.currentState!
-//           .maybePop();
-//       if (isFirstRouteInCurrentTab) {
-//         if (_navBloc.currentTab != TabItem.search) {
-// //            _tabIndex = 0;
-//           _onItemTapped(TabItem.search.index);
-//
-//           return false;
-//         }
-//       }
-//       // let system handle back button if we're on the first route
-//       return isFirstRouteInCurrentTab;
-//     },
-//     child:
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => _loginBloc,
-      child: BlocListener<LoginBloc, LoginState>(
-        listener: (BuildContext context, state) {
-          if (state is ErrorLoginState) {
-            _alertBuilder.showErrorDialog(context, state.failure.message);
-          } else {
-            _alertBuilder.stopErrorDialog(context);
-          }
+    return WillPopScope(
+      onWillPop: () async {
+        final isFirstRouteInCurrentTab = !await _navBloc
+            .tabNavigatorKeys[_navBloc.currentTab]!.currentState!
+            .maybePop();
+        if (isFirstRouteInCurrentTab) {
+          if (_navBloc.currentTab != TabItem.home) {
+//            _tabIndex = 0;
+            _onItemTapped(TabItem.home);
 
-          if (state is LoggedOutState) {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => LoginPage(),
-                ),
-                (Route<dynamic> route) => false);
+            return false;
           }
-        },
-        child: Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            leading: IconButton(
-              onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
-              },
-              icon: Icon(Icons.menu, color: Colors.black),
-            ),
-            title: Text(tr(AppStrings.appName)),
-          ),
-          drawer: _buildDrawerMenu(),
-          body: Stack(children: <Widget>[
-            _buildOffstageNavigator(TabItem.home),
-            _buildOffstageNavigator(TabItem.search),
-          ]),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(25),
-                topRight: Radius.circular(25),
+        }
+        // let system handle back button if we're on the first route
+        return isFirstRouteInCurrentTab;
+      },
+      child: BlocProvider(
+        create: (context) => _loginBloc,
+        child: BlocListener<LoginBloc, LoginState>(
+          listener: (BuildContext context, state) {
+            if (state is ErrorLoginState) {
+              _alertBuilder.showErrorDialog(context, state.failure.message);
+            } else {
+              _alertBuilder.stopErrorDialog(context);
+            }
+
+            if (state is LoggedOutState) {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                  (Route<dynamic> route) => false);
+            }
+          },
+          child: Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              leading: IconButton(
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+                icon: Icon(Icons.menu, color: Colors.black),
               ),
+              title: Text(tr(AppStrings.appName)),
             ),
-            height: 95,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: _buildBottomMenuItem(
-                      "Home", icHome, TabItem.home),
+            drawer: _buildDrawerMenu(),
+            body: Stack(children: <Widget>[
+              _buildOffstageNavigator(TabItem.home),
+              _buildOffstageNavigator(TabItem.search),
+            ]),
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
                 ),
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: _buildBottomMenuItem(
-                     "Search", icSearch, TabItem.search),
-                ),
-              ],
+              ),
+              height: 95,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.tight,
+                    child: _buildBottomMenuItem("Home", icHome, TabItem.home),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.tight,
+                    child: _buildBottomMenuItem(
+                        "Search", icSearch, TabItem.search),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -162,10 +160,9 @@ class _HomeContainerState extends State<HomeContainer> {
     );
   }
 
-  Widget _buildBottomMenuItem(
-      String text, String icon, TabItem tabItem) {
+  Widget _buildBottomMenuItem(String text, String icon, TabItem tabItem) {
     return InkWell(
-      onTap:() => _onItemTapped(tabItem),
+      onTap: () => _onItemTapped(tabItem),
       child: Container(
         child: Container(
           height: 56,

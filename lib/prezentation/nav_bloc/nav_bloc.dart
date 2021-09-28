@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
+import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
 
 import 'nav_event.dart';
@@ -33,11 +35,10 @@ class NavBloc extends Bloc<NavEvent, dynamic> {
       currentState?.pop();
     } else if (event is NavLogin) {
       currentState?.pushNamed(LoginPage.routeName, arguments: event.arguments);
+    } else if (event is NavSalonDetails) {
+      currentState?.pushNamed(SalonDetailsPage.routeName, arguments: event.arguments);
     }
-    // else if (event is NavRatingDetails) {
-    //   currentState?.pushNamed(RatingDetailsPage.routeName,
-    //       arguments: event.arguments);
-    // } else if (event is NavEditRatingDetails) {
+      // else if (event is NavEditRatingDetails) {
     //   currentState?.pushNamed(EditRatingDetailsPage.routeName,
     //       arguments: event.arguments);
     // }
@@ -49,7 +50,7 @@ class NavBloc extends Bloc<NavEvent, dynamic> {
     return {
       HomePage.routeName: (context) => HomePage(),
       SearchSalonsPage.routeName: (context) => SearchSalonsPage(),
-      //     RatingDetailsPage(argsList.first, argsList[1]),
+      SalonDetailsPage.routeName: (context) => SalonDetailsPage((argsList.first as Salon)),
       LoginPage.routeName: (context) => LoginPage(),
     };
   }
@@ -59,7 +60,9 @@ class NavBloc extends Bloc<NavEvent, dynamic> {
     print('tab build route for ${settings.name}, initialRoute: $initialRoute');
 
     var routes = getAllRoutes(settings);
-    WidgetBuilder builder = settings.name == "/" ? (context) => initialRoute : routes[settings.name]!;
+    WidgetBuilder builder = settings.name == "/"
+        ? (context) => initialRoute
+        : routes[settings.name]!;
     return MaterialPageRoute(builder: (ctx) => builder(ctx));
   }
 }
