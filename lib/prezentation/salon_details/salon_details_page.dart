@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/prezentation/categories/choose_category_page.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
@@ -30,7 +31,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.network(
-            "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg",
+            widget.salon.photoPath ??
+                "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg",
             fit: BoxFit.fill,
             height: 280,
             width: MediaQuery.of(context).size.width,
@@ -56,7 +58,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   ),
                   marginVertical(12),
                   Container(
-                    constraints: const BoxConstraints(maxHeight: 33),
+                    constraints: const BoxConstraints(maxHeight: 35),
                     child: ListView(
                       children: [
                         _buildTabItem(tr(AppStrings.aboutUs), ContentTab.INFO),
@@ -79,8 +81,14 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             ),
           ),
           Align(
-            child: buttonWithText(context, tr(AppStrings.signUp), () {},
-                width: 255, height: 40),
+            child: buttonWithText(
+              context,
+              tr(AppStrings.signUp),
+              () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ChooseCategoryPage(widget.salon))),
+              width: 255,
+              height: 40,
+            ),
             alignment: Alignment.center,
           ),
           marginVertical(12),

@@ -45,11 +45,10 @@ Widget textFieldWithBorders(
   );
 }
 
-Widget searchTextField(TextEditingController controller, {String? hintText}) {
+Widget searchTextField(TextEditingController controller, {String? hintText, double? topAndBottomPadding}) {
   return Material(
     color: bgGrey,
-    shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(50))),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
     elevation: 12.0,
     shadowColor: blurColor,
     child: TextFormField(
@@ -60,8 +59,7 @@ Widget searchTextField(TextEditingController controller, {String? hintText}) {
         hintText: hintText ?? tr(AppStrings.search),
         hintStyle: hintText2,
         prefixIcon: Padding(
-            padding:
-                const EdgeInsets.only(top: 14, bottom: 14, right: 6, left: 22),
+            padding: EdgeInsets.only(top: topAndBottomPadding ?? 14, bottom: topAndBottomPadding ?? 14, right: 6, left: 22),
             // add padding to adjust icon
             child: SvgPicture.asset(icSearch)),
         contentPadding: const EdgeInsets.all(0),

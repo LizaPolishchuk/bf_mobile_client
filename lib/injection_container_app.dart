@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import 'package:salons_app_mobile/prezentation/categories/categories_bloc.dart';
+import 'package:salons_app_mobile/prezentation/create_order/services_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
@@ -15,4 +17,6 @@ Future<void> init() async {
   getItApp.registerFactory(() => RegistrationBloc(getItApp()));
   getItApp.registerFactory(() => SalonsBloc(getItApp()));
   getItApp.registerFactory(() => OrdersBloc(getItApp(),getItApp(), getItApp()));
+  getItApp.registerFactory(() => ServicesBloc(getItApp()));
+  getItApp.registerFactory(() => CategoriesBloc(getItApp()));
 }
