@@ -36,6 +36,7 @@ Future<void> initHive() async {
   Hive.registerAdapter(ServiceAdapter());
   Hive.registerAdapter(OrderEntityAdapter());
   Hive.registerAdapter(UserEntityAdapter());
+  Hive.registerAdapter(CategoryAdapter());
 
   await getIt<LocalStorage>().openBox();
 }

@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/home/home_page.dart';
+import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_event.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_state.dart';
@@ -66,7 +66,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 SchedulerBinding.instance?.addPostFrameCallback((_) {
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                        builder: (context) => HomePage(),
+                        builder: (context) => HomeContainer(),
                       ),
                       (Route<dynamic> route) => false);
                 });

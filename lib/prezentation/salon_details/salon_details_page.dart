@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/categories/choose_category_page.dart';
+import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
+import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
@@ -84,8 +86,10 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             child: buttonWithText(
               context,
               tr(AppStrings.signUp),
-              () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ChooseCategoryPage(widget.salon))),
+              () {
+                NavBloc navBloc = getItApp<NavBloc>();
+                navBloc.add(NavChooseCategoryPage([widget.salon]));
+              },
               width: 255,
               height: 40,
             ),

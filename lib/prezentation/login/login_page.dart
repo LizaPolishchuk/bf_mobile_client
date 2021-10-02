@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/home/home_page.dart';
+import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
@@ -43,8 +43,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocProvider(
-        create: (context) => _loginBloc,
+      body: BlocProvider.value(
+        value: _loginBloc,
         child: BlocListener<LoginBloc, LoginState>(
           listener: (BuildContext context, state) {
             if (state is LoadingLoginState) {
@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                   MaterialPageRoute(
                     builder: (context) => (state.isNewUser ?? false)
                         ? RegistrationPage(state.user)
-                        : HomePage(),
+                        : HomeContainer(),
                   ),
                   (Route<dynamic> route) => false);
             }

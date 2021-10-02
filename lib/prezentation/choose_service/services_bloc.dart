@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/prezentation/create_order/services_event.dart';
-import 'package:salons_app_mobile/prezentation/create_order/services_state.dart';
+import 'package:salons_app_mobile/prezentation/choose_service/services_event.dart';
+import 'package:salons_app_mobile/prezentation/choose_service/services_state.dart';
 
 class ServicesBloc extends Bloc<ServicesEvent, ServicesState> {
   final GetServicesListUseCase getServicesListUseCase;

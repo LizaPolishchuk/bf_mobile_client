@@ -78,8 +78,8 @@ class _HomeContainerState extends State<HomeContainer> {
         // let system handle back button if we're on the first route
         return isFirstRouteInCurrentTab;
       },
-      child: BlocProvider(
-        create: (context) => _loginBloc,
+      child: BlocProvider.value(
+        value: _loginBloc,
         child: BlocListener<LoginBloc, LoginState>(
           listener: (BuildContext context, state) {
             if (state is ErrorLoginState) {

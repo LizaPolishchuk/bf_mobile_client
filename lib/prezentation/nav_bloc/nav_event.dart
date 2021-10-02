@@ -26,7 +26,14 @@ class NavSalonDetails extends NavEvent {
   NavSalonDetails(args) : super(args);
 }
 
-class NavEditRatingDetails extends NavEvent {
-  NavEditRatingDetails(args) : super(args);
+class NavChooseCategoryPage extends NavEvent {
+  NavChooseCategoryPage(args) : super(args);
+}
 
+class NavChooseServicePage extends NavEvent {
+  NavChooseServicePage(args) : super(args);
+}
+
+class NavCreateOrderPage extends NavEvent {
+  NavCreateOrderPage(args) : super(args);
 }

@@ -42,8 +42,8 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => _ordersBloc,
+    return BlocProvider.value(
+      value: _ordersBloc,
       child: BlocListener<OrdersBloc, OrdersState>(
         listener: (BuildContext context, state) {
           if (state is ErrorOrdersState) {

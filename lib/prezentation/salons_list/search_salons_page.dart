@@ -66,8 +66,8 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => _salonsBloc,
+    return BlocProvider.value(
+      value: _salonsBloc,
       child: BlocListener<SalonsBloc, SalonsState>(
         listener: (BuildContext context, state) {
           if (state is ErrorSalonsState) {

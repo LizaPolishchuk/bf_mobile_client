@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/home/home_page.dart';
+import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -86,7 +86,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                   MaterialPageRoute(
                     builder: (context) => (widget.isCreator ?? false)
                         ? RegistrationPage(state.user)
-                        : HomePage(),
+                        : HomeContainer(),
                   ),
                   (Route<dynamic> route) => false);
             }
