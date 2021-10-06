@@ -10,7 +10,6 @@ import 'package:salons_app_mobile/prezentation/categories/categories_event.dart'
 import 'package:salons_app_mobile/prezentation/categories/categories_state.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
@@ -34,7 +33,6 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
   late Salon salon;
 
   late CategoriesBloc _categoriesBloc;
-  late NavBloc _navBloc;
 
   final AlertBuilder _alertBuilder = AlertBuilder();
   late TextEditingController _searchController;
@@ -48,7 +46,6 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
     salon = widget.salon;
 
     _categoriesBloc = getItApp<CategoriesBloc>();
-    _navBloc = getItApp<NavBloc>();
 
     _refreshController = RefreshController();
     _searchController = TextEditingController();
@@ -71,134 +68,122 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: _navBloc,
-      child: BlocListener<NavBloc, NavState>(
-        listener: (BuildContext context, state) {
-          if (state is NavigationResultedState) {
-            if(state.result != null && state.result is Service?) {
-              print("Result: chosenService: ${(state.result as Service).name}");
-            }
-          }
-        },
-        child: BlocProvider.value(
-          value: _categoriesBloc,
-          child: BlocListener<CategoriesBloc, CategoriesState>(
-            listener: (BuildContext context, state) {},
-            child: Scaffold(
-              bottomNavigationBar: null,
-              body: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 280,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(widget.salon.photoPath ??
-                            "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg"),
-                      ),
-                    ),
-                    child: Container(
-                      // width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Color(0x50000000),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            salon.name,
-                            style: titleText2.copyWith(color: Colors.white),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            "Short description",
-                            style: bodyText2.copyWith(
-                                color: Colors.white, fontSize: 16),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          marginVertical(12),
-                          searchTextField(_searchController,
-                              hintText: tr(AppStrings.searchService),
-                              topAndBottomPadding: 8),
-                        ],
-                      ),
-                    ),
+      value: _categoriesBloc,
+      child: BlocListener<CategoriesBloc, CategoriesState>(
+        listener: (BuildContext context, state) {},
+        child: Scaffold(
+          bottomNavigationBar: null,
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 280,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(widget.salon.photoPath ??
+                        "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg"),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 18),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            tr(AppStrings.chooseCategory),
-                            style: titleText2,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          marginVertical(16),
-                          Flexible(
-                            fit: FlexFit.loose,
-                            child: StreamBuilder<List<Category>>(
-                                stream: _categoriesBloc.streamCategories,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState !=
-                                      ConnectionState.waiting) {
-                                    SchedulerBinding.instance
-                                        ?.addPostFrameCallback((_) {
-                                      if (_refreshController.isRefresh)
-                                        _refreshController.refreshCompleted();
-                                    });
-
-                                    var categories = snapshot.data ?? [];
-                                    return SmartRefresher(
-                                      enablePullDown: true,
-                                      controller: _refreshController,
-                                      onRefresh: _onRefresh,
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: categories.length > 0
-                                            ? categories.length
-                                            : 1,
-                                        itemBuilder: (context, index) {
-                                          return categories.length > 0
-                                              ? CardItemWidget(
-                                                  categories[index],
-                                                  () => getItApp<NavBloc>().add(
-                                                      NavChooseServicePage([
-                                                    widget.salon,
-                                                    categories[index].id
-                                                  ])),
-                                                )
-                                              : _buildEmptyList();
-                                        },
-                                      ),
-                                    );
-                                  } else {
-                                    return Center(
-                                        child: CircularProgressIndicator());
-                                  }
-                                }),
-                            // ],
-                            // ),
-                          )
-                        ],
-                      ),
-                    ),
+                ),
+                child: Container(
+                  // width: MediaQuery.of(context).size.width,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Color(0x50000000),
                   ),
-                ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(
+                        salon.name,
+                        style: titleText2.copyWith(color: Colors.white),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        "Short description",
+                        style: bodyText2.copyWith(
+                            color: Colors.white, fontSize: 16),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      marginVertical(12),
+                      searchTextField(_searchController,
+                          hintText: tr(AppStrings.searchService),
+                          topAndBottomPadding: 8),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        tr(AppStrings.chooseCategory),
+                        style: titleText2,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      marginVertical(16),
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: StreamBuilder<List<Category>>(
+                            stream: _categoriesBloc.streamCategories,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState !=
+                                  ConnectionState.waiting) {
+                                SchedulerBinding.instance
+                                    ?.addPostFrameCallback((_) {
+                                  if (_refreshController.isRefresh)
+                                    _refreshController.refreshCompleted();
+                                });
+
+                                var categories = snapshot.data ?? [];
+                                return SmartRefresher(
+                                  enablePullDown: true,
+                                  controller: _refreshController,
+                                  onRefresh: _onRefresh,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: categories.length > 0
+                                        ? categories.length
+                                        : 1,
+                                    itemBuilder: (context, index) {
+                                      return categories.length > 0
+                                          ? CardItemWidget(
+                                              categories[index],
+                                              () => getItApp<NavBloc>().add(
+                                                  NavCreateOrderPage([
+                                                widget.salon,
+                                                categories[index].id
+                                              ])),
+                                            )
+                                          : _buildEmptyList();
+                                    },
+                                  ),
+                                );
+                              } else {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              }
+                            }),
+                        // ],
+                        // ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

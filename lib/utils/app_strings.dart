@@ -39,6 +39,14 @@ class AppStrings {
   static const String chooseCategory = "choose_category";
   static const String from = "from";
   static const String next = "next";
+  static const String chooseSpecificCategory = "choose_specific_category";
+  static const String choose = "choose";
+  static const String chooseMaster = "choose_master";
+  static const String chooseDate = "choose_date";
+  static const String chooseTime = "choose_time";
+  static const String sum = "sum";
+  static const String ifTimeReservedDescription = "if_time_reserved_description";
+  static const String reserved = "reserved";
 
 }
 

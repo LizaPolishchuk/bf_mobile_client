@@ -36,6 +36,14 @@
   "search_service": "Искать услугу",
   "choose_category": "Выберите категорию",
   "from": "От",
-  "next": "Дальше"
+  "next": "Дальше",
+  "choose_specific_category": "Выберите конкретную услугу",
+  "choose": "Выбрать",
+  "choose_master": "Выбор мастера",
+  "choose_date": "Выбор даты",
+  "choose_time": "Выбор времени",
+  "sum": "Сумма:",
+  "reserved": "Занято",
+  "if_time_reserved_description": "*Если время занято, вы можете поставить себе напоминание,в случае, если оно освободится"
 
 }

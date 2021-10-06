@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/prezentation/categories/choose_category_page.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/choose_service_page.dart';
+import 'package:salons_app_mobile/prezentation/create_order/create_order_page.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_state.dart';
@@ -42,6 +43,8 @@ class NavBloc extends Bloc<NavEvent, NavState> {
       yield NavigationResultedState(navResult);
     } else if (event is NavChooseCategoryPage) {
        currentState?.pushNamed(ChooseCategoryPage.routeName, arguments: event.arguments);
+    } else if (event is NavCreateOrderPage) {
+       currentState?.pushNamed(CreateOrderPage.routeName, arguments: event.arguments);
     }
 
   }
@@ -56,6 +59,7 @@ class NavBloc extends Bloc<NavEvent, NavState> {
       LoginPage.routeName: (context) => LoginPage(),
       ChooseCategoryPage.routeName: (context) => ChooseCategoryPage(argsList.first as Salon),
       ChooseServicePage.routeName: (context) => ChooseServicePage(argsList.first as Salon, argsList[1] as String),
+      CreateOrderPage.routeName: (context) => CreateOrderPage(argsList.first as Salon, argsList[1] as String),
     };
   }
 

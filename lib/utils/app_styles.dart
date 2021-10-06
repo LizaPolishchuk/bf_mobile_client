@@ -38,6 +38,8 @@ final TextStyle bodyText3 =
     TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600);
 final TextStyle bodyText4 =
     TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500);
+final TextStyle bodyText5 =
+    TextStyle(color: darkGreyText, fontSize: 10, fontWeight: FontWeight.w500);
 
 final TextStyle titleText1 =
     TextStyle(color: darkGreyTitle, fontSize: 25, fontWeight: FontWeight.bold);
@@ -48,8 +50,20 @@ final TextStyle appBarText =
     TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500);
 final TextStyle buttonText =
     TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500);
+final TextStyle calendarText =
+    TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w400);
 
 final TextStyle errorText = TextStyle(fontSize: 12, color: errorRed);
+
+cardShadow({double? borderRadius}) {
+  return BoxDecoration(
+    borderRadius: BorderRadius.circular(borderRadius ?? 10),
+    color: Colors.white,
+    boxShadow: [
+      BoxShadow(color: blurColor, blurRadius: 8, offset: Offset(0, 3))
+    ],
+  );
+}
 
 final TextStyle text12W500 = TextStyle(
     fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF1F2937));
