@@ -138,7 +138,7 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                             itemBuilder: (context, index) {
                               return salons.length > 0
                                   ? CardItemWidget(salons[index], () {
-                                      getItApp<NavBloc>().add(NavSalonDetails([salons[index]]));
+                                      getItApp<NavBloc>().add(NavSalonDetails([salons[index].id]));
                                     })
                                   : _buildEmptyList();
                             },

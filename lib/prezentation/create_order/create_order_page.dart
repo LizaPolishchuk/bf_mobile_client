@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_state.dart';
+import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
+import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
@@ -33,93 +38,18 @@ class CreateOrderPage extends StatefulWidget {
 
 class _CreateOrderPageState extends State<CreateOrderPage> {
   late NavBloc _navBloc;
+  late OrdersBloc _ordersBloc;
+
   Service? _selectedService;
-
-  var _mockedMasters = [
-    Master("id1", "name", "description", "avatar", "avatarPath", "position", [],
-        {}, "status"),
-    Master("id2", "name", "description", "avatar", "avatarPath", "position", [],
-        {}, "status"),
-    Master("id3", "name", "description", "avatar", "avatarPath", "position", [],
-        {}, "status"),
-    Master("id4", "name", "description", "avatar", "avatarPath", "position", [],
-        {}, "status"),
-    Master("id5", "name", "description", "avatar", "avatarPath", "position", [],
-        {}, "status")
-  ];
-
-  var mockedOrders = [
-    OrderEntity(
-        "id",
-        "clientId",
-        "clientName",
-        "salonId",
-        "salonName",
-        "masterId",
-        "masterName",
-        "masterAvatar",
-        "serviceId",
-        "serviceName",
-        DateTime.now(),
-        100),
-    OrderEntity(
-        "id",
-        "",
-        "clientName",
-        "salonId",
-        "salonName",
-        "masterId",
-        "masterName",
-        "masterAvatar",
-        "serviceId",
-        "serviceName",
-        DateTime.now(),
-        100),
-    OrderEntity(
-        "id",
-        null,
-        "clientName",
-        "salonId",
-        "salonName",
-        "masterId",
-        "masterName",
-        "masterAvatar",
-        "serviceId",
-        "serviceName",
-        DateTime.now(),
-        100),
-    OrderEntity(
-        "id",
-        "clientId",
-        "clientName",
-        "salonId",
-        "salonName",
-        "masterId",
-        "masterName",
-        "masterAvatar",
-        "serviceId",
-        "serviceName",
-        DateTime.now(),
-        100),
-    OrderEntity(
-        "id",
-        "clientId",
-        "clientName",
-        "salonId",
-        "salonName",
-        "masterId",
-        "masterName",
-        "masterAvatar",
-        "serviceId",
-        "serviceName",
-        DateTime.now(),
-        100),
-  ];
+  DateTime? _selectedDay;
+  OrderEntity? _selectedOrder;
+  Master? _selectedMaster;
 
   @override
   void initState() {
     super.initState();
     _navBloc = getItApp<NavBloc>();
+    _ordersBloc = getItApp<OrdersBloc>();
   }
 
   @override
@@ -130,7 +60,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
         builder: (BuildContext context, state) {
           if (state is NavigationResultedState) {
             if (state.result != null && state.result is Service?) {
-              print("Result: chosenService: ${(state.result as Service).name}");
               _selectedService = state.result as Service;
             }
           }
@@ -174,7 +103,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   marginHorizontal(6),
                   buttonMoreWithRightArrow(
                       onPressed: () => _navBloc.add(NavChooseServicePage(
-                          [widget.salon, widget.categoryId])),
+                          [widget.salon.id, widget.categoryId])),
                       text: tr(AppStrings.choose)),
                 ],
               ),
@@ -185,7 +114,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               style: bodyText4,
             ),
             marginVertical(10),
-            _buildMasterSelector(_mockedMasters),
+            _buildMasterSelector(widget.salon.mastersList),
             marginVertical(22),
             Text(
               tr(AppStrings.chooseDate),
@@ -221,7 +150,15 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               style: bodyText5.copyWith(fontWeight: FontWeight.w400),
             ),
             marginVertical(12),
-            _buildTimeSelector(mockedOrders),
+            StreamBuilder<List<OrderEntity>>(
+                stream: _ordersBloc.streamOrders,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.waiting) {
+                    return _buildTimeSelector(snapshot.data ?? []);
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                }),
             marginVertical(16),
             // Spacer(),
             Row(
@@ -245,6 +182,9 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 context,
                 tr(AppStrings.next),
                 () {
+                  if(_selectedOrder == null) {
+                    Fluttertoast.showToast(msg: "Please choose time");
+                  }
                   // Navigator.of(context).pop(_chosenService);
                 },
                 width: 255,
@@ -256,10 +196,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       ),
     );
   }
-
-  DateTime? _selectedDay;
-  DateTime? _selectedTime;
-  Master? _selectedMaster;
 
   Widget _buildCalendar() {
     return TableCalendar(
@@ -273,10 +209,16 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
         formatButtonVisible: false,
       ),
       onDaySelected: (selectedDay, focusedDay) {
-        if (!_isDayBeforeNow(selectedDay)) {
+        if (_selectedService == null) {
+          Fluttertoast.showToast(msg: "Please choose service!");
+        } else if (_selectedMaster == null) {
+          Fluttertoast.showToast(msg: "Please choose master!");
+        } else if (!_isDayBeforeNow(selectedDay)) {
           setState(() {
             _selectedDay = selectedDay;
           });
+
+          _loadAvailableTime();
         }
       },
       daysOfWeekHeight: 22,
@@ -348,81 +290,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     );
   }
 
-  Widget _buildTimeSelector(List<OrderEntity> orders) {
-    return Container(
-      height: 42,
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          OrderEntity order = orders[index];
-
-          bool isReserved = order.clientId?.isNotEmpty == true;
-
-          return Container(
-            width: isReserved ? 100 : 80,
-            margin: const EdgeInsets.only(right: 6),
-            child: Stack(
-              children: [
-                InkWell(
-                  onTap: () {
-                    if (!isReserved) {
-                      setState(() {
-                        _selectedTime = order.date;
-                      });
-                    } else {
-                      print("click on notify");
-                    }
-                  },
-                  child: Container(
-                    width: 80,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: isReserved ? Color(0x807c797b) : accentColor,
-                      borderRadius: BorderRadius.circular(10),
-                      border: _selectedTime == order.date
-                          ? Border.all(width: 2, color: primaryColor)
-                          : null,
-                    ),
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "13:00",
-                          style: !isReserved
-                              ? bodyText4
-                              : bodyText4.copyWith(color: darkGreyText),
-                        ),
-                        if (isReserved)
-                          Text(
-                            tr(AppStrings.reserved),
-                            style: bodyText5,
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (order.clientId?.isNotEmpty == true)
-                  Positioned(
-                    right: -5,
-                    child: GestureDetector(
-                      child: SvgPicture.asset(icNotify),
-                      onTap: () {
-                        print("click on notify");
-                      },
-                    ),
-                  ),
-              ],
-            ),
-          );
-        },
-        itemCount: orders.length,
-        scrollDirection: Axis.horizontal,
-      ),
-    );
-  }
-
   Widget _buildMasterSelector(List<Master> masters) {
     return Container(
       height: 106,
@@ -468,7 +335,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   ),
                   marginVertical(2),
                   Text(
-                    "Liza Polishchuk dfdffddf",
+                    master.name,
                     style: bodyText4.copyWith(fontSize: 15),
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -485,6 +352,95 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     );
   }
 
+  Widget _buildTimeSelector(List<OrderEntity> orders) {
+    return Container(
+      height: 42,
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          OrderEntity order = orders[index];
+
+          bool isReserved = order.clientId?.isNotEmpty == true;
+
+          return Container(
+            width: isReserved ? 100 : 80,
+            margin: const EdgeInsets.only(right: 6),
+            child: Stack(
+              children: [
+                InkWell(
+                  onTap: () {
+                    if (!isReserved) {
+                      setState(() {
+                        _selectedOrder = order;
+                      });
+                    } else {
+                      print("click on notify");
+                    }
+                  },
+                  child: Container(
+                    width: 80,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isReserved ? Color(0x807c797b) : accentColor,
+                      borderRadius: BorderRadius.circular(10),
+                      border: _selectedOrder == order
+                          ? Border.all(width: 2, color: primaryColor)
+                          : null,
+                    ),
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          DateFormat('hh:mm').format(order.date),
+                          style: !isReserved
+                              ? bodyText4
+                              : bodyText4.copyWith(color: darkGreyText),
+                        ),
+                        if (isReserved)
+                          Text(
+                            tr(AppStrings.reserved),
+                            style: bodyText5,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (order.clientId?.isNotEmpty == true)
+                  Positioned(
+                    right: -5,
+                    child: GestureDetector(
+                      child: SvgPicture.asset(icNotify),
+                      onTap: () {
+                        print("click on notify");
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+        itemCount: orders.length,
+        scrollDirection: Axis.horizontal,
+      ),
+    );
+  }
+
+  Timer? _debounce;
+  void _loadAvailableTime() {
+    if (_selectedService != null &&
+        _selectedMaster != null &&
+        _selectedDay != null) {
+      if (_debounce?.isActive ?? false) _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: 600), () {
+        String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDay!);
+        _ordersBloc.add(LoadAvailableTimeEvent(widget.salon.id,
+            _selectedService!.id, _selectedMaster!.id, formattedDate));
+      });
+    }
+  }
+
   bool _isDayBeforeNow(DateTime day) {
     var now = DateTime.now();
 
@@ -492,5 +448,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             day.month == now.month &&
             day.day == now.day) &&
         day.isBefore(now));
+  }
+
+  @override
+  void dispose() {
+    _ordersBloc.dispose();
+
+    super.dispose();
   }
 }

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
+import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.dart';
+import 'package:salons_app_mobile/prezentation/salon_details/salon_details_event.dart';
+import 'package:salons_app_mobile/prezentation/salon_details/salon_details_state.dart';
+import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
@@ -15,9 +20,9 @@ enum ContentTab { INFO, PROMO, BONUSES }
 class SalonDetailsPage extends StatefulWidget {
   static const routeName = '/salon-details';
 
-  final Salon salon;
+  final String salonId;
 
-  const SalonDetailsPage(this.salon);
+  const SalonDetailsPage(this.salonId);
 
   @override
   _SalonDetailsPageState createState() => _SalonDetailsPageState();
@@ -26,86 +31,121 @@ class SalonDetailsPage extends StatefulWidget {
 class _SalonDetailsPageState extends State<SalonDetailsPage> {
   ContentTab _selectedTab = ContentTab.INFO;
 
+  late SalonDetailsBloc _salonDetailsBloc;
+
+  AlertBuilder _alertBuilder = AlertBuilder();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _salonDetailsBloc = getItApp<SalonDetailsBloc>();
+    _salonDetailsBloc.add(LoadSalonByIdEvent(widget.salonId));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(
-            widget.salon.photoPath ??
-                "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg",
-            fit: BoxFit.fill,
-            height: 280,
-            width: MediaQuery.of(context).size.width,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.salon.name,
-                    style: titleText2.copyWith(color: primaryColor),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    "Short description",
-                    style: hintText2,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  marginVertical(12),
-                  Container(
-                    constraints: const BoxConstraints(maxHeight: 35),
-                    child: ListView(
-                      children: [
-                        _buildTabItem(tr(AppStrings.aboutUs), ContentTab.INFO),
-                        _buildTabItem(tr(AppStrings.promo), ContentTab.PROMO),
-                        _buildTabItem(
-                            tr(AppStrings.bonuses), ContentTab.BONUSES),
-                      ],
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ),
-                  marginVertical(22),
-                  Flexible(
-                    fit: FlexFit.loose,
-                    child: SingleChildScrollView(
-                      child: _buildTabContent(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Align(
-            child: buttonWithText(
-              context,
-              tr(AppStrings.signUp),
-              () {
-                NavBloc navBloc = getItApp<NavBloc>();
-                navBloc.add(NavChooseCategoryPage([widget.salon]));
-              },
-              width: 255,
-              height: 40,
-            ),
-            alignment: Alignment.center,
-          ),
-          marginVertical(12),
-        ],
-      ),
+      body: BlocConsumer<SalonDetailsBloc, SalonDetailsState>(
+          bloc: _salonDetailsBloc,
+          listener: (BuildContext _, state) {
+            if (state is LoadingSalonDetailsState) {
+              _alertBuilder.showLoaderDialog(context);
+            } else {
+              _alertBuilder.stopLoaderDialog(context);
+            }
+
+            if (state is ErrorSalonDetailsState) {
+              _alertBuilder.showErrorDialog(context, state.failure.message);
+            } else {
+              _alertBuilder.stopErrorDialog(context);
+            }
+          },
+          builder: (BuildContext context, SalonDetailsState state) {
+            if (state is SalonDetailsLoadedState) {
+              return _buildSalonDetails(state.salon);
+            }
+            return SizedBox.shrink();
+          }),
     );
   }
 
-  Widget _buildTabContent() {
+  Widget _buildSalonDetails(Salon salon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image.network(
+          salon.photoPath ??
+              "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg",
+          fit: BoxFit.fill,
+          height: 280,
+          width: MediaQuery.of(context).size.width,
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  salon.name,
+                  style: titleText2.copyWith(color: primaryColor),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  "Short description",
+                  style: hintText2,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                marginVertical(12),
+                Container(
+                  constraints: const BoxConstraints(maxHeight: 35),
+                  child: ListView(
+                    children: [
+                      _buildTabItem(tr(AppStrings.aboutUs), ContentTab.INFO),
+                      _buildTabItem(tr(AppStrings.promo), ContentTab.PROMO),
+                      _buildTabItem(tr(AppStrings.bonuses), ContentTab.BONUSES),
+                    ],
+                    scrollDirection: Axis.horizontal,
+                  ),
+                ),
+                marginVertical(22),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: SingleChildScrollView(
+                    child: _buildTabContent(salon),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Align(
+          child: buttonWithText(
+            context,
+            tr(AppStrings.signUp),
+            () {
+              NavBloc navBloc = getItApp<NavBloc>();
+              navBloc.add(NavChooseCategoryPage([salon]));
+            },
+            width: 255,
+            height: 40,
+          ),
+          alignment: Alignment.center,
+        ),
+        marginVertical(12),
+      ],
+    );
+  }
+
+  Widget _buildTabContent(Salon salon) {
     switch (_selectedTab) {
       case ContentTab.INFO:
         return Text(
-          widget.salon.description ?? "",
+          salon.description ?? "",
           style: hintText2.copyWith(color: Colors.black),
         );
       case ContentTab.PROMO:

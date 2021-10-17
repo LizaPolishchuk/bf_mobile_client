@@ -29,6 +29,7 @@ class NavBloc extends Bloc<NavEvent, NavState> {
   @override
   Stream<NavState> mapEventToState(NavEvent event) async* {
     var currentState = tabNavigatorKeys[currentTab]?.currentState;
+    var navResult;
 
     if (event is NavPopAll) {
       currentState?.popUntil((r) => r.isFirst);
@@ -39,12 +40,17 @@ class NavBloc extends Bloc<NavEvent, NavState> {
     } else if (event is NavSalonDetails) {
       currentState?.pushNamed(SalonDetailsPage.routeName, arguments: event.arguments);
     } else if (event is NavChooseServicePage) {
-      var navResult = await currentState?.pushNamed(ChooseServicePage.routeName, arguments: event.arguments);
-      yield NavigationResultedState(navResult);
+      navResult = await currentState?.pushNamed(ChooseServicePage.routeName, arguments: event.arguments);
     } else if (event is NavChooseCategoryPage) {
        currentState?.pushNamed(ChooseCategoryPage.routeName, arguments: event.arguments);
     } else if (event is NavCreateOrderPage) {
        currentState?.pushNamed(CreateOrderPage.routeName, arguments: event.arguments);
+    }
+
+    if(navResult != null) {
+      yield NavigationResultedState(navResult);
+    } else {
+      yield InitialNavState();
     }
 
   }
@@ -55,10 +61,10 @@ class NavBloc extends Bloc<NavEvent, NavState> {
     return {
       HomePage.routeName: (context) => HomePage(),
       SearchSalonsPage.routeName: (context) => SearchSalonsPage(),
-      SalonDetailsPage.routeName: (context) => SalonDetailsPage((argsList.first as Salon)),
+      SalonDetailsPage.routeName: (context) => SalonDetailsPage((argsList.first as String)),
       LoginPage.routeName: (context) => LoginPage(),
       ChooseCategoryPage.routeName: (context) => ChooseCategoryPage(argsList.first as Salon),
-      ChooseServicePage.routeName: (context) => ChooseServicePage(argsList.first as Salon, argsList[1] as String),
+      ChooseServicePage.routeName: (context) => ChooseServicePage(argsList.first as String, argsList[1] as String),
       CreateOrderPage.routeName: (context) => CreateOrderPage(argsList.first as Salon, argsList[1] as String),
     };
   }

@@ -12,6 +12,7 @@ class AlertBuilder {
 
         showDialog(
           context: context,
+          useRootNavigator: false,
           barrierDismissible: false,
           builder: (BuildContext context) =>
               AlertDialog(
@@ -48,6 +49,7 @@ class AlertBuilder {
 
         showDialog(
           context: context,
+          useRootNavigator: false,
           builder: (BuildContext context) =>
               AlertDialog(
                 content: new Column(

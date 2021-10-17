@@ -21,18 +21,16 @@ import '../../injection_container_app.dart';
 class ChooseServicePage extends StatefulWidget {
   static const routeName = '/choose-service';
 
-  final Salon salon;
+  final String salonId;
   final String categoryId;
 
-  const ChooseServicePage(this.salon, this.categoryId);
+  const ChooseServicePage(this.salonId, this.categoryId);
 
   @override
   _ChooseServicePageState createState() => _ChooseServicePageState();
 }
 
 class _ChooseServicePageState extends State<ChooseServicePage> {
-  late Salon salon;
-
   late ServicesBloc _serviceBloc;
   final AlertBuilder _alertBuilder = AlertBuilder();
 
@@ -42,8 +40,6 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
   void initState() {
     super.initState();
 
-    salon = widget.salon;
-
     _serviceBloc = getItApp<ServicesBloc>();
 
     _refreshController = RefreshController();
@@ -52,7 +48,7 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
   }
 
   void _onRefresh() async {
-    _serviceBloc.add(LoadServicesListEvent(salon.id, widget.categoryId));
+    _serviceBloc.add(LoadServicesListEvent(widget.salonId, widget.categoryId));
   }
 
   @override
