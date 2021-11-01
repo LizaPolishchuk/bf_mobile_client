@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/prezentation/create_order/animated_container.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_state.dart';
@@ -45,6 +46,16 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   OrderEntity? _selectedOrder;
   Master? _selectedMaster;
 
+  ErrorAnimatedContainer? _serviceContainer;
+  ErrorAnimatedContainer? _masterContainer;
+  ErrorAnimatedContainer? _dateContainer;
+
+  final _serviceKey = new GlobalKey<ErrorAnimatedContainerState>();
+  final _masterKey = new GlobalKey<ErrorAnimatedContainerState>();
+  final _dateKey = new GlobalKey<ErrorAnimatedContainerState>();
+
+  bool _showAvailableTime = false;
+
   @override
   void initState() {
     super.initState();
@@ -78,36 +89,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: blurColor, blurRadius: 8, offset: Offset(0, 3))
-                ],
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-              margin: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _selectedService != null
-                          ? "${_selectedService!.name} (${_selectedService!.price?.toStringAsFixed(0)} ${tr(AppStrings.uah)})"
-                          : tr(AppStrings.chooseSpecificCategory),
-                      style: hintText2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  marginHorizontal(6),
-                  buttonMoreWithRightArrow(
-                      onPressed: () => _navBloc.add(NavChooseServicePage(
-                          [widget.salon.id, widget.categoryId])),
-                      text: tr(AppStrings.choose)),
-                ],
-              ),
-            ),
+            _buildServiceSelector(),
             marginVertical(22),
             Text(
               tr(AppStrings.chooseMaster),
@@ -121,44 +103,30 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               style: bodyText4,
             ),
             marginVertical(10),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                height: 255,
-                width: 285,
-                child: _buildCalendar(),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: blurColor, blurRadius: 8, offset: Offset(0, 3))
-                  ],
+            _buildCalendar(),
+            marginVertical(22),
+            Center(
+              child: SizedBox(
+                width: 226,
+                child: OutlinedButton(
+                  onPressed: () {
+                    _loadAvailableTime();
+                  },
+                  style: ButtonStyle(
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50.0))),
+                      side: MaterialStateProperty.all(BorderSide(
+                          color: primaryColor,
+                          width: 1.0,
+                          style: BorderStyle.solid))),
+                  child: Text(
+                    tr(AppStrings.chooseTime),
+                    style: bodyText4,
+                  ),
                 ),
               ),
             ),
-
-            marginVertical(22),
-            Text(
-              tr(AppStrings.chooseTime),
-              style: bodyText4,
-            ),
-
-            marginVertical(4),
-            Text(
-              tr(AppStrings.ifTimeReservedDescription),
-              style: bodyText5.copyWith(fontWeight: FontWeight.w400),
-            ),
-            marginVertical(12),
-            StreamBuilder<List<OrderEntity>>(
-                stream: _ordersBloc.streamOrders,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.waiting) {
-                    return _buildTimeSelector(snapshot.data ?? []);
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                }),
+            if (_showAvailableTime) _buildTimeSelector(),
             marginVertical(16),
             // Spacer(),
             Row(
@@ -182,7 +150,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 context,
                 tr(AppStrings.next),
                 () {
-                  if(_selectedOrder == null) {
+                  if (_selectedOrder == null) {
                     Fluttertoast.showToast(msg: "Please choose time");
                   }
                   // Navigator.of(context).pop(_chosenService);
@@ -198,61 +166,63 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   }
 
   Widget _buildCalendar() {
-    return TableCalendar(
-      firstDay: DateTime.utc(2010, 10, 16),
-      lastDay: DateTime.utc(2030, 3, 14),
-      focusedDay: DateTime.now(),
-      headerStyle: HeaderStyle(
-        headerPadding: EdgeInsets.all(0),
-        titleTextStyle: bodyText4,
-        titleCentered: true,
-        formatButtonVisible: false,
-      ),
-      onDaySelected: (selectedDay, focusedDay) {
-        if (_selectedService == null) {
-          Fluttertoast.showToast(msg: "Please choose service!");
-        } else if (_selectedMaster == null) {
-          Fluttertoast.showToast(msg: "Please choose master!");
-        } else if (!_isDayBeforeNow(selectedDay)) {
-          setState(() {
-            _selectedDay = selectedDay;
-          });
-
-          _loadAvailableTime();
-        }
-      },
-      daysOfWeekHeight: 22,
-      rowHeight: 29,
-      calendarBuilders: CalendarBuilders(
-        dowBuilder: (context, day) {
-          final text = DateFormat.E().format(day);
-          return Align(
-            alignment: Alignment.topCenter,
-            child: Text(
-              text.toUpperCase(),
-              style: bodyText1.copyWith(
-                  color: greyText, fontWeight: FontWeight.w600),
-            ),
-          );
-        },
-        headerTitleBuilder: (context, day) {
-          final text = DateFormat.yMMMM().format(day);
-          return Center(
-            child: Text(
-              text,
-              style: bodyText4,
-            ),
-          );
-        },
-        defaultBuilder: (context, day, day2) {
-          return _buildCalendarDay(day, CalendarDayType.DEFAULT);
-        },
-        todayBuilder: (context, day, day2) {
-          return _buildCalendarDay(day, CalendarDayType.TODAY);
-        },
-        outsideBuilder: (context, day, day2) {
-          return _buildCalendarDay(day, CalendarDayType.OUTSIDE);
-        },
+    return Align(
+      alignment: Alignment.center,
+      child: _dateContainer = ErrorAnimatedContainer(
+        key: _dateKey,
+        height: 255,
+        width: 285,
+        child: TableCalendar(
+          firstDay: DateTime.utc(2010, 10, 16),
+          lastDay: DateTime.utc(2030, 3, 14),
+          focusedDay: DateTime.now(),
+          headerStyle: HeaderStyle(
+            headerPadding: EdgeInsets.all(0),
+            titleTextStyle: bodyText4,
+            titleCentered: true,
+            formatButtonVisible: false,
+          ),
+          onDaySelected: (selectedDay, focusedDay) {
+            if (!_isDayBeforeNow(selectedDay)) {
+              setState(() {
+                _selectedDay = selectedDay;
+              });
+            }
+          },
+          daysOfWeekHeight: 22,
+          rowHeight: 29,
+          calendarBuilders: CalendarBuilders(
+            dowBuilder: (context, day) {
+              final text = DateFormat.E().format(day);
+              return Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  text.toUpperCase(),
+                  style: bodyText1.copyWith(
+                      color: greyText, fontWeight: FontWeight.w600),
+                ),
+              );
+            },
+            headerTitleBuilder: (context, day) {
+              final text = DateFormat.yMMMM().format(day);
+              return Center(
+                child: Text(
+                  text,
+                  style: bodyText4,
+                ),
+              );
+            },
+            defaultBuilder: (context, day, day2) {
+              return _buildCalendarDay(day, CalendarDayType.DEFAULT);
+            },
+            todayBuilder: (context, day, day2) {
+              return _buildCalendarDay(day, CalendarDayType.TODAY);
+            },
+            outsideBuilder: (context, day, day2) {
+              return _buildCalendarDay(day, CalendarDayType.OUTSIDE);
+            },
+          ),
+        ),
       ),
     );
   }
@@ -290,9 +260,36 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     );
   }
 
+  Widget _buildServiceSelector() {
+    return _serviceContainer = ErrorAnimatedContainer(
+      key: _serviceKey,
+      borderRadius: 10,
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              _selectedService != null
+                  ? "${_selectedService!.name} (${_selectedService!.price?.toStringAsFixed(0)} ${tr(AppStrings.uah)})"
+                  : tr(AppStrings.chooseSpecificCategory),
+              style: hintText2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          marginHorizontal(6),
+          buttonMoreWithRightArrow(
+              onPressed: () => _navBloc.add(
+                  NavChooseServicePage([widget.salon.id, widget.categoryId])),
+              text: tr(AppStrings.choose)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMasterSelector(List<Master> masters) {
     return Container(
-      height: 106,
+      height: 94,
       color: bgGrey,
       child: ListView.builder(
         itemBuilder: (context, index) {
@@ -304,21 +301,14 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 _selectedMaster = master;
               });
             },
-            child: Container(
+            child: _masterContainer = ErrorAnimatedContainer(
+              key: index == 0 ? _masterKey : null,
               width: 94,
-              margin: const EdgeInsets.only(right: 8, bottom: 6),
+              margin: const EdgeInsets.only(right: 8),
               padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                color: Colors.white,
-                border: _selectedMaster == master
-                    ? Border.all(color: primaryColor, width: 2)
-                    : null,
-                boxShadow: [
-                  BoxShadow(
-                      color: blurColor, blurRadius: 6, offset: Offset(0, 2))
-                ],
-              ),
+              border: _selectedMaster == master
+                  ? Border.all(color: primaryColor, width: 2)
+                  : null,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -352,7 +342,29 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     );
   }
 
-  Widget _buildTimeSelector(List<OrderEntity> orders) {
+  Widget _buildTimeSelector() {
+    return Column(
+      children: [
+        marginVertical(4),
+        Text(
+          tr(AppStrings.ifTimeReservedDescription),
+          style: bodyText5.copyWith(fontWeight: FontWeight.w400),
+        ),
+        marginVertical(12),
+        StreamBuilder<List<OrderEntity>>(
+            stream: _ordersBloc.streamOrders,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.waiting) {
+                return _buildTimeList(snapshot.data ?? []);
+              } else {
+                return CircularProgressIndicator();
+              }
+            }),
+      ],
+    );
+  }
+
+  Widget _buildTimeList(List<OrderEntity> orders) {
     return Container(
       height: 42,
       child: ListView.builder(
@@ -428,10 +440,30 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   }
 
   Timer? _debounce;
+
   void _loadAvailableTime() {
+    if (_selectedService == null) {
+      _serviceKey.currentState?.showError();
+
+      // _serviceContainer?.showError();
+    } else if (_selectedMaster == null) {
+      _masterKey.currentState?.showError();
+      print("_loadAvailableTime $_masterContainer");
+      // _masterContainer?
+    } else if (_selectedDay == null) {
+      // _dateContainer?.showError();
+      _dateKey.currentState?.showError();
+    }
+
     if (_selectedService != null &&
         _selectedMaster != null &&
         _selectedDay != null) {
+      if (!_showAvailableTime) {
+        setState(() {
+          _showAvailableTime = true;
+        });
+      }
+
       if (_debounce?.isActive ?? false) _debounce?.cancel();
       _debounce = Timer(const Duration(milliseconds: 600), () {
         String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDay!);
