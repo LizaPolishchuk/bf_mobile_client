@@ -25,4 +25,9 @@ class CancelOrderEvent extends OrdersEvent {
 
   CancelOrderEvent(this.orderEntity);
 }
+class UpdateOrderEvent extends OrdersEvent {
+  final OrderEntity orderEntity;
+
+  UpdateOrderEvent(this.orderEntity);
+}
 

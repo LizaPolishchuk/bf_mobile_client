@@ -68,6 +68,10 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         localStorage.setOrdersList(ordersList);
         ordersStreamSink.add(ordersList);
       });
+    }  else if (event is UpdateOrderEvent) {
+      final successOrError = await updateOrderUseCase(event.orderEntity);
+
+
     } else if (event is PinOrderEvent) {
       OrderEntity orderToUpdate = event.orderEntity;
       orderToUpdate.isPinned = !orderToUpdate.isPinned;

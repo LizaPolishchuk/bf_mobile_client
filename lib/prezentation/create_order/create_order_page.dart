@@ -46,10 +46,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   OrderEntity? _selectedOrder;
   Master? _selectedMaster;
 
-  ErrorAnimatedContainer? _serviceContainer;
-  ErrorAnimatedContainer? _masterContainer;
-  ErrorAnimatedContainer? _dateContainer;
-
   final _serviceKey = new GlobalKey<ErrorAnimatedContainerState>();
   final _masterKey = new GlobalKey<ErrorAnimatedContainerState>();
   final _dateKey = new GlobalKey<ErrorAnimatedContainerState>();
@@ -152,8 +148,16 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 () {
                   if (_selectedOrder == null) {
                     Fluttertoast.showToast(msg: "Please choose time");
+                  } else {
+                    UserEntity user = getIt<LocalStorage>().getCurrentUser();
+
+                    _selectedOrder!.clientId = user.id;
+                    _selectedOrder!.clientName = user.name;
+
+                    _ordersBloc.add(UpdateOrderEvent(_selectedOrder!));
+
+                    Navigator.of(context).pop();
                   }
-                  // Navigator.of(context).pop(_chosenService);
                 },
                 width: 255,
                 height: 40,
@@ -168,7 +172,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   Widget _buildCalendar() {
     return Align(
       alignment: Alignment.center,
-      child: _dateContainer = ErrorAnimatedContainer(
+      child: ErrorAnimatedContainer(
         key: _dateKey,
         height: 255,
         width: 285,
@@ -261,7 +265,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   }
 
   Widget _buildServiceSelector() {
-    return _serviceContainer = ErrorAnimatedContainer(
+    return ErrorAnimatedContainer(
       key: _serviceKey,
       borderRadius: 10,
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
@@ -301,7 +305,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 _selectedMaster = master;
               });
             },
-            child: _masterContainer = ErrorAnimatedContainer(
+            child: ErrorAnimatedContainer(
               key: index == 0 ? _masterKey : null,
               width: 94,
               margin: const EdgeInsets.only(right: 8),
@@ -444,20 +448,11 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   void _loadAvailableTime() {
     if (_selectedService == null) {
       _serviceKey.currentState?.showError();
-
-      // _serviceContainer?.showError();
     } else if (_selectedMaster == null) {
       _masterKey.currentState?.showError();
-      print("_loadAvailableTime $_masterContainer");
-      // _masterContainer?
     } else if (_selectedDay == null) {
-      // _dateContainer?.showError();
       _dateKey.currentState?.showError();
-    }
-
-    if (_selectedService != null &&
-        _selectedMaster != null &&
-        _selectedDay != null) {
+    } else {
       if (!_showAvailableTime) {
         setState(() {
           _showAvailableTime = true;

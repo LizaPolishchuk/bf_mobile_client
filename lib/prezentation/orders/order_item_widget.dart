@@ -28,16 +28,15 @@ class OrdersItemWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
       height: 100,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-                color: blurColor, blurRadius: 8, offset: Offset(0, 3))
-          ]),
       child: Slidable(
         child: Container(
           padding: const EdgeInsets.all(12),
-          color: Colors.white,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(color: blurColor, blurRadius: 8, offset: Offset(0, 3))
+              ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -107,34 +106,37 @@ class OrdersItemWidget extends StatelessWidget {
   Widget _buildSlideOption(
       String text, Color color, String icon, Function() onTap,
       {bool isRounded = false}) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
+    return SlideAction(
+      decoration: BoxDecoration(
           color: color,
           borderRadius: isRounded
               ? BorderRadius.only(
                   topRight: Radius.circular(10),
                   bottomRight: Radius.circular(10))
               : null,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(icon, height: 15, width: 15, color: Colors.white,),
-            marginVertical(6),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-              ),
+      ),
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            icon,
+            height: 15,
+            width: 15,
+            color: Colors.white,
+          ),
+          marginVertical(6),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
