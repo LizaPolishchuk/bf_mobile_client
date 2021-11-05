@@ -20,8 +20,9 @@ class CodeVerificationPage extends StatefulWidget {
   static const routeName = '/code-verification';
 
   final bool? isCreator;
+  final String phoneNumber;
 
-  const CodeVerificationPage(this.isCreator);
+  const CodeVerificationPage(this.isCreator, this.phoneNumber);
 
   @override
   _CodeVerificationPageState createState() => _CodeVerificationPageState();
@@ -159,14 +160,14 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             onCodeChanged: (code) {
               if (code!.length == 6) {
                 _loginBloc
-                    .add(LoginWithPhoneVerifyCodeEvent(_teControllerCode.text));
+                    .add(LoginWithPhoneVerifyCodeEvent(_teControllerCode.text, widget.phoneNumber));
               }
             },
           ),
           marginVertical(42),
           buttonWithText(context, tr(AppStrings.continueTxt), () {
             _loginBloc
-                .add(LoginWithPhoneVerifyCodeEvent(_teControllerCode.text));
+                .add(LoginWithPhoneVerifyCodeEvent(_teControllerCode.text, widget.phoneNumber));
           }),
         ],
       ),

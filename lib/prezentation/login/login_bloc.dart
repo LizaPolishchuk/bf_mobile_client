@@ -44,7 +44,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           (creator) => VerifyCodeSentState(creator));
     } else if (event is LoginWithPhoneVerifyCodeEvent) {
       yield LoadingLoginState();
-      final loginResult = await loginWithPhoneVerifyCodeUseCase(event.code);
+      final loginResult = await loginWithPhoneVerifyCodeUseCase(event.code, event.phoneNumber);
       yield* _loggedInOrFailure(loginResult);
     } else if (event is LogoutEvent) {
       yield LoadingLoginState();

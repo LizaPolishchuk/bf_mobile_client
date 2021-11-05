@@ -15,8 +15,9 @@ class LoginWithPhoneEvent extends LoginEvent {
 
 class LoginWithPhoneVerifyCodeEvent extends LoginEvent {
   final String code;
+  final String phoneNumber;
 
-  LoginWithPhoneVerifyCodeEvent(this.code);
+  LoginWithPhoneVerifyCodeEvent(this.code, this.phoneNumber);
 }
 
 class LoginWithEmailAndPasswordEvent extends LoginEvent {

@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
 
             if (state is VerifyCodeSentState) {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => CodeVerificationPage(state.isCreator),
+                builder: (context) => CodeVerificationPage(state.isCreator, _teControllerPhone.text),
               ));
             } else if (state is LoggedInState) {
               Navigator.of(context).pushAndRemoveUntil(
