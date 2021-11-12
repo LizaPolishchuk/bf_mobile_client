@@ -45,8 +45,8 @@ Widget textFieldWithBorders(
   );
 }
 
-Widget searchTextField(TextEditingController controller,
-    {String? hintText, double? topAndBottomPadding}) {
+Widget searchTextField(TextEditingController? controller,
+    {String? hintText, double? topAndBottomPadding, bool isEnabled = true}) {
   return Material(
     color: bgGrey,
     shape: RoundedRectangleBorder(
@@ -55,6 +55,7 @@ Widget searchTextField(TextEditingController controller,
     shadowColor: blurColor,
     child: TextFormField(
       controller: controller,
+      enabled: isEnabled,
       textCapitalization: TextCapitalization.sentences,
       style: hintText2.copyWith(color: Colors.black),
       decoration: InputDecoration(

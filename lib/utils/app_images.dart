@@ -17,6 +17,7 @@ const String icHome = 'assets/icons/ic_home.svg';
 const String icCheckBoxSelected = 'assets/icons/checkbox_selected.svg';
 const String icCheckBoxUnselected = 'assets/icons/checkbox_unselected.svg';
 const String icNotify = 'assets/icons/ic_notify.svg';
+const String icCalendar = 'assets/icons/ic_calendar.svg';
 
 ///Images
 const String masterPlaceholder = 'assets/images/master_image.png';

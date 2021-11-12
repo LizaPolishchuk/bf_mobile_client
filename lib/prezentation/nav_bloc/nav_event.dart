@@ -37,3 +37,7 @@ class NavChooseServicePage extends NavEvent {
 class NavCreateOrderPage extends NavEvent {
   NavCreateOrderPage(args) : super(args);
 }
+
+class NavOrdersHistoryPage extends NavEvent {
+  NavOrdersHistoryPage(args) : super(args);
+}

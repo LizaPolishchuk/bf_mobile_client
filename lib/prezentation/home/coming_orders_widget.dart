@@ -35,9 +35,7 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
   void initState() {
     super.initState();
 
-    // _ordersBloc = getItApp<OrdersBloc>();
     _ordersBloc = widget.ordersBloc;
-    // _ordersBloc.add(LoadOrdersForCurrentUserEvent());
   }
 
   @override

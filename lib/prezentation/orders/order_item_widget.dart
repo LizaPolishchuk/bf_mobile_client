@@ -17,11 +17,13 @@ class OrdersItemWidget extends StatelessWidget {
     required this.order,
     required this.onPressedPin,
     required this.onPressedRemove,
+    this.enableSlidebar = true,
   }) : super(key: key);
 
   final OrderEntity order;
   final Function(OrderEntity order) onPressedPin;
   final Function(OrderEntity order) onPressedRemove;
+  final bool enableSlidebar;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class OrdersItemWidget extends StatelessWidget {
                         '${order.serviceName} ${tr(AppStrings.inTxt)} ${order.salonName}',
                         style: bodyText3.copyWith(fontSize: 16)),
                   ),
-                  Text(DateFormat('EE dd MMMM', "ru").format(DateTime.now()),
+                  Text(DateFormat('EE dd MMMM', "ru").format(order.date),
                       overflow: TextOverflow.clip,
                       style: bodyText3.copyWith(fontSize: 12)),
                   if (order.isPinned == true)
@@ -76,6 +78,7 @@ class OrdersItemWidget extends StatelessWidget {
             ],
           ),
         ),
+        enabled: enableSlidebar,
         actionPane: SlidableDrawerActionPane(),
         secondaryActions: [
           // _buildSlideOption(
@@ -108,12 +111,11 @@ class OrdersItemWidget extends StatelessWidget {
       {bool isRounded = false}) {
     return SlideAction(
       decoration: BoxDecoration(
-          color: color,
-          borderRadius: isRounded
-              ? BorderRadius.only(
-                  topRight: Radius.circular(10),
-                  bottomRight: Radius.circular(10))
-              : null,
+        color: color,
+        borderRadius: isRounded
+            ? BorderRadius.only(
+                topRight: Radius.circular(10), bottomRight: Radius.circular(10))
+            : null,
       ),
       onTap: onTap,
       child: Column(

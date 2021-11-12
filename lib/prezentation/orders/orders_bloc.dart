@@ -35,7 +35,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   ) async* {
     if (event is LoadOrdersForCurrentUserEvent) {
       String userId = localStorage.getUserId();
-      final ordersListOrError = await getOrdersListUseCase(userId, OrderForType.USER);
+      final ordersListOrError = await getOrdersListUseCase(userId, OrderForType.USER, dateFor: event.dateFor, dateFrom: event.dateFrom, dateTo: event.dateTo);
       ordersListOrError.fold((failure) {
         ordersStreamSink.addError(failure.message);
       }, (ordersList) {
@@ -43,7 +43,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         localStorage.setOrdersList(ordersList);
         ordersStreamSink.add(ordersList);
       });
-    }else if (event is LoadAvailableTimeEvent) {
+    }else if (event is LoadAvailableOrdersByTimeEvent) {
 
       final ordersListOrError = await getAvailableTimeUseCase(event.salonId, event.serviceId, event.masterId, event.date);
       print("LoadAvailableTimeEvent");

@@ -47,6 +47,9 @@ class AppStrings {
   static const String sum = "sum";
   static const String ifTimeReservedDescription = "if_time_reserved_description";
   static const String reserved = "reserved";
+  static const String nothingFound = "nothing_found";
+  static const String ordersHistory = "orders_history";
+  static const String searchByDate = "search_by_date";
 
 }
 

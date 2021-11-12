@@ -19,7 +19,7 @@ import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:salons_app_mobile/utils/widgets/calendar_widget.dart';
 
 import '../../injection_container_app.dart';
 
@@ -99,7 +99,10 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               style: bodyText4,
             ),
             marginVertical(10),
-            _buildCalendar(),
+            Calendar(key: _dateKey, onSelectDay: (selectedDay) {
+              _selectedDay = selectedDay;
+
+            },),
             marginVertical(22),
             Center(
               child: SizedBox(
@@ -165,101 +168,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildCalendar() {
-    return Align(
-      alignment: Alignment.center,
-      child: ErrorAnimatedContainer(
-        key: _dateKey,
-        height: 255,
-        width: 285,
-        child: TableCalendar(
-          firstDay: DateTime.utc(2010, 10, 16),
-          lastDay: DateTime.utc(2030, 3, 14),
-          focusedDay: DateTime.now(),
-          headerStyle: HeaderStyle(
-            headerPadding: EdgeInsets.all(0),
-            titleTextStyle: bodyText4,
-            titleCentered: true,
-            formatButtonVisible: false,
-          ),
-          onDaySelected: (selectedDay, focusedDay) {
-            if (!_isDayBeforeNow(selectedDay)) {
-              setState(() {
-                _selectedDay = selectedDay;
-              });
-            }
-          },
-          daysOfWeekHeight: 22,
-          rowHeight: 29,
-          calendarBuilders: CalendarBuilders(
-            dowBuilder: (context, day) {
-              final text = DateFormat.E().format(day);
-              return Align(
-                alignment: Alignment.topCenter,
-                child: Text(
-                  text.toUpperCase(),
-                  style: bodyText1.copyWith(
-                      color: greyText, fontWeight: FontWeight.w600),
-                ),
-              );
-            },
-            headerTitleBuilder: (context, day) {
-              final text = DateFormat.yMMMM().format(day);
-              return Center(
-                child: Text(
-                  text,
-                  style: bodyText4,
-                ),
-              );
-            },
-            defaultBuilder: (context, day, day2) {
-              return _buildCalendarDay(day, CalendarDayType.DEFAULT);
-            },
-            todayBuilder: (context, day, day2) {
-              return _buildCalendarDay(day, CalendarDayType.TODAY);
-            },
-            outsideBuilder: (context, day, day2) {
-              return _buildCalendarDay(day, CalendarDayType.OUTSIDE);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCalendarDay(DateTime day, CalendarDayType dayType) {
-    var now = DateTime.now();
-
-    if (day.year == now.year && day.month == now.month && day.day == now.day) {
-      dayType = CalendarDayType.TODAY;
-    } else if (day.isBefore(now)) {
-      dayType = CalendarDayType.OUTSIDE;
-    } else {
-      dayType = CalendarDayType.DEFAULT;
-    }
-
-    return Container(
-      decoration: _selectedDay == day
-          ? BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: primaryColor,
-            )
-          : null,
-      alignment: Alignment.center,
-      child: Text(
-        day.day.toString(),
-        style: calendarText.copyWith(
-            color: _selectedDay == day
-                ? Colors.white
-                : dayType == CalendarDayType.OUTSIDE
-                    ? Color(0x4d3c3c43)
-                    : dayType == CalendarDayType.TODAY
-                        ? primaryColor
-                        : Colors.black),
       ),
     );
   }
@@ -462,19 +370,10 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       if (_debounce?.isActive ?? false) _debounce?.cancel();
       _debounce = Timer(const Duration(milliseconds: 600), () {
         String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDay!);
-        _ordersBloc.add(LoadAvailableTimeEvent(widget.salon.id,
+        _ordersBloc.add(LoadAvailableOrdersByTimeEvent(widget.salon.id,
             _selectedService!.id, _selectedMaster!.id, formattedDate));
       });
     }
-  }
-
-  bool _isDayBeforeNow(DateTime day) {
-    var now = DateTime.now();
-
-    return (!(day.year == now.year &&
-            day.month == now.month &&
-            day.day == now.day) &&
-        day.isBefore(now));
   }
 
   @override

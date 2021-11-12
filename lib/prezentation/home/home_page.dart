@@ -9,6 +9,7 @@ import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
+import 'package:salons_app_mobile/utils/date_utils.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';
@@ -35,28 +36,28 @@ class _HomePageState extends State<HomePage> {
       RefreshController(initialRefresh: true);
 
   void _onRefresh() async {
-    _ordersBloc.add(LoadOrdersForCurrentUserEvent());
+    _ordersBloc.add(LoadOrdersForCurrentUserEvent(dateFrom: DateTime.now().formatToYYYYMMddWithTime()));
     _salonsBloc.add(LoadTopSalonsEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return SmartRefresher(
-            controller: _refreshController,
-            onRefresh: _onRefresh,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TopSalonsWidget(_salonsBloc),
-                  marginVertical(46),
-                  Expanded(
-                      child:
-                          ComingOrdersWidget(_ordersBloc, _refreshController))
-                ],
-              ),
+      controller: _refreshController,
+      onRefresh: _onRefresh,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TopSalonsWidget(_salonsBloc),
+            marginVertical(46),
+            Expanded(
+              child: ComingOrdersWidget(_ordersBloc, _refreshController),
             ),
+          ],
+        ),
+      ),
     );
   }
 }

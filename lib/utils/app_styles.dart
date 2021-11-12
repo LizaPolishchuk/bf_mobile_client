@@ -45,6 +45,8 @@ final TextStyle titleText1 =
     TextStyle(color: darkGreyTitle, fontSize: 25, fontWeight: FontWeight.bold);
 final TextStyle titleText2 =
     TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.w600);
+final TextStyle titleText3 =
+    TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.w700);
 
 final TextStyle appBarText =
     TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500);

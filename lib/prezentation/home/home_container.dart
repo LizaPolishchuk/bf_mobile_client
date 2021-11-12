@@ -232,7 +232,10 @@ class _HomeContainerState extends State<HomeContainer> {
                 ],
               )),
           marginVertical(40),
-          _buildDrawerItem(tr(AppStrings.history), icHistory),
+          _buildDrawerItem(tr(AppStrings.history), icHistory, onClick: (){
+            Navigator.of(context).pop();
+            _navBloc.add(NavOrdersHistoryPage([]));
+          }),
           _buildDrawerItem(tr(AppStrings.promo), icPromo),
           _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),
           _buildDrawerItem(tr(AppStrings.settings), icSettings),
