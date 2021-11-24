@@ -14,6 +14,7 @@ import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum ContentTab { INFO, PROMO, BONUSES }
 
@@ -96,9 +97,28 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 ),
                 Text(
                   "Short description",
-                  style: hintText2,
+                  style: hintText2.copyWith(
+                    fontWeight: FontWeight.w300,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                ),
+                marginVertical(4),
+                GestureDetector(
+                  onTap: (){
+                    //todo here is hardcode
+                      openMap(49.4457819, 32.0564462);
+                  },
+                  child: Text(
+                    "Хрещатик, 14 оф. 3",
+                    style: hintText1.copyWith(
+                      fontWeight: FontWeight.w300,
+                      color: primaryColor,
+                      decoration: TextDecoration.underline,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 marginVertical(12),
                 Container(
@@ -182,5 +202,14 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
         ),
       ),
     );
+  }
+
+  Future<void> openMap(double latitude, double longitude) async {
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      throw 'Could not open the map.';
+    }
   }
 }

@@ -82,4 +82,29 @@ class AlertBuilder {
       Navigator.of(context).pop();
     }
   }
+
+  // void _showAlertDialog(String message, bool popToFirstPage) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       content: Text(message),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             if (popToFirstPage) {
+  //               Navigator.of(context).popUntil((route) => route.isFirst);
+  //             } else {
+  //               Navigator.of(context).pop();
+  //             }
+  //           },
+  //           child: const Text(
+  //             'Ok :(',
+  //             textAlign: TextAlign.end,
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
+
 }

@@ -45,6 +45,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   table_calendar: ^3.0.2
   connectivity: ^3.0.6
+  url_launcher: ^6.0.12
 
   firebase_crashlytics: ^2.2.4
 
