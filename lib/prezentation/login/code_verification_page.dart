@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
@@ -19,10 +18,10 @@ import 'login_state.dart';
 class CodeVerificationPage extends StatefulWidget {
   static const routeName = '/code-verification';
 
-  final bool? isCreator;
   final String phoneNumber;
+  final LoginBloc loginBloc;
 
-  const CodeVerificationPage(this.isCreator, this.phoneNumber);
+  const CodeVerificationPage(this.loginBloc, this.phoneNumber);
 
   @override
   _CodeVerificationPageState createState() => _CodeVerificationPageState();
@@ -40,7 +39,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
     listenForCode();
 
     _teControllerCode = TextEditingController();
-    _loginBloc = getItApp<LoginBloc>();
+    _loginBloc = widget.loginBloc;
   }
 
   @override
@@ -85,7 +84,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             if (state is LoggedInState) {
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                    builder: (context) => (widget.isCreator ?? false)
+                    builder: (context) => (state.isNewUser ?? false)
                         ? RegistrationPage(state.user)
                         : HomeContainer(),
                   ),

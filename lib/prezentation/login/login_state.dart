@@ -13,9 +13,9 @@ class LoggedInState extends LoginState {
   LoggedInState(this.user, this.isNewUser);
 }
 class VerifyCodeSentState extends LoginState {
-  final bool? isCreator;
+  // final bool? isCreator;
 
-  VerifyCodeSentState(this.isCreator);
+  VerifyCodeSentState();
 }
 class LoggedOutState extends LoginState {}
 class ErrorLoginState extends LoginState {
