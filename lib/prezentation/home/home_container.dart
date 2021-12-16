@@ -238,7 +238,11 @@ class _HomeContainerState extends State<HomeContainer> {
           }),
           _buildDrawerItem(tr(AppStrings.promo), icPromo),
           _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),
-          _buildDrawerItem(tr(AppStrings.settings), icSettings),
+          _buildDrawerItem(tr(AppStrings.settings), icSettings, onClick: (){
+            //61b23d90acf773b3b9a3aa45
+            Navigator.of(context).pop();
+            _navBloc.add(NavProfilePage([]));
+          }),
           _buildDrawerItem(tr(AppStrings.exit), icExit,
               onClick: () => _loginBloc.add(LogoutEvent())),
         ],

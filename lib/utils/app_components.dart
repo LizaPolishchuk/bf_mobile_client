@@ -14,6 +14,7 @@ Widget textFieldWithBorders(
   TextEditingController controller, {
   String? errorStr,
   String? prefixText,
+  bool enabled = true,
   TextInputType? keyboardType,
   int? maxLength,
   FormFieldValidator<String>? validator,
@@ -31,6 +32,7 @@ Widget textFieldWithBorders(
       errorStyle: errorText,
       labelStyle: hintText1,
       prefixStyle: bodyText1,
+      enabled: enabled,
       counterText: "",
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       enabledBorder: OutlineInputBorder(
@@ -90,17 +92,20 @@ Widget searchTextField(TextEditingController? controller,
 }
 
 ///Buttons
-Widget buttonWithText(BuildContext context, String text, VoidCallback onPressed,
-    {Color? buttonColor, double? width, double? height}) {
-  return SizedBox(
-    height: height ?? 50,
-    width: width ?? 226,
-    child: ElevatedButton(
-      onPressed: onPressed,
-      style: buttonColor != null
-          ? ButtonStyle(backgroundColor: MaterialStateProperty.all(buttonColor))
-          : Theme.of(context).elevatedButtonTheme.style,
-      child: Text(text),
+Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
+    {Color? buttonColor, double? height}) {
+  return FittedBox(
+    child: Container(
+      height: height ?? 50,
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: buttonColor != null
+            ? ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(buttonColor))
+            : Theme.of(context).elevatedButtonTheme.style,
+        child: Text(text),
+      ),
     ),
   );
 }
@@ -130,7 +135,10 @@ Widget buttonMoreWithRightArrow(
 Widget imageWithPlaceholder(String? imageUrl, String placeholder) {
   return FadeInImage(
       imageErrorBuilder: (context, error, _) {
-        return Image.asset(placeholder, fit: BoxFit.fill,);
+        return Image.asset(
+          placeholder,
+          fit: BoxFit.fill,
+        );
       },
       fit: BoxFit.fill,
       image: NetworkImage(imageUrl ?? ""),

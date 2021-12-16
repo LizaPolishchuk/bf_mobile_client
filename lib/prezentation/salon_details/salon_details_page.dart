@@ -105,9 +105,9 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 ),
                 marginVertical(4),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     //todo here is hardcode
-                      openMap(49.4457819, 32.0564462);
+                    openMap(49.4457819, 32.0564462);
                   },
                   child: Text(
                     "Хрещатик, 14 оф. 3",
@@ -144,14 +144,13 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           ),
         ),
         Align(
-          child: buttonWithText(
+          child: roundedButton(
             context,
             tr(AppStrings.signUp),
             () {
               NavBloc navBloc = getItApp<NavBloc>();
               navBloc.add(NavChooseCategoryPage([salon]));
             },
-            width: 255,
             height: 40,
           ),
           alignment: Alignment.center,
@@ -205,7 +204,8 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   }
 
   Future<void> openMap(double latitude, double longitude) async {
-    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    String googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     if (await canLaunch(googleUrl)) {
       await launch(googleUrl);
     } else {

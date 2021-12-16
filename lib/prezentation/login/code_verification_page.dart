@@ -164,7 +164,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             },
           ),
           marginVertical(42),
-          buttonWithText(context, tr(AppStrings.continueTxt), () {
+          roundedButton(context, tr(AppStrings.continueTxt), () {
             _loginBloc
                 .add(LoginWithPhoneVerifyCodeEvent(_teControllerCode.text, widget.phoneNumber));
           }),

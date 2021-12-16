@@ -39,6 +39,7 @@ final TextStyle bodyText4 =
     TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500);
 final TextStyle bodyText5 =
     TextStyle(color: darkGreyText, fontSize: 10, fontWeight: FontWeight.w500);
+final TextStyle bodyText6 = TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500);
 
 final TextStyle titleText1 =
     TextStyle(color: darkGreyTitle, fontSize: 25, fontWeight: FontWeight.bold);

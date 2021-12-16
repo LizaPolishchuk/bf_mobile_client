@@ -99,10 +99,9 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
                 Spacer(),
                 Align(
                   alignment: Alignment.center,
-                  child: buttonWithText(context, tr(AppStrings.next), () {
+                  child: roundedButton(context, tr(AppStrings.next), () {
                      Navigator.of(context).pop(_chosenService);
-                  }, width: 255,
-                    height: 40,),
+                  }, height: 40,),
                 ),
               ],
             ),

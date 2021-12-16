@@ -145,7 +145,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             marginVertical(35),
             Align(
               alignment: Alignment.center,
-              child: buttonWithText(
+              child: roundedButton(
                 context,
                 tr(AppStrings.next),
                 () {
@@ -162,7 +162,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                     Navigator.of(context).pop();
                   }
                 },
-                width: 255,
                 height: 40,
               ),
             ),

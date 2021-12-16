@@ -128,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           marginVertical(22),
-          buttonWithText(
+          roundedButton(
             context,
             tr(AppStrings.signIn),
             () {

@@ -50,6 +50,11 @@ class AppStrings {
   static const String nothingFound = "nothing_found";
   static const String ordersHistory = "orders_history";
   static const String searchByDate = "search_by_date";
+  static const String yourGender = "your_gender";
+  static const String editProfile = "edit_profile";
+  static const String saveChanges = "save_changes";
+  static const String cancel = "cancel";
+
 
 }
 

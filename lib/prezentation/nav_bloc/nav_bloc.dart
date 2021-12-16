@@ -11,6 +11,7 @@ import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/nav_bloc/nav_state.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
+import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
 
@@ -48,6 +49,8 @@ class NavBloc extends Bloc<NavEvent, NavState> {
        currentState?.pushNamed(CreateOrderPage.routeName, arguments: event.arguments);
     } else if (event is NavOrdersHistoryPage) {
        currentState?.pushNamed(OrdersHistoryPage.routeName, arguments: event.arguments);
+    } else if (event is NavProfilePage) {
+       currentState?.pushNamed(SettingsPage.routeName, arguments: event.arguments);
     }
 
     if(navResult != null) {
@@ -70,6 +73,7 @@ class NavBloc extends Bloc<NavEvent, NavState> {
       ChooseServicePage.routeName: (context) => ChooseServicePage(argsList.first as String, argsList[1] as String),
       CreateOrderPage.routeName: (context) => CreateOrderPage(argsList.first as Salon, argsList[1] as String),
       OrdersHistoryPage.routeName: (context) => OrdersHistoryPage(),
+      SettingsPage.routeName: (context) => SettingsPage(),
     };
   }
 
