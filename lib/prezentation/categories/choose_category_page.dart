@@ -8,8 +8,7 @@ import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/categories/categories_bloc.dart';
 import 'package:salons_app_mobile/prezentation/categories/categories_event.dart';
 import 'package:salons_app_mobile/prezentation/categories/categories_state.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
+import 'package:salons_app_mobile/prezentation/create_order/create_order_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
@@ -161,11 +160,13 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
                                       return categories.length > 0
                                           ? CardItemWidget(
                                               categories[index],
-                                              () => getItApp<NavBloc>().add(
-                                                  NavCreateOrderPage([
-                                                widget.salon,
-                                                categories[index].id
-                                              ])),
+                                              () => Navigator.of(context)
+                                                  .pushNamed(
+                                                      CreateOrderPage.routeName,
+                                                      arguments: [
+                                                    widget.salon,
+                                                    categories[index].id
+                                                  ]),
                                             )
                                           : _buildEmptyList();
                                     },

@@ -2,16 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/prezentation/choose_service/choose_service_page.dart';
 import 'package:salons_app_mobile/prezentation/create_order/animated_container.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_state.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -38,7 +35,6 @@ class CreateOrderPage extends StatefulWidget {
 }
 
 class _CreateOrderPageState extends State<CreateOrderPage> {
-  late NavBloc _navBloc;
   late OrdersBloc _ordersBloc;
 
   Service? _selectedService;
@@ -55,26 +51,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   @override
   void initState() {
     super.initState();
-    _navBloc = getItApp<NavBloc>();
     _ordersBloc = getItApp<OrdersBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _navBloc,
-      child: BlocBuilder<NavBloc, NavState>(
-        builder: (BuildContext context, state) {
-          if (state is NavigationResultedState) {
-            if (state.result != null && state.result is Service?) {
-              _selectedService = state.result as Service;
-            }
-          }
-
-          return _buildPage();
-        },
-      ),
-    );
+    return _buildPage();
   }
 
   Widget _buildPage() {
@@ -99,10 +81,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               style: bodyText4,
             ),
             marginVertical(10),
-            Calendar(key: _dateKey, onSelectDay: (selectedDay) {
-              _selectedDay = selectedDay;
-
-            },),
+            Calendar(
+              key: _dateKey,
+              onSelectDay: (selectedDay) {
+                _selectedDay = selectedDay;
+              },
+            ),
             marginVertical(22),
             Center(
               child: SizedBox(
@@ -190,8 +174,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
           ),
           marginHorizontal(6),
           buttonMoreWithRightArrow(
-              onPressed: () => _navBloc.add(
-                  NavChooseServicePage([widget.salon.id, widget.categoryId])),
+              onPressed: () async {
+                var result = await Navigator.of(context).pushNamed(ChooseServicePage.routeName, arguments: [widget.salon.id, widget.categoryId]);
+                if (result != null && result is Service?) {
+                  _selectedService = result as Service;
+                }
+              },
               text: tr(AppStrings.choose)),
         ],
       ),

@@ -6,8 +6,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
+import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_state.dart';
@@ -138,7 +137,9 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                             itemBuilder: (context, index) {
                               return salons.length > 0
                                   ? CardItemWidget(salons[index], () {
-                                      getItApp<NavBloc>().add(NavSalonDetails([salons[index].id]));
+                                      Navigator.of(context).pushNamed(
+                                          SalonDetailsPage.routeName,
+                                          arguments: salons[index].id);
                                     })
                                   : _buildEmptyList();
                             },

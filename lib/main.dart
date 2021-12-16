@@ -10,6 +10,7 @@ import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
+import 'package:salons_app_mobile/prezentation/navigation/routes.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
@@ -65,6 +66,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Salons App',
       theme: mainTheme,
+      onGenerateRoute: onGenerateRoutes,
       localeListResolutionCallback: (locales, supportedLocales) {
         return application.resolveLocale(updatedDeviceLocaleList: locales);
       },

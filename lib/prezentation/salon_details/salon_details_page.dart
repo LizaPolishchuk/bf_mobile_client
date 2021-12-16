@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
+import 'package:salons_app_mobile/prezentation/categories/choose_category_page.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_event.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_state.dart';
@@ -148,8 +147,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
             context,
             tr(AppStrings.signUp),
             () {
-              NavBloc navBloc = getItApp<NavBloc>();
-              navBloc.add(NavChooseCategoryPage([salon]));
+              Navigator.of(context).pushNamed(ChooseCategoryPage.routeName, arguments: salon);
             },
             height: 40,
           ),

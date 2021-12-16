@@ -9,8 +9,8 @@ import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_state.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_event.dart';
+import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
+import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -18,6 +18,8 @@ import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+
+enum TabItem { home, search }
 
 class HomeContainer extends StatefulWidget {
   const HomeContainer({Key? key}) : super(key: key);
@@ -28,7 +30,12 @@ class HomeContainer extends StatefulWidget {
 
 class _HomeContainerState extends State<HomeContainer> {
   TabItem _currentTab = TabItem.home;
-  late NavBloc _navBloc;
+
+  final List _children = [
+    const HomePage(),
+    const SearchSalonsPage(),
+  ];
+
   late LoginBloc _loginBloc;
   late UserEntity _currentUser;
 
@@ -42,17 +49,18 @@ class _HomeContainerState extends State<HomeContainer> {
     _currentUser = getIt<LocalStorage>().getCurrentUser();
 
     _loginBloc = getItApp<LoginBloc>();
-    _navBloc = getItApp<NavBloc>();
   }
 
   void _onItemTapped(TabItem tabItem) {
-    if (tabItem == _currentTab) {
-      // pop to first route
-      _navBloc.add(NavPopAll());
-    } else {
-      _navBloc.currentTab = tabItem;
-      setState(() => _currentTab = tabItem);
-    }
+    setState(() => _currentTab = tabItem);
+
+    // if (tabItem == _currentTab) {
+    //   // pop to first route
+    //   _navBloc.add(NavPopAll());
+    // } else {
+    //   _navBloc.currentTab = tabItem;
+    //   setState(() => _currentTab = tabItem);
+    // }
   }
 
   /// Created to be called from navBloc for the ability to switch tabs from outside
@@ -64,19 +72,15 @@ class _HomeContainerState extends State<HomeContainer> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        final isFirstRouteInCurrentTab = !await _navBloc
-            .tabNavigatorKeys[_navBloc.currentTab]!.currentState!
-            .maybePop();
-        if (isFirstRouteInCurrentTab) {
-          if (_navBloc.currentTab != TabItem.home) {
-//            _tabIndex = 0;
-            _onItemTapped(TabItem.home);
+        final isLastRouteInCurrentTab = !Navigator.of(context).canPop();
 
-            return false;
-          }
+        print("isLastRouteInCurrentTab $isLastRouteInCurrentTab");
+
+        if (isLastRouteInCurrentTab && _currentTab != TabItem.home) {
+          return false;
+        } else {
+          return true;
         }
-        // let system handle back button if we're on the first route
-        return isFirstRouteInCurrentTab;
       },
       child: BlocProvider.value(
         value: _loginBloc,
@@ -108,10 +112,7 @@ class _HomeContainerState extends State<HomeContainer> {
               title: Text(tr(AppStrings.appName)),
             ),
             drawer: _buildDrawerMenu(),
-            body: Stack(children: <Widget>[
-              _buildOffstageNavigator(TabItem.home),
-              _buildOffstageNavigator(TabItem.search),
-            ]),
+            body: _children[_currentTab.index],
             bottomNavigationBar: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -144,21 +145,21 @@ class _HomeContainerState extends State<HomeContainer> {
     );
   }
 
-  Widget _buildOffstageNavigator(TabItem tabItem) {
-    return Offstage(
-      offstage: _navBloc.currentTab != tabItem,
-      child: Navigator(
-          key: _navBloc.tabNavigatorKeys[tabItem],
-          initialRoute: "/",
-          onGenerateRoute: (settings) {
-            if (tabItem == TabItem.home) {
-              return _navBloc.onGenerateRoutes(settings, HomePage());
-            } else {
-              return _navBloc.onGenerateRoutes(settings, SearchSalonsPage());
-            }
-          }),
-    );
-  }
+  // Widget _buildOffstageNavigator(TabItem tabItem) {
+  //   return Offstage(
+  //     offstage: _navBloc.currentTab != tabItem,
+  //     child: Navigator(
+  //         key: _navBloc.tabNavigatorKeys[tabItem],
+  //         initialRoute: "/",
+  //         onGenerateRoute: (settings) {
+  //           if (tabItem == TabItem.home) {
+  //             return _navBloc.onGenerateRoutes(settings, HomePage());
+  //           } else {
+  //             return _navBloc.onGenerateRoutes(settings, SearchSalonsPage());
+  //           }
+  //         }),
+  //   );
+  // }
 
   Widget _buildBottomMenuItem(String text, String icon, TabItem tabItem) {
     return InkWell(
@@ -232,16 +233,16 @@ class _HomeContainerState extends State<HomeContainer> {
                 ],
               )),
           marginVertical(40),
-          _buildDrawerItem(tr(AppStrings.history), icHistory, onClick: (){
+          _buildDrawerItem(tr(AppStrings.history), icHistory, onClick: () {
             Navigator.of(context).pop();
-            _navBloc.add(NavOrdersHistoryPage([]));
+            Navigator.of(context)
+                .pushNamed(OrdersHistoryPage.routeName);
           }),
           _buildDrawerItem(tr(AppStrings.promo), icPromo),
           _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),
-          _buildDrawerItem(tr(AppStrings.settings), icSettings, onClick: (){
-            //61b23d90acf773b3b9a3aa45
+          _buildDrawerItem(tr(AppStrings.settings), icSettings, onClick: () {
             Navigator.of(context).pop();
-            _navBloc.add(NavProfilePage([]));
+            Navigator.of(context).pushNamed(SettingsPage.routeName);
           }),
           _buildDrawerItem(tr(AppStrings.exit), icExit,
               onClick: () => _loginBloc.add(LogoutEvent())),

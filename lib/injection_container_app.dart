@@ -2,7 +2,6 @@ import 'package:get_it/get_it.dart';
 import 'package:salons_app_mobile/prezentation/categories/categories_bloc.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/services_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/prezentation/nav_bloc/nav_bloc.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
 import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
@@ -13,8 +12,6 @@ final getItApp = GetIt.instance;
 
 Future<void> init() async {
   ///Bloc
-  getItApp.registerLazySingleton(() => NavBloc());
-
   getItApp.registerFactory(() => LoginBloc(getItApp(), getItApp(), getItApp(), getItApp(), getItApp()));
   getItApp.registerFactory(() => RegistrationBloc(getItApp()));
   getItApp.registerFactory(() => SalonsBloc(getItApp()));
