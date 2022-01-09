@@ -54,7 +54,11 @@ class AppStrings {
   static const String editProfile = "edit_profile";
   static const String saveChanges = "save_changes";
   static const String cancel = "cancel";
-
+  static const String filters = "filters";
+  static const String apply = "apply";
+  static const String services = "services";
+  static const String distance = "distance";
+  static const String price = "price";
 
 }
 

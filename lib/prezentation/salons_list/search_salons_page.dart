@@ -14,6 +14,8 @@ import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
+import 'package:salons_app_mobile/utils/events/event_bus.dart';
 import 'package:salons_app_mobile/utils/widgets/card_item_widget.dart';
 
 class SearchSalonsPage extends StatefulWidget {
@@ -47,6 +49,12 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
       _salonsBloc.page = 1;
       _salonsBloc.add(LoadSalonsEvent(_searchController.text));
     });
+
+    eventBus.on<ApplySearchFiltersEvent>().listen((event) {
+      _salonsBloc.page = 1;
+      _salonsBloc.add(LoadSalonsEvent(_searchController.text,
+          searchFilters: event.searchFilters));
+    });
   }
 
   void _onRefresh() async {
@@ -61,6 +69,8 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
     } else {
       _refreshController.loadComplete();
     }
+
+    // Scaffold.of(context).openEndDrawer();
   }
 
   @override

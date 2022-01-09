@@ -12,12 +12,15 @@ import 'package:salons_app_mobile/prezentation/login/login_state.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
+import 'package:salons_app_mobile/prezentation/search_filters/search_filters_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
+import 'package:salons_app_mobile/utils/events/event_bus.dart';
 
 enum TabItem { home, search }
 
@@ -42,6 +45,8 @@ class _HomeContainerState extends State<HomeContainer> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final AlertBuilder _alertBuilder = AlertBuilder();
 
+  SearchFilters? _searchFilters;
+
   @override
   void initState() {
     super.initState();
@@ -49,18 +54,13 @@ class _HomeContainerState extends State<HomeContainer> {
     _currentUser = getIt<LocalStorage>().getCurrentUser();
 
     _loginBloc = getItApp<LoginBloc>();
-  }
 
-  void _onItemTapped(TabItem tabItem) {
-    setState(() => _currentTab = tabItem);
-
-    // if (tabItem == _currentTab) {
-    //   // pop to first route
-    //   _navBloc.add(NavPopAll());
-    // } else {
-    //   _navBloc.currentTab = tabItem;
-    //   setState(() => _currentTab = tabItem);
-    // }
+    eventBus.on<ApplySearchFiltersEvent>().listen((event) {
+      print("catch in home container : ${event.searchFilters?.priceFrom}");
+      setState(() {
+        _searchFilters = event.searchFilters;
+      });
+    });
   }
 
   /// Created to be called from navBloc for the ability to switch tabs from outside
@@ -103,15 +103,30 @@ class _HomeContainerState extends State<HomeContainer> {
           child: Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
+              actions: <Widget>[
+                _currentTab == TabItem.home
+                    ? Container()
+                    : IconButton(
+                        icon: SvgPicture.asset(
+                          icFilters,
+                          color: _searchFilters != null ? primaryColor : null,
+                        ),
+                        onPressed: () {
+                          _scaffoldKey.currentState?.openEndDrawer();
+                        },
+                      )
+              ],
               leading: IconButton(
+                icon: SvgPicture.asset(icMenu),
                 onPressed: () {
                   _scaffoldKey.currentState?.openDrawer();
                 },
-                icon: Icon(Icons.menu, color: Colors.black),
               ),
               title: Text(tr(AppStrings.appName)),
             ),
             drawer: _buildDrawerMenu(),
+            endDrawer:
+                Drawer(child: SearchFiltersPage(searchFilters: _searchFilters)),
             body: _children[_currentTab.index],
             bottomNavigationBar: Container(
               decoration: BoxDecoration(
@@ -163,7 +178,7 @@ class _HomeContainerState extends State<HomeContainer> {
 
   Widget _buildBottomMenuItem(String text, String icon, TabItem tabItem) {
     return InkWell(
-      onTap: () => _onItemTapped(tabItem),
+      onTap: () => setState(() => _currentTab = tabItem),
       child: Container(
         child: Container(
           height: 56,
@@ -235,8 +250,7 @@ class _HomeContainerState extends State<HomeContainer> {
           marginVertical(40),
           _buildDrawerItem(tr(AppStrings.history), icHistory, onClick: () {
             Navigator.of(context).pop();
-            Navigator.of(context)
-                .pushNamed(OrdersHistoryPage.routeName);
+            Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
           }),
           _buildDrawerItem(tr(AppStrings.promo), icPromo),
           _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),

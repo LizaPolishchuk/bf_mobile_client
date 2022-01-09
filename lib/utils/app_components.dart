@@ -92,11 +92,21 @@ Widget searchTextField(TextEditingController? controller,
 }
 
 ///Buttons
+
+Widget _buildButtonContainer({required Widget child, double? width}) {
+  if (width == null) {
+    return FittedBox(child: child);
+  }
+  return child;
+}
+
 Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
-    {Color? buttonColor, double? height}) {
-  return FittedBox(
+    {Color? buttonColor, Color? textColor, double? height, double? width}) {
+  return _buildButtonContainer(
+    width: width,
     child: Container(
       height: height ?? 50,
+      width: width,
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: ElevatedButton(
         onPressed: onPressed,
@@ -104,7 +114,11 @@ Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
             ? ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(buttonColor))
             : Theme.of(context).elevatedButtonTheme.style,
-        child: Text(text),
+        child: Text(
+          text,
+          style:
+              textColor != null ? buttonText.copyWith(color: textColor) : null,
+        ),
       ),
     ),
   );

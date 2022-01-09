@@ -7,6 +7,7 @@ import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
+import 'package:salons_app_mobile/prezentation/search_filters/search_filters_bloc.dart';
 
 final getItApp = GetIt.instance;
 
@@ -20,4 +21,5 @@ Future<void> init() async {
   getItApp.registerFactory(() => CategoriesBloc(getItApp()));
   getItApp.registerFactory(() => SalonDetailsBloc(getItApp()));
   getItApp.registerFactory(() => ProfileBloc(getItApp(), getItApp(), getItApp()));
+  getItApp.registerFactory(() => SearchFiltersBloc(getItApp()));
 }

@@ -20,6 +20,8 @@ const String icNotify = 'assets/icons/ic_notify.svg';
 const String icCalendar = 'assets/icons/ic_calendar.svg';
 const String icProfilePlaceholder = 'assets/icons/ic_profile_placeholder.svg';
 const String icCheck = 'assets/icons/ic_check.svg';
+const String icMenu = 'assets/icons/ic_menu.svg';
+const String icFilters = 'assets/icons/ic_filters.svg';
 
 ///Images
 const String masterPlaceholder = 'assets/images/master_image.png';

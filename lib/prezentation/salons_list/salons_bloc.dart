@@ -40,8 +40,11 @@ class SalonsBloc extends Bloc<SalonsEvent, SalonsState> {
       final salonsListOrError = await getSalonsListUseCase(loadTop: true);
       _parseSalonsResponse(salonsListOrError);
     } else if (event is LoadSalonsEvent) {
-      final salonsListOrError =
-          await getSalonsListUseCase(searchText: event.searchText, page: page, limit: limit);
+      final salonsListOrError = await getSalonsListUseCase(
+          searchText: event.searchText,
+          page: page,
+          limit: limit,
+          searchFilters: event.searchFilters);
       _parseSalonsResponse(salonsListOrError);
     }
   }
@@ -50,13 +53,13 @@ class SalonsBloc extends Bloc<SalonsEvent, SalonsState> {
     salonsListOrError.fold((failure) {
       salonsStreamSink.addError(failure.message);
     }, (salonsList) {
-      print("_parseSalonsResponse");
+      print("_parseSalonsResponse ${salonsList.length}, page: $page");
       noMoreData = false;
 
       if (page == 1) {
         this.salonsList = salonsList;
       } else {
-        if(salonsList.length == 0) {
+        if (salonsList.length == 0) {
           print("_parseSalonsResponse no more data set tot true");
 
           noMoreData = true;
