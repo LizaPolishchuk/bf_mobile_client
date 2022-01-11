@@ -114,6 +114,16 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                               _refreshController.loadNoData();
                             }
                           }
+
+                          if (snapshot.hasError) {
+                            String errorMsg = snapshot.error.toString();
+                            if(errorMsg == NoInternetException.noInternetCode) {
+                              errorMsg = tr(AppStrings.noInternetConnection);
+                            } else {
+                              errorMsg = tr(AppStrings.somethingWentWrong);
+                            }
+                            _alertBuilder.showErrorSnackBar(context, errorMsg);
+                          }
                         });
 
                         return SmartRefresher(

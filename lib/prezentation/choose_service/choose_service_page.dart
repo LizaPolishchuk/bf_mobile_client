@@ -70,9 +70,20 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState !=
                             ConnectionState.waiting) {
+
                           SchedulerBinding.instance?.addPostFrameCallback((_) {
                             if (_refreshController.isRefresh)
                               _refreshController.refreshCompleted();
+
+                            if (snapshot.hasError) {
+                              String errorMsg = snapshot.error.toString();
+                              if(errorMsg == NoInternetException.noInternetCode) {
+                                errorMsg = tr(AppStrings.noInternetConnection);
+                              } else {
+                                errorMsg = tr(AppStrings.somethingWentWrong);
+                              }
+                              _alertBuilder.showErrorSnackBar(context, errorMsg);
+                            }
                           });
 
                           var services = snapshot.data ?? [];

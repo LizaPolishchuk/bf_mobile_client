@@ -48,8 +48,8 @@ dependencies:
   url_launcher: ^6.0.12
   event_bus: ^2.0.0
   flutter_native_splash: ^1.3.3
-
   firebase_crashlytics: ^2.2.4
+  another_flushbar: ^1.10.25
 
 
 dev_dependencies:

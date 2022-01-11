@@ -122,7 +122,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           marginVertical(48),
           GenderSelector(
-              genderSelectorType: GenderSelectorType.radio_buttons,
+              genderSelectorType: GenderSelectorType.icons,
               onSelectGender: (int selectedGender) {
                 _selectedGender = selectedGender;
               }),

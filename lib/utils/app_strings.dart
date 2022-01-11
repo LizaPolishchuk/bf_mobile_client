@@ -59,6 +59,8 @@ class AppStrings {
   static const String services = "services";
   static const String distance = "distance";
   static const String price = "price";
+  static const String noInternetConnection = "no_internet_connection";
+  static const String somethingWentWrong = "something_went_wrong";
 
 }
 

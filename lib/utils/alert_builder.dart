@@ -1,9 +1,12 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:salons_app_mobile/utils/app_colors.dart';
 
 class AlertBuilder {
   bool _isLoaderDialogShowed = false;
   bool _isErrorDialogShowed = false;
+  bool _isSnackBarShowed = false;
 
   showLoaderDialog(BuildContext context) {
     if (!_isLoaderDialogShowed) {
@@ -14,19 +17,18 @@ class AlertBuilder {
           context: context,
           useRootNavigator: false,
           barrierDismissible: false,
-          builder: (BuildContext context) =>
-              AlertDialog(
-                content: new Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    Container(
-                      margin: EdgeInsets.only(top: 12),
-                      child: Text("Loading..."),
-                    ),
-                  ],
+          builder: (BuildContext context) => AlertDialog(
+            content: new Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                Container(
+                  margin: EdgeInsets.only(top: 12),
+                  child: Text("Loading..."),
                 ),
-              ),
+              ],
+            ),
+          ),
         );
       });
     }
@@ -50,20 +52,19 @@ class AlertBuilder {
         showDialog(
           context: context,
           useRootNavigator: false,
-          builder: (BuildContext context) =>
-              AlertDialog(
-                content: new Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text("Error!"),
-                    Container(
-                      margin: EdgeInsets.only(top: 12),
-                      child: Text(errorMessage),
-                    ),
-                  ],
+          builder: (BuildContext context) => AlertDialog(
+            content: new Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Error!"),
+                Container(
+                  margin: EdgeInsets.only(top: 12),
+                  child: Text(errorMessage),
                 ),
-              ),
+              ],
+            ),
+          ),
         ).then((value) {
           print("showDialog then");
 
@@ -83,28 +84,49 @@ class AlertBuilder {
     }
   }
 
-  // void _showAlertDialog(String message, bool popToFirstPage) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       content: Text(message),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () {
-  //             if (popToFirstPage) {
-  //               Navigator.of(context).popUntil((route) => route.isFirst);
-  //             } else {
-  //               Navigator.of(context).pop();
-  //             }
-  //           },
-  //           child: const Text(
-  //             'Ok :(',
-  //             textAlign: TextAlign.end,
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
+  showErrorSnackBar(BuildContext context, String errorText) {
+    if (!_isSnackBarShowed) {
+      _isSnackBarShowed = true;
+      Flushbar(
+        maxWidth: 224,
+        padding: const EdgeInsets.all(15),
+        borderRadius: const BorderRadius.all(Radius.circular(50)),
+        messageText: Text(errorText,
+            style: TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center),
+        backgroundColor: errorRed.withAlpha(80),
+        flushbarPosition: FlushbarPosition.TOP,
+        duration: const Duration(seconds: 3),
+      ).show(context).then((value) {
+        Future.delayed(
+            Duration(milliseconds: 500), () => _isSnackBarShowed = false);
+      });
+    }
+  }
+
+// void _showAlertDialog(String message, bool popToFirstPage) {
+//   showDialog(
+//     context: context,
+//     builder: (context) => AlertDialog(
+//       content: Text(message),
+//       actions: [
+//         TextButton(
+//           onPressed: () {
+//             if (popToFirstPage) {
+//               Navigator.of(context).popUntil((route) => route.isFirst);
+//             } else {
+//               Navigator.of(context).pop();
+//             }
+//           },
+//           child: const Text(
+//             'Ok :(',
+//             textAlign: TextAlign.end,
+//           ),
+//         )
+//       ],
+//     ),
+//   );
+// }
 
 }

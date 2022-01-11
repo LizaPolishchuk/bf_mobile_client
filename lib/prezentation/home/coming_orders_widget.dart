@@ -56,7 +56,8 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(tr(AppStrings.comingOrders), style: bodyText3),
-                buttonMoreWithRightArrow(onPressed: () {}, text: tr(AppStrings.all)),
+                buttonMoreWithRightArrow(
+                    onPressed: () {}, text: tr(AppStrings.all)),
               ],
             ),
             marginVertical(16),
@@ -65,10 +66,19 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
                   stream: _ordersBloc.streamOrders,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.waiting) {
-
                       SchedulerBinding.instance?.addPostFrameCallback((_) {
                         if (widget.refreshController.isRefresh)
                           widget.refreshController.refreshCompleted();
+
+                        if (snapshot.hasError) {
+                          String errorMsg = snapshot.error.toString();
+                          if (errorMsg == NoInternetException.noInternetCode) {
+                            errorMsg = tr(AppStrings.noInternetConnection);
+                          } else {
+                            errorMsg = tr(AppStrings.somethingWentWrong);
+                          }
+                          _alertBuilder.showErrorSnackBar(context, errorMsg);
+                        }
                       });
 
                       if (snapshot.data != null && snapshot.data!.length > 0) {

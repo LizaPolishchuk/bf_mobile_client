@@ -56,5 +56,7 @@
   "filters": "Фильтры",
   "services": "Услуги",
   "distance": "Расстояние",
-  "price": "Цена"
+  "price": "Цена",
+  "no_internet_connection": "Отсутсвует интернет соединение",
+  "something_went_wrong": "Упс.. Что-то пошло не так"
 }

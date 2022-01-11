@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,7 @@ import 'package:salons_app_mobile/prezentation/choose_service/choose_service_pag
 import 'package:salons_app_mobile/prezentation/create_order/animated_container.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
+import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
@@ -36,6 +38,7 @@ class CreateOrderPage extends StatefulWidget {
 
 class _CreateOrderPageState extends State<CreateOrderPage> {
   late OrdersBloc _ordersBloc;
+  final AlertBuilder _alertBuilder = AlertBuilder();
 
   Service? _selectedService;
   DateTime? _selectedDay;
@@ -175,7 +178,9 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
           marginHorizontal(6),
           buttonMoreWithRightArrow(
               onPressed: () async {
-                var result = await Navigator.of(context).pushNamed(ChooseServicePage.routeName, arguments: [widget.salon.id, widget.categoryId]);
+                var result = await Navigator.of(context).pushNamed(
+                    ChooseServicePage.routeName,
+                    arguments: [widget.salon.id, widget.categoryId]);
                 if (result != null && result is Service?) {
                   _selectedService = result as Service;
                 }
@@ -254,6 +259,17 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             stream: _ordersBloc.streamOrders,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.waiting) {
+                SchedulerBinding.instance?.addPostFrameCallback((_) {
+                  if (snapshot.hasError) {
+                    String errorMsg = snapshot.error.toString();
+                    if (errorMsg == NoInternetException.noInternetCode) {
+                      errorMsg = tr(AppStrings.noInternetConnection);
+                    } else {
+                      errorMsg = tr(AppStrings.somethingWentWrong);
+                    }
+                    _alertBuilder.showErrorSnackBar(context, errorMsg);
+                  }
+                });
                 return _buildTimeList(snapshot.data ?? []);
               } else {
                 return CircularProgressIndicator();

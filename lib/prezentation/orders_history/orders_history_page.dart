@@ -120,6 +120,16 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
             SchedulerBinding.instance?.addPostFrameCallback((_) {
               if (_refreshController.isRefresh)
                 _refreshController.refreshCompleted();
+
+              if (snapshot.hasError) {
+                String errorMsg = snapshot.error.toString();
+                if(errorMsg == NoInternetException.noInternetCode) {
+                  errorMsg = tr(AppStrings.noInternetConnection);
+                } else {
+                  errorMsg = tr(AppStrings.somethingWentWrong);
+                }
+                _alertBuilder.showErrorSnackBar(context, errorMsg);
+              }
             });
 
             if (snapshot.data != null && snapshot.data!.length > 0) {

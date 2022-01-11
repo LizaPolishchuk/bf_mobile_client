@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
+import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
@@ -26,6 +27,7 @@ class TopSalonsWidget extends StatefulWidget {
 class _TopSalonsWidgetState extends State<TopSalonsWidget> {
   late SalonsBloc _salonsBloc;
   bool isEmptyList = false;
+  AlertBuilder _alertBuilder = AlertBuilder();
 
   @override
   void initState() {
