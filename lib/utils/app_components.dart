@@ -147,16 +147,34 @@ Widget buttonMoreWithRightArrow(
 
 ///Image
 Widget imageWithPlaceholder(String? imageUrl, String placeholder) {
-  return FadeInImage(
-      imageErrorBuilder: (context, error, _) {
-        return Image.asset(
-          placeholder,
-          fit: BoxFit.fill,
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(100),
+    child: Image.network(
+      imageUrl ?? "",
+      height: 64,
+      width: 64,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          return child;
+        }
+        return Container(
+          width: 64,
+          height: 64,
+          alignment: Alignment.center,
+          child: const SizedBox(
+            height: 16,
+            width: 16,
+            child: CircularProgressIndicator(),
+          ),
         );
       },
-      fit: BoxFit.fill,
-      image: NetworkImage(imageUrl ?? ""),
-      placeholder: AssetImage(placeholder));
+      errorBuilder: (context, error, stackTrace) => Image.asset(
+        placeholder,
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
 }
 
 Widget emptyListPlaceholderW(String imagePlaceholder, String text) {

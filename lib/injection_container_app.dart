@@ -20,6 +20,6 @@ Future<void> init() async {
   getItApp.registerFactory(() => ServicesBloc(getItApp()));
   getItApp.registerFactory(() => CategoriesBloc(getItApp()));
   getItApp.registerFactory(() => SalonDetailsBloc(getItApp()));
-  getItApp.registerFactory(() => ProfileBloc(getItApp(), getItApp(), getItApp()));
+  getItApp.registerFactory(() => ProfileBloc(getItApp(), getItApp(), getItApp(), getItApp()));
   getItApp.registerFactory(() => SearchFiltersBloc(getItApp()));
 }

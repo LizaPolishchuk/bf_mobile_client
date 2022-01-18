@@ -22,6 +22,7 @@ const String icProfilePlaceholder = 'assets/icons/ic_profile_placeholder.svg';
 const String icCheck = 'assets/icons/ic_check.svg';
 const String icMenu = 'assets/icons/ic_menu.svg';
 const String icFilters = 'assets/icons/ic_filters.svg';
+const String icCamera = 'assets/icons/ic_camera.svg';
 
 ///Images
 const String masterPlaceholder = 'assets/images/master_image.png';

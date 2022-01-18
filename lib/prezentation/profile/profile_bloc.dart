@@ -8,9 +8,11 @@ import 'package:salons_app_mobile/prezentation/profile/profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetUserUseCase getUserUseCase;
   final UpdateUserUseCase updateUserUseCase;
+  final UpdateUserAvatarUseCase updateUserAvatarUseCase;
   final LocalStorage localStorage;
 
-  ProfileBloc(this.getUserUseCase, this.updateUserUseCase, this.localStorage)
+  ProfileBloc(this.getUserUseCase, this.updateUserUseCase,
+      this.updateUserAvatarUseCase, this.localStorage)
       : super(InitialProfileState());
 
   @override
@@ -29,9 +31,35 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is UpdateProfileEvent) {
       yield LoadingProfileState();
 
-      final updateResult = await updateUserUseCase(event.user);
-      yield updateResult.fold(
-          (error) => ErrorProfileState(error), (user) => ProfileUpdatedState(event.user));
+      UserEntity userToUpdate = event.user;
+
+      print("event is UpdateProfileEvent");
+
+      if (event.userAvatar != null) {
+        final updateAvatarResult =
+            await updateUserAvatarUseCase(event.userAvatar!);
+
+        if (updateAvatarResult.isLeft()) {
+          yield ErrorProfileState(Failure());
+        } else {
+          String url = updateAvatarResult.getOrElse(() => "");
+
+          if (url.isEmpty) {
+            yield ErrorProfileState(Failure());
+          } else {
+            userToUpdate.avatar = url;
+            final updateResult = await updateUserUseCase(userToUpdate);
+
+            yield updateResult.fold((error) => ErrorProfileState(error),
+                (user) => ProfileUpdatedState(user));
+          }
+        }
+      } else {
+        final updateResult = await updateUserUseCase(userToUpdate);
+
+        yield updateResult.fold((error) => ErrorProfileState(error),
+            (user) => ProfileUpdatedState(user));
+      }
     }
   }
 }

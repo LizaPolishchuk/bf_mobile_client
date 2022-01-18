@@ -235,7 +235,7 @@ class _HomeContainerState extends State<HomeContainer> {
                   marginVertical(42),
                   Row(
                     children: [
-                      imageWithPlaceholder("", avatarPlaceholder),
+                      imageWithPlaceholder(_currentUser.avatar, avatarPlaceholder),
                       marginHorizontal(10),
                       Expanded(
                         child: Text(_currentUser.name ?? "",

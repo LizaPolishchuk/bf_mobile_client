@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
@@ -38,6 +40,8 @@ class _SettingsPageState extends State<SettingsPage> {
   int? _selectedGender;
   bool _isEditMode = false;
 
+  File? _pickedAvatar;
+
   @override
   void initState() {
     super.initState();
@@ -71,7 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
             }
 
             if (state is ProfileUpdatedState) {
-                _isEditMode = false;
+              _isEditMode = false;
             }
           },
           builder: (BuildContext context, ProfileState state) {
@@ -107,17 +111,70 @@ class _SettingsPageState extends State<SettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
+                  SizedBox(
                     height: 88,
-                    width: 88,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: accentColor,
-                      borderRadius: BorderRadius.circular(100),
+                    width: 93,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          height: 88,
+                          width: 88,
+                          decoration: BoxDecoration(
+                            color: accentColor,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: _pickedAvatar != null
+                              ? ClipRRect(
+                                  child: Image.file(
+                                    _pickedAvatar!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  borderRadius: BorderRadius.circular(100),
+                                )
+                              : user.avatar?.isNotEmpty == true
+                                  ? ClipRRect(
+                                      child: Image.network(
+                                        user.avatar!,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.circular(100),
+                                    )
+                                  : SvgPicture.asset(icProfilePlaceholder),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: InkWell(
+                            onTap: () async {
+                              if(_isEditMode) {
+                                final PickedFile? image = await ImagePicker()
+                                    .getImage(source: ImageSource.gallery);
+                                if (image != null) {
+                                  setState(() {
+                                    _pickedAvatar = File(image.path);
+                                  });
+                                }
+                              }
+                            },
+                            child: Container(
+                              height: 24,
+                              width: 24,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  width: 1,
+                                  color: primaryColor,
+                                ),
+                              ),
+                              child: SvgPicture.asset(icCamera),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    child: SvgPicture.asset(icProfilePlaceholder),
                   ),
-                  marginVertical(16),
+                  marginVertical(24),
                   Form(
                     key: _formKeyName,
                     child: textFieldWithBorders(
@@ -179,17 +236,20 @@ class _SettingsPageState extends State<SettingsPage> {
                           name: _teControllerName.text,
                           gender: _selectedGender,
                         );
-                        _profileBloc.add(UpdateProfileEvent(userToUpdate));
+                        _profileBloc.add(UpdateProfileEvent(userToUpdate, userAvatar: _pickedAvatar));
                       }
                     }
                   }),
                   const SizedBox(height: 12),
                   if (_isEditMode)
-                    roundedButton(context, tr(AppStrings.cancel), () {
-                      setState(() {
-                        _isEditMode = false;
-                      });
-                    }),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: roundedButton(context, tr(AppStrings.cancel), () {
+                        setState(() {
+                          _isEditMode = false;
+                        });
+                      }),
+                    ),
                 ],
               ),
             ),
