@@ -12,6 +12,11 @@ class LoginWithPhoneEvent extends LoginEvent {
 
   LoginWithPhoneEvent(this.phone);
 }
+class ResendCodePhoneEvent extends LoginEvent {
+  final String phone;
+
+  ResendCodePhoneEvent(this.phone);
+}
 
 class LoginWithPhoneVerifyCodeEvent extends LoginEvent {
   final String code;
@@ -35,3 +40,5 @@ class SignUpWithEmailAndPasswordEvent extends LoginEvent {
 }
 
 class LogoutEvent extends LoginEvent {}
+
+class StartTimerEvent extends LoginEvent {}

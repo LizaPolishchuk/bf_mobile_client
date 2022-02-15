@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
@@ -12,11 +13,16 @@ import 'app_styles.dart';
 Widget textFieldWithBorders(
   String labelText,
   TextEditingController controller, {
+  String? hintText,
   String? errorStr,
   String? prefixText,
+  Widget? prefixIcon,
+  BoxConstraints? prefixIconConstraints,
   bool enabled = true,
   TextInputType? keyboardType,
   int? maxLength,
+  FocusNode? focusNode,
+  List<TextInputFormatter>? inputFormatters,
   FormFieldValidator<String>? validator,
 }) {
   return TextFormField(
@@ -24,10 +30,15 @@ Widget textFieldWithBorders(
     style: bodyText1,
     validator: validator,
     maxLength: maxLength,
+    focusNode: focusNode,
+    inputFormatters: inputFormatters,
     keyboardType: keyboardType ?? TextInputType.text,
     decoration: InputDecoration(
+      prefixIconConstraints: prefixIconConstraints,
       prefixText: prefixText,
       labelText: labelText,
+      hintText: hintText,
+      prefixIcon: prefixIcon,
       errorText: errorStr,
       errorStyle: errorText,
       labelStyle: hintText1,

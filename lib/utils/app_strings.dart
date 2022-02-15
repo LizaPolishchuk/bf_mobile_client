@@ -61,6 +61,11 @@ class AppStrings {
   static const String price = "price";
   static const String noInternetConnection = "no_internet_connection";
   static const String somethingWentWrong = "something_went_wrong";
+  static const String wrongCode = "wrong_code";
+  static const String welcome = "welcome";
+  static const String enterPhoneDescription = "enter_phone_description";
+  static const String didNotReceiveCode = "did_not_receive_code";
+  static const String resendCode = "resend_code";
 
 }
 

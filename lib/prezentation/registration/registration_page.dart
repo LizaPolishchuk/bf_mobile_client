@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
@@ -108,6 +109,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
             child: textFieldWithBorders(
               tr(AppStrings.name),
               _teControllerName,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp('[a-zA-Z]'))
+              ],
               validator: (text) => (text?.isEmpty == true)
                   ? "Это поле не может быть пустым"
                   : null,

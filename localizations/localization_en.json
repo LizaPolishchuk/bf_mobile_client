@@ -58,5 +58,10 @@
   "distance": "Расстояние",
   "price": "Цена",
   "no_internet_connection": "Отсутсвует интернет соединение",
-  "something_went_wrong": "Упс.. Что-то пошло не так"
+  "something_went_wrong": "Упс.. Что-то пошло не так",
+  "wrong_code": "Не верный код",
+  "welcome": "Добро пожаловать!",
+  "enter_phone_description": "Введите номер для того, чтобы войти в приложение",
+  "did_not_receive_code": "Не получили код?",
+  "resend_code": "Отправить ещё раз"
 }

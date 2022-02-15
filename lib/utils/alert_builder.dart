@@ -43,8 +43,6 @@ class AlertBuilder {
   }
 
   showErrorDialog(BuildContext context, String errorMessage) {
-    print("showErrorDialog $_isErrorDialogShowed");
-
     if (!_isErrorDialogShowed) {
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         _isErrorDialogShowed = true;
@@ -75,8 +73,6 @@ class AlertBuilder {
   }
 
   stopErrorDialog(BuildContext context) {
-    print("stopErrorDialog: _isErrorDialogShowed $_isErrorDialogShowed");
-
     if (_isErrorDialogShowed) {
       _isErrorDialogShowed = false;
 
