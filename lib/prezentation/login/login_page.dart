@@ -164,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
               focusNode: _teFocusNode,
               maxLength: 9,
               prefixIcon: Padding(
-                padding: const EdgeInsets.only(left: 10, bottom: 1.5),
+                padding: const EdgeInsets.only(left: 16, bottom: 1.5),
                 child: Text(
                   uaCode,
                   style: bodyText1,
@@ -189,11 +189,19 @@ class _LoginPageState extends State<LoginPage> {
             child: roundedButton(
               context,
               tr(AppStrings.signIn),
-              () {
+              () async {
                 _isButtonPressed = true;
-                if (_formKey.currentState!.validate())
-                  _loginBloc.add(
-                      LoginWithPhoneEvent(uaCode + _teControllerPhone.text));
+                if (_formKey.currentState!.validate()) {
+                  var hasConnection =
+                      await ConnectivityManager.checkInternetConnection();
+                  if (hasConnection) {
+                    _loginBloc.add(
+                        LoginWithPhoneEvent(uaCode + _teControllerPhone.text));
+                  } else {
+                    _alertBuilder.showErrorSnackBar(
+                        context, tr(AppStrings.noInternetConnection));
+                  }
+                }
               },
               width: double.infinity,
             ),

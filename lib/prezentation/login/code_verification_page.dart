@@ -170,17 +170,31 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                 color: primaryColor, height: 26, enabled: true, width: 3),
             currentCode: "",
             onCodeSubmitted: (code) {},
-            onCodeChanged: (code) {
+            onCodeChanged: (code) async {
               if (code!.length == 6) {
-                _loginBloc.add(LoginWithPhoneVerifyCodeEvent(
-                    _teControllerCode.text, widget.phoneNumber));
+                var hasConnection =
+                    await ConnectivityManager.checkInternetConnection();
+                if (hasConnection) {
+                  _loginBloc.add(LoginWithPhoneVerifyCodeEvent(
+                      _teControllerCode.text, widget.phoneNumber));
+                } else {
+                  _alertBuilder.showErrorSnackBar(
+                      context, tr(AppStrings.noInternetConnection));
+                }
               }
             },
           ),
           marginVertical(42),
-          roundedButton(context, tr(AppStrings.continueTxt), () {
-            _loginBloc.add(LoginWithPhoneVerifyCodeEvent(
-                _teControllerCode.text, widget.phoneNumber));
+          roundedButton(context, tr(AppStrings.continueTxt), () async {
+            var hasConnection =
+                await ConnectivityManager.checkInternetConnection();
+            if (hasConnection) {
+              _loginBloc.add(LoginWithPhoneVerifyCodeEvent(
+                  _teControllerCode.text, widget.phoneNumber));
+            } else {
+              _alertBuilder.showErrorSnackBar(
+                  context, tr(AppStrings.noInternetConnection));
+            }
           }),
           Spacer(),
           StreamBuilder<int?>(
@@ -200,11 +214,18 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                             decoration: TextDecoration.underline,
                           ),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () {
+                            ..onTap = () async {
                               if (snapshot.data == null) {
-                                _loginBloc.add(
-                                    LoginWithPhoneEvent(widget.phoneNumber));
-                                _loginBloc.add(StartTimerEvent());
+                                var hasConnection = await ConnectivityManager
+                                    .checkInternetConnection();
+                                if (hasConnection) {
+                                  _loginBloc.add(
+                                      LoginWithPhoneEvent(widget.phoneNumber));
+                                  _loginBloc.add(StartTimerEvent());
+                                }
+                              } else {
+                                _alertBuilder.showErrorSnackBar(context,
+                                    tr(AppStrings.noInternetConnection));
                               }
                             }),
                     ],

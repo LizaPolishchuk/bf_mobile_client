@@ -38,6 +38,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   int? _selectedGender;
   bool? _showGenderError;
+  bool _isButtonPressed = false;
 
   @override
   void initState() {
@@ -45,38 +46,49 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     _registrationBloc = getItApp<RegistrationBloc>();
     _teControllerName = new TextEditingController();
+    _teControllerName.addListener(() {
+      if (_isButtonPressed) {
+        _isButtonPressed = false;
+        _formKey.currentState!.validate();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        reverse: true,
-        child: BlocBuilder<RegistrationBloc, RegistrationState>(
-            bloc: _registrationBloc,
-            builder: (BuildContext context, RegistrationState state) {
-              if (state is LoadingRegistrationState) {
-                _alertBuilder.showLoaderDialog(context);
+      body: BlocConsumer<RegistrationBloc, RegistrationState>(
+          bloc: _registrationBloc,
+          listener: (BuildContext context, state) {
+            if (state is LoadingRegistrationState) {
+              _alertBuilder.showLoaderDialog(context);
+            } else {
+              _alertBuilder.stopLoaderDialog(context);
+            }
+
+            if (state is ErrorRegistrationState) {
+              String errorMsg = state.failure.message;
+              if (errorMsg == NoInternetException.noInternetCode) {
+                errorMsg = tr(AppStrings.noInternetConnection);
               } else {
-                _alertBuilder.stopLoaderDialog(context);
-                _alertBuilder.stopErrorDialog(context);
+                errorMsg = tr(AppStrings.somethingWentWrong);
               }
+              _alertBuilder.showErrorSnackBar(context, errorMsg);
+            }
 
-              if (state is UserUpdatedState) {
-                SchedulerBinding.instance?.addPostFrameCallback((_) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => HomeContainer(),
-                      ),
-                      (Route<dynamic> route) => false);
-                });
-              } else if (state is ErrorRegistrationState) {
-                _alertBuilder.showErrorDialog(context, state.failure.message);
-              }
-
-              return _buildPage();
-            }),
-      ),
+            if (state is UserUpdatedState) {
+              SchedulerBinding.instance?.addPostFrameCallback((_) {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => HomeContainer(),
+                    ),
+                    (Route<dynamic> route) => false);
+              });
+            }
+          },
+          builder: (BuildContext context, RegistrationState state) {
+            return _buildPage();
+          }),
     );
   }
 
@@ -84,18 +96,23 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 28, right: 28, top: 120, bottom: 28),
+      padding: const EdgeInsets.only(left: 28, right: 28, bottom: 28),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Text(
-            tr(AppStrings.appName),
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              color: accentColor,
-              fontSize: 50,
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 120),
+              child: Text(
+                tr(AppStrings.appName),
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: accentColor,
+                  fontSize: 50,
+                ),
+              ),
             ),
           ),
           marginVertical(48),
@@ -106,16 +123,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
           marginVertical(25),
           Form(
             key: _formKey,
-            child: textFieldWithBorders(
-              tr(AppStrings.name),
-              _teControllerName,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp('[a-zA-Z]'))
-              ],
-              validator: (text) => (text?.isEmpty == true)
+            child: textFieldWithBorders(tr(AppStrings.name), _teControllerName,
+                maxLength: 250,
+                keyboardType: TextInputType.name,
+                textCapitalization: TextCapitalization.words,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp('[a-zA-Z ]'))
+                ], validator: (text) {
+              if (!_isButtonPressed) {
+                return null;
+              }
+              return (text?.isEmpty == true)
                   ? "Это поле не может быть пустым"
-                  : null,
-            ),
+                  : null;
+            }),
           ),
           marginVertical(isKeyboard ? 33 : 66),
           Text(
@@ -129,17 +150,30 @@ class _RegistrationPageState extends State<RegistrationPage> {
               genderSelectorType: GenderSelectorType.icons,
               onSelectGender: (int selectedGender) {
                 _selectedGender = selectedGender;
+                if (_showGenderError == true) {
+                  setState(() {
+                    _showGenderError = false;
+                  });
+                }
               }),
           marginVertical(isKeyboard ? 40 : 80),
-          roundedButton(context, tr(AppStrings.continueTxt), () {
+          roundedButton(context, tr(AppStrings.continueTxt), () async {
+            _isButtonPressed = true;
             bool validName = _formKey.currentState!.validate();
             bool validGender = checkIsGenderSelected();
             if (validName && validGender) {
-              UserEntity userToUpdate = widget.user.copy(
-                name: _teControllerName.text,
-                gender: _selectedGender,
-              );
-              _registrationBloc.add(UpdateUserEvent(userToUpdate));
+              var hasConnection =
+                  await ConnectivityManager.checkInternetConnection();
+              if (hasConnection) {
+                UserEntity userToUpdate = widget.user.copy(
+                  name: _teControllerName.text,
+                  gender: _selectedGender,
+                );
+                _registrationBloc.add(UpdateUserEvent(userToUpdate));
+              } else {
+                _alertBuilder.showErrorSnackBar(
+                    context, tr(AppStrings.noInternetConnection));
+              }
             }
           }),
         ],
