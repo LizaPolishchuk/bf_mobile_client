@@ -71,6 +71,9 @@ Widget searchTextField(TextEditingController? controller,
     child: TextFormField(
       controller: controller,
       enabled: isEnabled,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z ]'))
+        ],
       textCapitalization: TextCapitalization.sentences,
       style: hintText2.copyWith(color: Colors.black),
       decoration: InputDecoration(

@@ -29,3 +29,4 @@ const String masterPlaceholder = 'assets/images/master_image.png';
 const String avatarPlaceholder = 'assets/images/avatar_placeholder.png';
 const String loginPlaceholder = 'assets/images/login_placeholder.png';
 const String emptyListPlaceholder = 'assets/images/empty_list_placeholder.png';
+const String emptyOrdersPlaceholder = 'assets/images/empty_orders_placeholder.png';

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,12 +67,8 @@ class _LoginPageState extends State<LoginPage> {
             }
 
             if (state is ErrorLoginState) {
-              String errorMsg = state.failure.message;
-              if (errorMsg == NoInternetException.noInternetCode) {
-                errorMsg = tr(AppStrings.noInternetConnection);
-              } else {
-                errorMsg = tr(AppStrings.somethingWentWrong);
-              }
+              String errorMsg = kDebugMode
+                  ? state.failure.message : tr(AppStrings.somethingWentWrong);
               _alertBuilder.showErrorSnackBar(context, errorMsg);
             } else {
               _alertBuilder.stopErrorDialog(context);

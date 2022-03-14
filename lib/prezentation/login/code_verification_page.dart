@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -88,16 +89,13 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             }
 
             if (state is ErrorCodeVerifyState) {
-              print("${state.failure}");
-              String errorMsg = state.failure.message;
-              if (errorMsg == NoInternetException.noInternetCode) {
-                errorMsg = tr(AppStrings.noInternetConnection);
-              } else {
-                errorMsg =
-                    (state.failure.codeStr == "invalid-verification-code")
-                        ? tr(AppStrings.wrongCode)
-                        : tr(AppStrings.somethingWentWrong);
-              }
+              String errorMsg =
+                  (state.failure.codeStr == "invalid-verification-code")
+                      ? tr(AppStrings.wrongCode)
+                      : kDebugMode
+                          ? state.failure.message
+                          : tr(AppStrings.somethingWentWrong);
+
               _alertBuilder.showErrorSnackBar(context, errorMsg);
             } else {
               _alertBuilder.stopErrorDialog(context);

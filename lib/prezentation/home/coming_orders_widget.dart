@@ -116,23 +116,30 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
     var lastWord = words.removeLast().replaceAll("!", "");
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(emptyListPlaceholder),
+        Image.asset(
+          emptyOrdersPlaceholder,
+          height: 188,
+          width: 300,
+        ),
+        marginVertical(22),
         RichText(
+            textAlign: TextAlign.center,
             text: TextSpan(
-          style: bodyText3,
-          children: [
-            TextSpan(text: words.join(" ")),
-            TextSpan(
-                text: " " + lastWord,
-                style: bodyText3.copyWith(color: primaryColor),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    print('Terms of Service"');
-                  }),
-            TextSpan(text: "!"),
-          ],
-        )),
+              style: bodyText3,
+              children: [
+                TextSpan(text: words.join(" ")),
+                TextSpan(
+                    text: " " + lastWord,
+                    style: bodyText3.copyWith(color: primaryColor),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        print('Terms of Service"');
+                      }),
+                TextSpan(text: "!"),
+              ],
+            )),
       ],
     );
   }

@@ -1,4 +1,6 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +14,7 @@ import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
+import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
@@ -45,32 +48,51 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
 
     _onRefresh();
 
+    Connectivity().onConnectivityChanged.listen((connectivityResult) {
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
+        if (_refreshController.isRefresh) {
+          _onRefresh();
+        } else if (_refreshController.isLoading) {
+          _onLoading();
+        }
+      }
+    });
+
     _searchController.addListener(() {
-      _salonsBloc.page = 1;
-      _salonsBloc.add(LoadSalonsEvent(_searchController.text));
+      _loadSalonsList(_searchController.text);
     });
 
     eventBus.on<ApplySearchFiltersEvent>().listen((event) {
-      _salonsBloc.page = 1;
-      _salonsBloc.add(LoadSalonsEvent(_searchController.text,
-          searchFilters: event.searchFilters));
+      _loadSalonsList(_searchController.text,
+          searchFilters: event.searchFilters);
     });
   }
 
   void _onRefresh() async {
-    _salonsBloc.page = 1;
-    _salonsBloc.add(LoadSalonsEvent(_searchController.text));
+    _loadSalonsList(_searchController.text);
   }
 
   void _onLoading() async {
     if (!_salonsBloc.noMoreData) {
-      _salonsBloc.page += 1;
-      _salonsBloc.add(LoadSalonsEvent(_searchController.text));
+      _loadSalonsList(_searchController.text, nextPage: true);
     } else {
       _refreshController.loadComplete();
     }
+  }
 
-    // Scaffold.of(context).openEndDrawer();
+  _loadSalonsList(String searchKey,
+      {SearchFilters? searchFilters, bool nextPage = false}) async {
+    var hasConnection = await ConnectivityManager.checkInternetConnection();
+    if (hasConnection) {
+      _salonsBloc.page = nextPage ? _salonsBloc.page + 1 : 1;
+      _salonsBloc
+          .add(LoadSalonsEvent(searchKey.trim(), searchFilters: searchFilters));
+    } else {
+      _alertBuilder.showErrorSnackBar(
+          context, tr(AppStrings.noInternetConnection));
+     // _refreshController.loadComplete();
+    }
   }
 
   @override
@@ -116,12 +138,9 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                           }
 
                           if (snapshot.hasError) {
-                            String errorMsg = snapshot.error.toString();
-                            if(errorMsg == NoInternetException.noInternetCode) {
-                              errorMsg = tr(AppStrings.noInternetConnection);
-                            } else {
-                              errorMsg = tr(AppStrings.somethingWentWrong);
-                            }
+                            String errorMsg = kDebugMode
+                                ? snapshot.error.toString()
+                                : tr(AppStrings.somethingWentWrong);
                             _alertBuilder.showErrorSnackBar(context, errorMsg);
                           }
                         });
@@ -140,30 +159,25 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                               } else {
                                 body = SizedBox.shrink();
                               }
-                              // else if (mode == LoadStatus.failed) {
-                              //   body = Text("Load Failed!Click retry!");
-                              // } else {
-                              //   body = Text("No more Data");
-                              // }
                               return Container(
                                 height: 55.0,
                                 child: Center(child: body),
                               );
                             },
                           ),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: salons.length > 0 ? salons.length : 1,
-                            itemBuilder: (context, index) {
-                              return salons.length > 0
-                                  ? CardItemWidget(salons[index], () {
+                          child: salons.length > 0
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: salons.length,
+                                  itemBuilder: (context, index) {
+                                    return CardItemWidget(salons[index], () {
                                       Navigator.of(context).pushNamed(
                                           SalonDetailsPage.routeName,
                                           arguments: salons[index].id);
-                                    })
-                                  : _buildEmptyList();
-                            },
-                          ),
+                                    });
+                                  },
+                                )
+                              : _buildEmptyList(),
                         );
                       } else {
                         return Center(child: CircularProgressIndicator());
@@ -180,10 +194,15 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
   }
 
   Widget _buildEmptyList() {
-    return Container(
-      height: MediaQuery.of(context).size.height / 2,
-      alignment: Alignment.center,
-      child: Text("Empty list"),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(emptyListPlaceholder),
+        Text(
+          tr(AppStrings.nothingFound),
+          style: bodyText3,
+        )
+      ],
     );
   }
 

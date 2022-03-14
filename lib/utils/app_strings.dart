@@ -31,6 +31,7 @@ class AppStrings {
   static const String cancelOrder = "cancel_order";
   static const String home = "home";
   static const String search = "search";
+  static const String searching = "searching";
   static const String salons = "salons";
   static const String signUp = "sign_up";
   static const String aboutUs = "about_us";
