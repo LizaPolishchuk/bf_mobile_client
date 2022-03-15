@@ -13,8 +13,9 @@ class Calendar extends StatefulWidget {
   final Function(DateTime selectedDay)? onSelectDay;
   final CalendarFormat? calendarFormat;
   final double? height;
+  final GlobalKey? dateKey;
 
-  const Calendar({Key? key, this.onSelectDay, this.calendarFormat, this.height}) : super(key: key);
+  const Calendar({Key? key, this.onSelectDay, this.calendarFormat, this.height, this.dateKey}) : super(key: key);
 
   @override
   _CalendarState createState() => _CalendarState();
@@ -32,7 +33,7 @@ class _CalendarState extends State<Calendar> {
     return Align(
       alignment: Alignment.center,
       child: ErrorAnimatedContainer(
-        key: widget.key,
+        key: widget.dateKey,
         height: widget.height ?? 255,
         width: 285,
         child: TableCalendar(

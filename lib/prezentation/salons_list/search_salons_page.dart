@@ -91,7 +91,7 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
     } else {
       _alertBuilder.showErrorSnackBar(
           context, tr(AppStrings.noInternetConnection));
-     // _refreshController.loadComplete();
+      // _refreshController.loadComplete();
     }
   }
 
@@ -173,7 +173,7 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                                     return CardItemWidget(salons[index], () {
                                       Navigator.of(context).pushNamed(
                                           SalonDetailsPage.routeName,
-                                          arguments: salons[index].id);
+                                          arguments: salons[index]);
                                     });
                                   },
                                 )

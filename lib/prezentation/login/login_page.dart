@@ -60,7 +60,6 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocListener<LoginBloc, LoginState>(
           listener: (BuildContext context, state) {
             if (state is LoadingLoginState) {
-              print("login show loader");
               _alertBuilder.showLoaderDialog(context);
             } else {
               _alertBuilder.stopLoaderDialog(context);
@@ -70,8 +69,6 @@ class _LoginPageState extends State<LoginPage> {
               String errorMsg = kDebugMode
                   ? state.failure.message : tr(AppStrings.somethingWentWrong);
               _alertBuilder.showErrorSnackBar(context, errorMsg);
-            } else {
-              _alertBuilder.stopErrorDialog(context);
             }
 
             if (state is VerifyCodeSentState) {

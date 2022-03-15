@@ -23,6 +23,7 @@ const String icCheck = 'assets/icons/ic_check.svg';
 const String icMenu = 'assets/icons/ic_menu.svg';
 const String icFilters = 'assets/icons/ic_filters.svg';
 const String icCamera = 'assets/icons/ic_camera.svg';
+const String icArrowLeftWithShadow = 'assets/icons/ic_arrow_left_with_shadow.svg';
 
 ///Images
 const String masterPlaceholder = 'assets/images/master_image.png';

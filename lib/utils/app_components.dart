@@ -141,7 +141,7 @@ Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
 }
 
 Widget buttonMoreWithRightArrow(
-    {required VoidCallback onPressed,
+    {required VoidCallback? onPressed,
     String? text,
     Color? color,
     double? width}) {

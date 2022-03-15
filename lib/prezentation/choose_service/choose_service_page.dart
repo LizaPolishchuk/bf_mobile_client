@@ -23,8 +23,9 @@ class ChooseServicePage extends StatefulWidget {
 
   final String salonId;
   final String categoryId;
+  final Service? chosenService;
 
-  const ChooseServicePage(this.salonId, this.categoryId);
+  const ChooseServicePage(this.salonId, this.categoryId, this.chosenService);
 
   @override
   _ChooseServicePageState createState() => _ChooseServicePageState();
@@ -35,12 +36,15 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
   final AlertBuilder _alertBuilder = AlertBuilder();
 
   late RefreshController _refreshController;
+  Service? _chosenService;
 
   @override
   void initState() {
     super.initState();
 
     _serviceBloc = getItApp<ServicesBloc>();
+
+    _chosenService = widget.chosenService;
 
     _refreshController = RefreshController();
 
@@ -58,8 +62,16 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
       child: BlocListener<ServicesBloc, ServicesState>(
         listener: (BuildContext context, state) {},
         child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: SvgPicture.asset(
+                  icArrowLeftWithShadow,
+                  color: darkGreyText,
+                )),
+          ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 18),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,19 +82,20 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState !=
                             ConnectionState.waiting) {
-
                           SchedulerBinding.instance?.addPostFrameCallback((_) {
                             if (_refreshController.isRefresh)
                               _refreshController.refreshCompleted();
 
                             if (snapshot.hasError) {
                               String errorMsg = snapshot.error.toString();
-                              if(errorMsg == NoInternetException.noInternetCode) {
+                              if (errorMsg ==
+                                  NoInternetException.noInternetCode) {
                                 errorMsg = tr(AppStrings.noInternetConnection);
                               } else {
                                 errorMsg = tr(AppStrings.somethingWentWrong);
                               }
-                              _alertBuilder.showErrorSnackBar(context, errorMsg);
+                              _alertBuilder.showErrorSnackBar(
+                                  context, errorMsg);
                             }
                           });
 
@@ -110,9 +123,13 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
                 Spacer(),
                 Align(
                   alignment: Alignment.center,
-                  child: roundedButton(context, tr(AppStrings.next), () {
-                     Navigator.of(context).pop(_chosenService);
-                  }, height: 40,),
+                  child: roundedButton(
+                    context,
+                    tr(AppStrings.next),
+                    () {
+                      Navigator.of(context).pop(_chosenService);
+                    },
+                  ),
                 ),
               ],
             ),
@@ -121,8 +138,6 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
       ),
     );
   }
-
-  Service? _chosenService;
 
   Widget _buildServiceItem(Service service) {
     return Container(

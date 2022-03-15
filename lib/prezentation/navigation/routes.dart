@@ -18,7 +18,7 @@ MaterialPageRoute onGenerateRoutes(RouteSettings settings) {
     case SearchSalonsPage.routeName:
       return materialPageRoute(SearchSalonsPage());
     case SalonDetailsPage.routeName:
-      return materialPageRoute(SalonDetailsPage(settings.arguments as String));
+      return materialPageRoute(SalonDetailsPage(settings.arguments as Salon));
     case LoginPage.routeName:
       return materialPageRoute(LoginPage());
     case ChooseCategoryPage.routeName:
@@ -26,7 +26,8 @@ MaterialPageRoute onGenerateRoutes(RouteSettings settings) {
     case ChooseServicePage.routeName:
       return materialPageRoute(ChooseServicePage(
           (settings.arguments as List<dynamic>).first as String,
-          (settings.arguments as List<dynamic>)[1] as String));
+          (settings.arguments as List<dynamic>)[1] as String,
+          (settings.arguments as List<dynamic>)[2] as Service?));
     case CreateOrderPage.routeName:
       return materialPageRoute(CreateOrderPage(
           (settings.arguments as List<dynamic>).first as Salon,

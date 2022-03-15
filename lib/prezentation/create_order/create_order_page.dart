@@ -59,13 +59,19 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildPage();
+    return Scaffold(
+      body: _buildPage(),
+    );
   }
 
   Widget _buildPage() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding:  EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: 16,
+            top: 16 + MediaQuery.of(context).padding.top),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -85,7 +91,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             ),
             marginVertical(10),
             Calendar(
-              key: _dateKey,
+              dateKey: _dateKey,
               onSelectDay: (selectedDay) {
                 _selectedDay = selectedDay;
               },
@@ -159,34 +165,39 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   }
 
   Widget _buildServiceSelector() {
-    return ErrorAnimatedContainer(
-      key: _serviceKey,
-      borderRadius: 10,
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-      margin: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              _selectedService != null
-                  ? "${_selectedService!.name} (${_selectedService!.price?.toStringAsFixed(0)} ${tr(AppStrings.uah)})"
-                  : tr(AppStrings.chooseSpecificCategory),
-              style: hintText2,
-              overflow: TextOverflow.ellipsis,
+    return InkWell(
+      onTap: () async {
+        var result = await Navigator.of(context).pushNamed(
+            ChooseServicePage.routeName,
+            arguments: [widget.salon.id, widget.categoryId, _selectedService]);
+        if (result != null && result is Service?) {
+          setState(() {
+            _selectedService = result as Service;
+          });
+        }
+      },
+      child: ErrorAnimatedContainer(
+        key: _serviceKey,
+        borderRadius: 10,
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+        margin: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                _selectedService != null
+                    ? "${_selectedService!.name} (${_selectedService!.price?.toStringAsFixed(0)} ${tr(AppStrings.uah)})"
+                    : tr(AppStrings.chooseSpecificCategory),
+                style: hintText2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-          marginHorizontal(6),
-          buttonMoreWithRightArrow(
-              onPressed: () async {
-                var result = await Navigator.of(context).pushNamed(
-                    ChooseServicePage.routeName,
-                    arguments: [widget.salon.id, widget.categoryId]);
-                if (result != null && result is Service?) {
-                  _selectedService = result as Service;
-                }
-              },
-              text: tr(AppStrings.choose)),
-        ],
+            marginHorizontal(6),
+            buttonMoreWithRightArrow(
+                onPressed: null,
+                text: tr(AppStrings.choose)),
+          ],
+        ),
       ),
     );
   }
