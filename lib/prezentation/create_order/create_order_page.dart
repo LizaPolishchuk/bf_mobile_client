@@ -270,7 +270,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             stream: _ordersBloc.streamOrders,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.waiting) {
-                SchedulerBinding.instance?.addPostFrameCallback((_) {
+                SchedulerBinding.instance.addPostFrameCallback((_) {
                   if (snapshot.hasError) {
                     String errorMsg = snapshot.error.toString();
                     if (errorMsg == NoInternetException.noInternetCode) {

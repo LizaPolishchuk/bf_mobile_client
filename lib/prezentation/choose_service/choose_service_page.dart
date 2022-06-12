@@ -82,7 +82,7 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState !=
                             ConnectionState.waiting) {
-                          SchedulerBinding.instance?.addPostFrameCallback((_) {
+                          SchedulerBinding.instance.addPostFrameCallback((_) {
                             if (_refreshController.isRefresh)
                               _refreshController.refreshCompleted();
 

@@ -79,67 +79,71 @@ class OrdersItemWidget extends StatelessWidget {
           ),
         ),
         enabled: enableSlidebar,
-        actionPane: SlidableDrawerActionPane(),
-        secondaryActions: [
-          // _buildSlideOption(
-          //   tr(AppStrings.pin),
-          //   primaryColor,
-          //   order.isPinned ? icUnpin : icPin,
-          //   () => onPressedPin(order),
-          // ),
-          _buildSlideOption(
-            tr(AppStrings.cancelOrder),
-            errorRed,
-            icCancel,
-            () {
-              showDialog(
-                context: context,
-                builder: (context) => CancelOrderAlertWidget(
-                  onPressedConfirm: () => onPressedRemove(order),
-                ),
-              );
-            },
-            isRounded: true,
-          ),
-        ],
+        endActionPane: ActionPane(
+          motion: SizedBox.shrink(),
+          children: [
+            //TODO: разкоментувати
+            // _buildSlideOption(
+            //   tr(AppStrings.pin),
+            //   primaryColor,
+            //   order.isPinned ? icUnpin : icPin,
+            //   () => onPressedPin(order),
+            // ),
+            // _buildSlideOption(
+            //   tr(AppStrings.cancelOrder),
+            //   errorRed,
+            //   icCancel,
+            //   () {
+            //     showDialog(
+            //       context: context,
+            //       builder: (context) => CancelOrderAlertWidget(
+            //         onPressedConfirm: () => onPressedRemove(order),
+            //       ),
+            //     );
+            //   },
+            //   isRounded: true,
+            // ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSlideOption(
-      String text, Color color, String icon, Function() onTap,
-      {bool isRounded = false}) {
-    return SlideAction(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: isRounded
-            ? BorderRadius.only(
-                topRight: Radius.circular(10), bottomRight: Radius.circular(10))
-            : null,
-      ),
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            icon,
-            height: 15,
-            width: 15,
-            color: Colors.white,
-          ),
-          marginVertical(6),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w400,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //TODO: пофіксити
+  // Widget _buildSlideOption(
+  //     String text, Color color, String icon, Function() onTap,
+  //     {bool isRounded = false}) {
+  //   return SlideAction(
+  //     decoration: BoxDecoration(
+  //       color: color,
+  //       borderRadius: isRounded
+  //           ? BorderRadius.only(
+  //               topRight: Radius.circular(10), bottomRight: Radius.circular(10))
+  //           : null,
+  //     ),
+  //     onTap: onTap,
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         SvgPicture.asset(
+  //           icon,
+  //           height: 15,
+  //           width: 15,
+  //           color: Colors.white,
+  //         ),
+  //         marginVertical(6),
+  //         Text(
+  //           text,
+  //           textAlign: TextAlign.center,
+  //           style: TextStyle(
+  //             fontSize: 10,
+  //             fontWeight: FontWeight.w400,
+  //             color: Colors.white,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

@@ -10,7 +10,7 @@ class AlertBuilder {
 
   showLoaderDialog(BuildContext context) {
     if (!_isLoaderDialogShowed) {
-      SchedulerBinding.instance?.addPostFrameCallback((_) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
         _isLoaderDialogShowed = true;
 
         showDialog(
@@ -44,7 +44,7 @@ class AlertBuilder {
 
   showErrorDialog(BuildContext context, String errorMessage) {
     if (!_isErrorDialogShowed) {
-      SchedulerBinding.instance?.addPostFrameCallback((_) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
         _isErrorDialogShowed = true;
 
         showDialog(

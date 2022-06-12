@@ -77,7 +77,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             }
 
             if (state is UserUpdatedState) {
-              SchedulerBinding.instance?.addPostFrameCallback((_) {
+              SchedulerBinding.instance.addPostFrameCallback((_) {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) => HomeContainer(),

@@ -1,4 +1,3 @@
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -17,6 +16,7 @@ import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/widgets/card_item_widget.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../injection_container_app.dart';
 
@@ -167,7 +167,7 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
                                   if (snapshot.connectionState !=
                                       ConnectionState.waiting) {
                                     SchedulerBinding.instance
-                                        ?.addPostFrameCallback((_) {
+                                        .addPostFrameCallback((_) {
                                       if (_refreshController.isRefresh)
                                         _refreshController.refreshCompleted();
 

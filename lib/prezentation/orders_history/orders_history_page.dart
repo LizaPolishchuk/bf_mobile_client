@@ -117,7 +117,7 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
         stream: _ordersBloc.streamOrders,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.waiting) {
-            SchedulerBinding.instance?.addPostFrameCallback((_) {
+            SchedulerBinding.instance.addPostFrameCallback((_) {
               if (_refreshController.isRefresh)
                 _refreshController.refreshCompleted();
 

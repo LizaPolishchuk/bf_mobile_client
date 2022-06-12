@@ -1,4 +1,3 @@
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +19,7 @@ import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
 import 'package:salons_app_mobile/utils/events/event_bus.dart';
 import 'package:salons_app_mobile/utils/widgets/card_item_widget.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SearchSalonsPage extends StatefulWidget {
   static const routeName = '/search-salons';
@@ -126,7 +126,7 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                       if (snapshot.connectionState != ConnectionState.waiting) {
                         var salons = snapshot.data ?? [];
 
-                        SchedulerBinding.instance?.addPostFrameCallback((_) {
+                        SchedulerBinding.instance.addPostFrameCallback((_) {
                           if (_refreshController.isRefresh)
                             _refreshController.refreshCompleted();
                           if (_refreshController.isLoading) {

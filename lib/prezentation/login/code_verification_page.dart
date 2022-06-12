@@ -71,7 +71,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
         child: BlocListener<LoginBloc, LoginState>(
           listener: (BuildContext context, state) {
             if (state is LoggedInState) {
-              SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) => (state.isNewUser ?? false)
