@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
@@ -9,8 +7,6 @@ import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/orders/order_item_widget.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -40,8 +36,8 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
       RefreshController(initialRefresh: true);
 
   void _onRefresh() async {
-    _ordersBloc.add(LoadOrdersForCurrentUserEvent(
-        dateFor: _selectedDate?.formatToYYYYMMdd()));
+    _ordersBloc.getOrdersForCurrentUser(
+        dateFor: _selectedDate?.formatToYYYYMMdd());
   }
 
   @override
@@ -49,64 +45,56 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
     super.initState();
 
     _ordersBloc = getItApp<OrdersBloc>();
+
+    _ordersBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _ordersBloc,
-      child: BlocListener<OrdersBloc, OrdersState>(
-        listener: (BuildContext context, state) {
-          if (state is ErrorOrdersState) {
-            _alertBuilder.showErrorDialog(context, state.failure.message);
-          } else {
-            _alertBuilder.stopErrorDialog(context);
-          }
-        },
-        child: Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  tr(AppStrings.ordersHistory),
-                  style: titleText3,
-                ),
-                marginVertical(16),
-                GestureDetector(
-                  child: _buildSearch(),
-                  onTap: () {
-                    setState(() {
-                      _showCalendar = !_showCalendar;
-                    });
-                    if(!_showCalendar && _selectedDate != null) {
-                      _selectedDate = null;
-                      _onRefresh();
-                    }
-                  },
-                ),
-                marginVertical(_showCalendar ? 15 : 25),
-                if (_showCalendar)
-                  Calendar(
-                    height: 140,
-                    calendarFormat: CalendarFormat.twoWeeks,
-                    onSelectDay: (selectedDay) {
-                      _selectedDate = selectedDay;
-                      _onRefresh();
-                    },
-                  ),
-                if (_showCalendar) marginVertical(15),
-                Flexible(
-                  child: SmartRefresher(
-                    controller: _refreshController,
-                    onRefresh: _onRefresh,
-                    child: _buildOrdersList(),
-                  ),
-                ),
-              ],
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tr(AppStrings.ordersHistory),
+              style: titleText3,
             ),
-          ),
+            marginVertical(16),
+            GestureDetector(
+              child: _buildSearch(),
+              onTap: () {
+                setState(() {
+                  _showCalendar = !_showCalendar;
+                });
+                if (!_showCalendar && _selectedDate != null) {
+                  _selectedDate = null;
+                  _onRefresh();
+                }
+              },
+            ),
+            marginVertical(_showCalendar ? 15 : 25),
+            if (_showCalendar)
+              Calendar(
+                height: 140,
+                calendarFormat: CalendarFormat.twoWeeks,
+                onSelectDay: (selectedDay) {
+                  _selectedDate = selectedDay;
+                  _onRefresh();
+                },
+              ),
+            if (_showCalendar) marginVertical(15),
+            Flexible(
+              child: SmartRefresher(
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                child: _buildOrdersList(),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -114,7 +102,7 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
 
   Widget _buildOrdersList() {
     return StreamBuilder<List<OrderEntity>>(
-        stream: _ordersBloc.streamOrders,
+        stream: _ordersBloc.ordersLoaded,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.waiting) {
             SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -123,7 +111,7 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
 
               if (snapshot.hasError) {
                 String errorMsg = snapshot.error.toString();
-                if(errorMsg == NoInternetException.noInternetCode) {
+                if (errorMsg == NoInternetException.noInternetCode) {
                   errorMsg = tr(AppStrings.noInternetConnection);
                 } else {
                   errorMsg = tr(AppStrings.somethingWentWrong);
@@ -178,10 +166,10 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
                             order: orders[index],
                             enableSlidebar: false,
                             onPressedPin: (order) {
-                              _ordersBloc.add(PinOrderEvent(order));
+                              _ordersBloc.pinOrder(order, index);
                             },
                             onPressedRemove: (order) {
-                              _ordersBloc.add(CancelOrderEvent(order));
+                              _ordersBloc.cancelOrder(order);
                             },
                           ),
                         ),

@@ -1,72 +1,86 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:dartz/dartz.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
-import 'salons_event.dart';
-import 'salons_state.dart';
 
-class SalonsBloc extends Bloc<SalonsEvent, SalonsState> {
-  final GetSalonsListUseCase getSalonsListUseCase;
+class SalonsBloc {
+  final GetSalonsListUseCase _getSalonsListUseCase;
 
   SalonsBloc(
-    this.getSalonsListUseCase,
-  ) : super(InitialSalonsState()) {
-    streamController = StreamController<List<Salon>>.broadcast();
-  }
+    this._getSalonsListUseCase,
+  );
 
-  List<Salon> salonsList = [];
+  List<Salon> _salonsList = [];
 
   int page = 1;
   int limit = 5;
   bool noMoreData = false;
 
-  late StreamController<List<Salon>> streamController;
+  final _salonsLoadedSubject = PublishSubject<List<Salon>>();
+  final _errorSubject = PublishSubject<String>();
+  final _isLoadingSubject = PublishSubject<bool>();
 
-  StreamSink<List<Salon>> get salonsStreamSink => streamController.sink;
+  // output stream
+  Stream<List<Salon>> get salonsLoaded => _salonsLoadedSubject.stream;
 
-  Stream<List<Salon>> get streamSalons => streamController.stream;
+  Stream<String> get errorMessage => _errorSubject.stream;
 
-  void dispose() {
-    streamController.close();
-  }
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
 
-  @override
-  Stream<SalonsState> mapEventToState(
-    SalonsEvent event,
-  ) async* {
-    if (event is LoadTopSalonsEvent) {
-      final salonsListOrError = await getSalonsListUseCase(loadTop: true);
-      _parseSalonsResponse(salonsListOrError);
-    } else if (event is LoadSalonsEvent) {
-      final salonsListOrError = await getSalonsListUseCase(
-          searchText: event.searchText,
-          page: page,
-          limit: limit,
-          searchFilters: event.searchFilters);
-      _parseSalonsResponse(salonsListOrError);
-    }
-  }
+  loadTopSalons() async {
+    final response = await _getSalonsListUseCase(loadTop: true);
 
-  void _parseSalonsResponse(Either<Failure, List<Salon>> salonsListOrError) {
-    salonsListOrError.fold((failure) {
-      salonsStreamSink.addError(failure.message);
-    }, (salonsList) {
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      List<Salon> salonsList = response.right;
+
       print("_parseSalonsResponse ${salonsList.length}, page: $page");
       noMoreData = false;
 
       if (page == 1) {
-        this.salonsList = salonsList;
+        this._salonsList = salonsList;
       } else {
         if (salonsList.length == 0) {
           print("_parseSalonsResponse no more data set tot true");
 
           noMoreData = true;
         }
-        this.salonsList.addAll(salonsList);
+        this._salonsList.addAll(salonsList);
       }
-      salonsStreamSink.add(this.salonsList);
-    });
+
+      _salonsLoadedSubject.add(_salonsList);
+    }
+  }
+
+  loadSalons(String searchText, {SearchFilters? searchFilters}) async {
+    final response = await _getSalonsListUseCase(
+        searchText: searchText,
+        page: page,
+        limit: limit,
+        searchFilters: searchFilters);
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      List<Salon> salonsList = response.right;
+
+      print("_parseSalonsResponse ${salonsList.length}, page: $page");
+      noMoreData = false;
+
+      if (page == 1) {
+        this._salonsList = salonsList;
+      } else {
+        if (salonsList.length == 0) {
+          print("_parseSalonsResponse no more data set tot true");
+
+          noMoreData = true;
+        }
+        this._salonsList.addAll(salonsList);
+      }
+
+      _salonsLoadedSubject.add(_salonsList);
+    }
   }
 }

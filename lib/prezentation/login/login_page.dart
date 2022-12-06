@@ -1,13 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
-import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -16,7 +12,6 @@ import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
 import 'login_bloc.dart';
-import 'login_state.dart';
 
 const uaCode = "+380";
 
@@ -49,73 +44,53 @@ class _LoginPageState extends State<LoginPage> {
         _isButtonPressed = false;
       }
     });
+
+    _loginBloc.codeSentSuccess.listen((errorMsg) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            CodeVerificationPage(_loginBloc, uaCode + _teControllerPhone.text),
+      ));
+    });
+
+    _loginBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
+
+    _loginBloc.isLoading.listen((isLoading) {
+      if (isLoading) {
+        _alertBuilder.showLoaderDialog(context);
+      } else {
+        _alertBuilder.stopLoaderDialog(context);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff193a3c),
-      body: BlocProvider.value(
-        value: _loginBloc,
-        child: BlocListener<LoginBloc, LoginState>(
-          listener: (BuildContext context, state) {
-            if (state is LoadingLoginState) {
-              _alertBuilder.showLoaderDialog(context);
-            } else {
-              _alertBuilder.stopLoaderDialog(context);
-            }
-
-            if (state is ErrorLoginState) {
-              String errorMsg = kDebugMode
-                  ? state.failure.message : tr(AppStrings.somethingWentWrong);
-              _alertBuilder.showErrorSnackBar(context, errorMsg);
-            }
-
-            if (state is VerifyCodeSentState) {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => CodeVerificationPage(
-                    _loginBloc, uaCode + _teControllerPhone.text),
-              ));
-            }
-            // else if (state is LoggedInState) {
-            //   Navigator.of(context).pushAndRemoveUntil(
-            //       MaterialPageRoute(
-            //         builder: (context) => (state.isNewUser ?? false)
-            //             ? RegistrationPage(state.user)
-            //             : HomeContainer(),
-            //       ),
-            //       (Route<dynamic> route) => false);
-            // }
-          },
-          bloc: _loginBloc,
-          child: buildPage(),
-        ),
-      ),
-    );
-  }
-
-  Widget buildPage() {
-    return Stack(
-      children: [
-        Image.asset(
-          loginPlaceholder,
-          fit: BoxFit.fill,
-          width: MediaQuery.of(context).size.width,
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(25),
-                topRight: Radius.circular(25),
-              ),
-            ),
-            child: buildLogin(),
+      body: Stack(
+        children: [
+          Image.asset(
+            loginPlaceholder,
+            fit: BoxFit.fill,
+            width: MediaQuery.of(context).size.width,
           ),
-        ),
-      ],
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
+                ),
+              ),
+              child: buildLogin(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -189,8 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                   var hasConnection =
                       await ConnectivityManager.checkInternetConnection();
                   if (hasConnection) {
-                    _loginBloc.add(
-                        LoginWithPhoneEvent(uaCode + _teControllerPhone.text));
+                    _loginBloc.loginWithPhone(uaCode + _teControllerPhone.text);
                   } else {
                     _alertBuilder.showErrorSnackBar(
                         context, tr(AppStrings.noInternetConnection));
@@ -223,12 +197,5 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _loginBloc.dispose();
-
-    super.dispose();
   }
 }

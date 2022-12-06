@@ -5,9 +5,7 @@ import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/prezentation/home/coming_orders_widget.dart';
 import 'package:salons_app_mobile/prezentation/home/top_salons_widget.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/date_utils.dart';
 
@@ -36,8 +34,8 @@ class _HomePageState extends State<HomePage> {
       RefreshController(initialRefresh: true);
 
   void _onRefresh() async {
-    _ordersBloc.add(LoadOrdersForCurrentUserEvent(dateFrom: DateTime.now().formatToYYYYMMddWithTime()));
-    _salonsBloc.add(LoadTopSalonsEvent());
+    _ordersBloc.getOrdersForCurrentUser(dateFrom: DateTime.now().formatToYYYYMMddWithTime());
+    _salonsBloc.loadTopSalons();
   }
 
   @override

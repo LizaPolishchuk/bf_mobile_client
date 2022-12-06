@@ -40,7 +40,7 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Salon>>(
-      stream: _salonsBloc.streamSalons,
+      stream: _salonsBloc.salonsLoaded,
       builder: (context, snapshot) {
         //todo add here animation to better showing
 

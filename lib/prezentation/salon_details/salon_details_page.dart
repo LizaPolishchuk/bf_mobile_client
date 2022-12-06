@@ -1,15 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/categories/choose_category_page.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.dart';
-import 'package:salons_app_mobile/prezentation/salon_details/salon_details_event.dart';
-import 'package:salons_app_mobile/prezentation/salon_details/salon_details_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -44,12 +39,24 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
 
     _salonDetailsBloc = getItApp<SalonDetailsBloc>();
     _loadSalonDetails();
+
+    _salonDetailsBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
+
+    _salonDetailsBloc.isLoading.listen((isLoading) {
+      if (isLoading) {
+        _alertBuilder.showLoaderDialog(context);
+      } else {
+        _alertBuilder.stopLoaderDialog(context);
+      }
+    });
   }
 
   _loadSalonDetails() async {
     var hasConnection = await ConnectivityManager.checkInternetConnection();
     if (hasConnection) {
-      _salonDetailsBloc.add(LoadSalonByIdEvent(widget.salon.id));
+      _salonDetailsBloc.loadSalonById(widget.salon.id);
     } else {
       _alertBuilder.showErrorSnackBar(
           context, tr(AppStrings.noInternetConnection));
@@ -59,29 +66,15 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<SalonDetailsBloc, SalonDetailsState>(
-          bloc: _salonDetailsBloc,
-          listener: (BuildContext _, state) {
-            if (state is LoadingSalonDetailsState) {
-              _alertBuilder.showLoaderDialog(context);
-            } else {
-              _alertBuilder.stopLoaderDialog(context);
-            }
-
-            if (state is ErrorSalonDetailsState) {
-              String errorMsg = kDebugMode
-                  ? state.failure.message
-                  : tr(AppStrings.somethingWentWrong);
-              _alertBuilder.showErrorSnackBar(context, errorMsg);
-            }
-          },
-          builder: (BuildContext context, SalonDetailsState state) {
-            if (state is SalonDetailsLoadedState) {
-              return _buildSalonDetails(state.salon);
-            }
-            return _buildSalonDetails(widget.salon);
-          }),
-    );
+        body: StreamBuilder<Salon>(
+      stream: _salonDetailsBloc.salonLoaded,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return _buildSalonDetails(snapshot.data!);
+        }
+        return _buildSalonDetails(widget.salon);
+      },
+    ));
   }
 
   Widget _buildSalonDetails(Salon salon) {
@@ -166,9 +159,11 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                 context,
                 tr(AppStrings.signUp),
                 () async {
-                  var hasConnection = await ConnectivityManager.checkInternetConnection();
+                  var hasConnection =
+                      await ConnectivityManager.checkInternetConnection();
                   if (hasConnection) {
-                    Navigator.of(context).pushNamed(ChooseCategoryPage.routeName,
+                    Navigator.of(context).pushNamed(
+                        ChooseCategoryPage.routeName,
                         arguments: salon);
                   } else {
                     _alertBuilder.showErrorSnackBar(

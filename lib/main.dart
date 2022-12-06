@@ -4,11 +4,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
+import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
+import 'package:salons_app_mobile/event_bus_events/user_logout_event.dart';
+import 'package:salons_app_mobile/event_bus_events/user_registered_event.dart';
+import 'package:salons_app_mobile/event_bus_events/user_success_logged_in_event.dart';
 import 'package:salons_app_mobile/localization/app_translation_delegate.dart';
 import 'package:salons_app_mobile/localization/application.dart';
 import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/prezentation/login/login_event.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/navigation/routes.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
@@ -114,30 +117,54 @@ class _InitialPageState extends State<InitialPage> {
   late LocalTranslationsDelegate _newLocaleDelegate;
   String? token;
   UserEntity? user;
+  late Widget _initialPage;
 
   @override
   void initState() {
     super.initState();
 
     LocalStorage localStorage = getIt<LocalStorage>();
+
     user = localStorage.getCurrentUser();
     token = localStorage.getAccessToken();
 
-    print("Main: user: $user, token: $token, isRegistered: ${user?.isRegistered}");
+    print(
+        "Main: user: $user, token: $token, isRegistered: ${user?.isRegistered}");
+
+    eventBus.on<UserSuccessLoggedInEvent>().listen((event) {
+      setState(() {
+        _initialPage = event.isNewUser
+            ? RegistrationPage(event.user)
+            : const HomeContainer();
+      });
+    });
+
+    eventBus.on<UserRegisteredEvent>().listen((event) {
+      _initialPage = const HomeContainer();
+    });
+
+    eventBus.on<UserLoggedOutEvent>().listen((event) {
+      setState(() {
+        _initialPage = LoginPage();
+      });
+    });
+
+    _initialPage = (token?.isNotEmpty != true)
+        ? LoginPage()
+        : (user?.isRegistered != true)
+            ? RegistrationPage(user!)
+            : HomeContainer();
 
     if (token != null && user == null) {
       token = null;
-      getIt<LoginBloc>().add(LogoutEvent());
+      getIt<LoginBloc>().logout();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: (token?.isNotEmpty != true)
-            ? LoginPage()
-            : (user?.isRegistered != true)
-                ? RegistrationPage(user!)
-                : HomeContainer());
+      body: _initialPage,
+    );
   }
 }

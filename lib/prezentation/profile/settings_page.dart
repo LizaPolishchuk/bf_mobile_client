@@ -1,14 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
-import 'package:salons_app_mobile/prezentation/profile/profile_event.dart';
-import 'package:salons_app_mobile/prezentation/profile/profile_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -47,10 +44,26 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
 
     _profileBloc = getItApp<ProfileBloc>();
-    _profileBloc.add(GetProfileEvent());
+    _profileBloc.loadUserProfile();
 
     _teControllerName = new TextEditingController();
     _teControllerPhone = new TextEditingController();
+
+    _profileBloc.profileUpdated.listen((_) {
+      _isEditMode = false;
+    });
+
+    _profileBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
+
+    _profileBloc.isLoading.listen((isLoading) {
+      if (isLoading) {
+        _alertBuilder.showLoaderDialog(context);
+      } else {
+        _alertBuilder.stopLoaderDialog(context);
+      }
+    });
   }
 
   @override
@@ -59,32 +72,14 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: Text(tr(AppStrings.settings)),
       ),
-      body: BlocConsumer<ProfileBloc, ProfileState>(
-          bloc: _profileBloc,
-          listener: (BuildContext _, state) {
-            if (state is LoadingProfileState) {
-              _alertBuilder.showLoaderDialog(context);
-            } else {
-              _alertBuilder.stopLoaderDialog(context);
+      body: StreamBuilder<UserEntity>(
+          stream: _profileBloc.profileLoaded,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || snapshot.data == null) {
+              return SizedBox.shrink();
             }
 
-            if (state is ErrorProfileState) {
-              _alertBuilder.showErrorDialog(context, state.failure.message);
-            } else {
-              _alertBuilder.stopErrorDialog(context);
-            }
-
-            if (state is ProfileUpdatedState) {
-              _isEditMode = false;
-            }
-          },
-          builder: (BuildContext context, ProfileState state) {
-            if (state is ProfileLoadedState) {
-              return _buildPage(state.user);
-            } else if (state is ProfileUpdatedState) {
-              return _buildPage(state.user);
-            }
-            return SizedBox.shrink();
+            return _buildPage(snapshot.data!);
           }),
     );
   }
@@ -146,7 +141,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           alignment: Alignment.bottomRight,
                           child: InkWell(
                             onTap: () async {
-                              if(_isEditMode) {
+                              if (_isEditMode) {
                                 final PickedFile? image = await ImagePicker()
                                     .getImage(source: ImageSource.gallery);
                                 if (image != null) {
@@ -236,7 +231,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           name: _teControllerName.text,
                           gender: _selectedGender,
                         );
-                        _profileBloc.add(UpdateProfileEvent(userToUpdate, userAvatar: _pickedAvatar));
+                        _profileBloc.updateUser(userToUpdate,
+                            userAvatar: _pickedAvatar);
                       }
                     }
                   }),

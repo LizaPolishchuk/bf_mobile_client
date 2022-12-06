@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,7 +10,6 @@ import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/choose_service_page.dart';
 import 'package:salons_app_mobile/prezentation/create_order/animated_container.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -150,7 +148,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                     _selectedOrder!.clientId = user.id;
                     _selectedOrder!.clientName = user.name;
 
-                    _ordersBloc.add(UpdateOrderEvent(_selectedOrder!));
+                    _ordersBloc.updateOrder(_selectedOrder!);
 
                     Navigator.of(context).pop();
                   }
@@ -267,7 +265,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
         ),
         marginVertical(12),
         StreamBuilder<List<OrderEntity>>(
-            stream: _ordersBloc.streamOrders,
+            stream: _ordersBloc.ordersLoaded,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.waiting) {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -384,8 +382,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       if (_debounce?.isActive ?? false) _debounce?.cancel();
       _debounce = Timer(const Duration(milliseconds: 600), () {
         String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDay!);
-        _ordersBloc.add(LoadAvailableOrdersByTimeEvent(widget.salon.id,
-            _selectedService!.id, _selectedMaster!.id, formattedDate));
+        _ordersBloc.getAvailableOrdersByTime(widget.salon.id,
+            _selectedService!.id, _selectedMaster!.id, formattedDate);
       });
     }
   }

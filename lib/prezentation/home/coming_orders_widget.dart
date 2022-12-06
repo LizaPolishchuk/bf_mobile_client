@@ -1,13 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -36,78 +33,70 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
     super.initState();
 
     _ordersBloc = widget.ordersBloc;
+
+    _ordersBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _ordersBloc,
-      child: BlocListener<OrdersBloc, OrdersState>(
-        listener: (BuildContext context, state) {
-          if (state is ErrorOrdersState) {
-            _alertBuilder.showErrorDialog(context, state.failure.message);
-          } else {
-            _alertBuilder.stopErrorDialog(context);
-          }
-        },
-        child: Column(
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(tr(AppStrings.comingOrders), style: bodyText3),
-                buttonMoreWithRightArrow(
-                    onPressed: () {}, text: tr(AppStrings.all)),
-              ],
-            ),
-            marginVertical(16),
-            Expanded(
-              child: StreamBuilder<List<OrderEntity>>(
-                  stream: _ordersBloc.streamOrders,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.waiting) {
-                      SchedulerBinding.instance.addPostFrameCallback((_) {
-                        if (widget.refreshController.isRefresh)
-                          widget.refreshController.refreshCompleted();
-
-                        if (snapshot.hasError) {
-                          String errorMsg = snapshot.error.toString();
-                          if (errorMsg == NoInternetException.noInternetCode) {
-                            errorMsg = tr(AppStrings.noInternetConnection);
-                          } else {
-                            errorMsg = tr(AppStrings.somethingWentWrong);
-                          }
-                          _alertBuilder.showErrorSnackBar(context, errorMsg);
-                        }
-                      });
-
-                      if (snapshot.data != null && snapshot.data!.length > 0) {
-                        var orders = snapshot.data!;
-                        return ListView.builder(
-                          itemCount: orders.length,
-                          itemBuilder: (context, index) {
-                            return OrdersItemWidget(
-                              order: orders[index],
-                              onPressedPin: (order) {
-                                _ordersBloc.add(PinOrderEvent(order));
-                              },
-                              onPressedRemove: (order) {
-                                _ordersBloc.add(CancelOrderEvent(order));
-                              },
-                            );
-                          },
-                        );
-                      } else {
-                        return _buildEmptyList();
-                      }
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  }),
-            )
+            Text(tr(AppStrings.comingOrders), style: bodyText3),
+            buttonMoreWithRightArrow(
+                onPressed: () {}, text: tr(AppStrings.all)),
           ],
         ),
-      ),
+        marginVertical(16),
+        Expanded(
+          child: StreamBuilder<List<OrderEntity>>(
+              stream: _ordersBloc.ordersLoaded,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.waiting) {
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    if (widget.refreshController.isRefresh)
+                      widget.refreshController.refreshCompleted();
+
+                    if (snapshot.hasError) {
+                      String errorMsg = snapshot.error.toString();
+                      if (errorMsg == NoInternetException.noInternetCode) {
+                        errorMsg = tr(AppStrings.noInternetConnection);
+                      } else {
+                        errorMsg = tr(AppStrings.somethingWentWrong);
+                      }
+                      _alertBuilder.showErrorSnackBar(context, errorMsg);
+                    }
+                  });
+
+                  if (snapshot.data != null && snapshot.data!.length > 0) {
+                    var orders = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        return OrdersItemWidget(
+                          order: orders[index],
+                          onPressedPin: (order) {
+                            _ordersBloc.pinOrder(order, index);
+                          },
+                          onPressedRemove: (order) {
+                            _ordersBloc.cancelOrder(order);
+                          },
+                        );
+                      },
+                    );
+                  } else {
+                    return _buildEmptyList();
+                  }
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }),
+        )
+      ],
     );
   }
 

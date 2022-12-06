@@ -1,14 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/home/home_container.dart';
-import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
+import 'package:salons_app_mobile/prezentation/login/code_verification_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -17,8 +12,6 @@ import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import 'login_bloc.dart';
-import 'login_event.dart';
-import 'login_state.dart';
 
 class CodeVerificationPage extends StatefulWidget {
   static const routeName = '/code-verification';
@@ -33,7 +26,7 @@ class CodeVerificationPage extends StatefulWidget {
 }
 
 class _CodeVerificationPageState extends State<CodeVerificationPage> {
-  late LoginBloc _loginBloc;
+  late CodeVerifyBloc _codeVerifyBloc;
   late TextEditingController _teControllerCode;
   final AlertBuilder _alertBuilder = new AlertBuilder();
 
@@ -41,21 +34,46 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
   void initState() {
     super.initState();
 
-    listenForCode();
+    widget.loginBloc.codeSentSuccess.listen((event) {
+      SmsAutoFill().listenForCode();
+    });
 
     _teControllerCode = TextEditingController();
-    _loginBloc = widget.loginBloc;
-    _loginBloc.add(StartTimerEvent());
+    _codeVerifyBloc = getIt<CodeVerifyBloc>();
+    _codeVerifyBloc.setLoginBloc(widget.loginBloc);
+
+    _codeVerifyBloc.startTimerToResendCode();
+
+    // _codeVerifyBloc.loggedInSuccess.listen((event) {
+    //   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+    //     Navigator.of(context).pushAndRemoveUntil(
+    //         MaterialPageRoute(
+    //           builder: (context) => (event.values.first ?? false)
+    //               ? RegistrationPage(event.keys.last)
+    //               : HomeContainer(),
+    //         ),
+    //         (Route<dynamic> route) => false);
+    //   });
+    // });
+
+    _codeVerifyBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
+
+    _codeVerifyBloc.isLoading.listen((isLoading) {
+      if (isLoading) {
+        _alertBuilder.showLoaderDialog(context);
+      } else {
+        _alertBuilder.stopLoaderDialog(context);
+      }
+    });
   }
 
   @override
   void dispose() {
     SmsAutoFill().unregisterListener();
+    _codeVerifyBloc.dispose();
     super.dispose();
-  }
-
-  void listenForCode() async {
-    await SmsAutoFill().listenForCode;
   }
 
   @override
@@ -68,68 +86,29 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
         ),
       ),
       body: SafeArea(
-        child: BlocListener<LoginBloc, LoginState>(
-          listener: (BuildContext context, state) {
-            if (state is LoggedInState) {
-              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => (state.isNewUser ?? false)
-                          ? RegistrationPage(state.user)
-                          : HomeContainer(),
-                    ),
-                    (Route<dynamic> route) => false);
-              });
-            }
-
-            if (state is LoadingCodeVerifyState) {
-              _alertBuilder.showLoaderDialog(context);
-            } else {
-              _alertBuilder.stopLoaderDialog(context);
-            }
-
-            if (state is ErrorCodeVerifyState) {
-              String errorMsg =
-                  (state.failure.codeStr == "invalid-verification-code")
-                      ? tr(AppStrings.wrongCode)
-                      : kDebugMode
-                          ? state.failure.message
-                          : tr(AppStrings.somethingWentWrong);
-
-              _alertBuilder.showErrorSnackBar(context, errorMsg);
-            } else {
-              _alertBuilder.stopErrorDialog(context);
-            }
-          },
-          bloc: _loginBloc,
-          child: buildPage(),
-        ),
-      ),
-    );
-  }
-
-  Widget buildPage() {
-    return Stack(
-      children: [
-        Container(
-          height: MediaQuery.of(context).size.height,
-          color: bgGrey,
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            margin: const EdgeInsets.only(top: 20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(25),
-                topRight: Radius.circular(25),
+        child: Stack(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              color: bgGrey,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: const EdgeInsets.only(top: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25),
+                  ),
+                ),
+                child: buildContent(),
               ),
             ),
-            child: buildContent(),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -170,33 +149,19 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             onCodeSubmitted: (code) {},
             onCodeChanged: (code) async {
               if (code!.length == 6) {
-                var hasConnection =
-                    await ConnectivityManager.checkInternetConnection();
-                if (hasConnection) {
-                  _loginBloc.add(LoginWithPhoneVerifyCodeEvent(
-                      _teControllerCode.text, widget.phoneNumber));
-                } else {
-                  _alertBuilder.showErrorSnackBar(
-                      context, tr(AppStrings.noInternetConnection));
-                }
+                _codeVerifyBloc.verifyCode(
+                    widget.phoneNumber, _teControllerCode.text);
               }
             },
           ),
           marginVertical(42),
           roundedButton(context, tr(AppStrings.continueTxt), () async {
-            var hasConnection =
-                await ConnectivityManager.checkInternetConnection();
-            if (hasConnection) {
-              _loginBloc.add(LoginWithPhoneVerifyCodeEvent(
-                  _teControllerCode.text, widget.phoneNumber));
-            } else {
-              _alertBuilder.showErrorSnackBar(
-                  context, tr(AppStrings.noInternetConnection));
-            }
+            _codeVerifyBloc.verifyCode(
+                widget.phoneNumber, _teControllerCode.text);
           }),
           Spacer(),
           StreamBuilder<int?>(
-              stream: _loginBloc.streamTime,
+              stream: _codeVerifyBloc.resendCodeTime,
               builder: (context, snapshot) {
                 return RichText(
                   text: TextSpan(
@@ -217,9 +182,8 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                                 var hasConnection = await ConnectivityManager
                                     .checkInternetConnection();
                                 if (hasConnection) {
-                                  _loginBloc.add(
-                                      LoginWithPhoneEvent(widget.phoneNumber));
-                                  _loginBloc.add(StartTimerEvent());
+                                  _codeVerifyBloc
+                                      .resendCode(widget.phoneNumber);
                                 }
                               } else {
                                 _alertBuilder.showErrorSnackBar(context,

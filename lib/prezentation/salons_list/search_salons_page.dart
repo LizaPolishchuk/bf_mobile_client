@@ -1,16 +1,14 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/salons_event.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/salons_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
@@ -19,7 +17,6 @@ import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
 import 'package:salons_app_mobile/utils/events/event_bus.dart';
 import 'package:salons_app_mobile/utils/widgets/card_item_widget.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SearchSalonsPage extends StatefulWidget {
   static const routeName = '/search-salons';
@@ -67,6 +64,10 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
       _loadSalonsList(_searchController.text,
           searchFilters: event.searchFilters);
     });
+
+    _salonsBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
   }
 
   void _onRefresh() async {
@@ -86,8 +87,7 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
     var hasConnection = await ConnectivityManager.checkInternetConnection();
     if (hasConnection) {
       _salonsBloc.page = nextPage ? _salonsBloc.page + 1 : 1;
-      _salonsBloc
-          .add(LoadSalonsEvent(searchKey.trim(), searchFilters: searchFilters));
+      _salonsBloc.loadSalons(searchKey.trim(), searchFilters: searchFilters);
     } else {
       _alertBuilder.showErrorSnackBar(
           context, tr(AppStrings.noInternetConnection));
@@ -97,98 +97,86 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _salonsBloc,
-      child: BlocListener<SalonsBloc, SalonsState>(
-        listener: (BuildContext context, state) {
-          if (state is ErrorSalonsState) {
-            _alertBuilder.showErrorDialog(context, state.failure.message);
-          } else {
-            _alertBuilder.stopErrorDialog(context);
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(left: 18, right: 18, top: 44),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              searchTextField(_searchController),
-              marginVertical(24),
-              Text(
-                tr(AppStrings.salons),
-                style: bodyText3,
-              ),
-              marginVertical(14),
-              Expanded(
-                child: StreamBuilder<List<Salon>>(
-                    stream: _salonsBloc.streamSalons,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.waiting) {
-                        var salons = snapshot.data ?? [];
-
-                        SchedulerBinding.instance.addPostFrameCallback((_) {
-                          if (_refreshController.isRefresh)
-                            _refreshController.refreshCompleted();
-                          if (_refreshController.isLoading) {
-                            if (salons.length > 0) {
-                              _refreshController.loadComplete();
-                            } else {
-                              _refreshController.loadNoData();
-                            }
-                          }
-
-                          if (snapshot.hasError) {
-                            String errorMsg = kDebugMode
-                                ? snapshot.error.toString()
-                                : tr(AppStrings.somethingWentWrong);
-                            _alertBuilder.showErrorSnackBar(context, errorMsg);
-                          }
-                        });
-
-                        return SmartRefresher(
-                          enablePullDown: true,
-                          enablePullUp: true,
-                          controller: _refreshController,
-                          onRefresh: _onRefresh,
-                          onLoading: _onLoading,
-                          footer: CustomFooter(
-                            builder: (BuildContext? context, LoadStatus? mode) {
-                              Widget body;
-                              if (mode == LoadStatus.loading) {
-                                body = CupertinoActivityIndicator();
-                              } else {
-                                body = SizedBox.shrink();
-                              }
-                              return Container(
-                                height: 55.0,
-                                child: Center(child: body),
-                              );
-                            },
-                          ),
-                          child: salons.length > 0
-                              ? ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: salons.length,
-                                  itemBuilder: (context, index) {
-                                    return CardItemWidget(salons[index], () {
-                                      Navigator.of(context).pushNamed(
-                                          SalonDetailsPage.routeName,
-                                          arguments: salons[index]);
-                                    });
-                                  },
-                                )
-                              : _buildEmptyList(),
-                        );
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                    }),
-                // ],
-                // ),
-              )
-            ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 18, right: 18, top: 44),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          searchTextField(_searchController),
+          marginVertical(24),
+          Text(
+            tr(AppStrings.salons),
+            style: bodyText3,
           ),
-        ),
+          marginVertical(14),
+          Expanded(
+            child: StreamBuilder<List<Salon>>(
+                stream: _salonsBloc.salonsLoaded,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.waiting) {
+                    var salons = snapshot.data ?? [];
+
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      if (_refreshController.isRefresh)
+                        _refreshController.refreshCompleted();
+                      if (_refreshController.isLoading) {
+                        if (salons.length > 0) {
+                          _refreshController.loadComplete();
+                        } else {
+                          _refreshController.loadNoData();
+                        }
+                      }
+
+                      if (snapshot.hasError) {
+                        String errorMsg = kDebugMode
+                            ? snapshot.error.toString()
+                            : tr(AppStrings.somethingWentWrong);
+                        _alertBuilder.showErrorSnackBar(context, errorMsg);
+                      }
+                    });
+
+                    return SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: true,
+                      controller: _refreshController,
+                      onRefresh: _onRefresh,
+                      onLoading: _onLoading,
+                      footer: CustomFooter(
+                        builder: (BuildContext? context, LoadStatus? mode) {
+                          Widget body;
+                          if (mode == LoadStatus.loading) {
+                            body = CupertinoActivityIndicator();
+                          } else {
+                            body = SizedBox.shrink();
+                          }
+                          return Container(
+                            height: 55.0,
+                            child: Center(child: body),
+                          );
+                        },
+                      ),
+                      child: salons.length > 0
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: salons.length,
+                              itemBuilder: (context, index) {
+                                return CardItemWidget(salons[index], () {
+                                  Navigator.of(context).pushNamed(
+                                      SalonDetailsPage.routeName,
+                                      arguments: salons[index]);
+                                });
+                              },
+                            )
+                          : _buildEmptyList(),
+                    );
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                }),
+            // ],
+            // ),
+          )
+        ],
       ),
     );
   }
@@ -208,7 +196,6 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
 
   @override
   void dispose() {
-    _salonsBloc.dispose();
     _refreshController.dispose();
     _searchController.dispose();
     super.dispose();

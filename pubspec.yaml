@@ -50,6 +50,7 @@ dependencies:
   flutter_native_splash: ^2.2.3
   firebase_crashlytics: ^2.8.1
   another_flushbar: ^1.10.29
+  rxdart: ^0.27.4
 
 
 dev_dependencies:

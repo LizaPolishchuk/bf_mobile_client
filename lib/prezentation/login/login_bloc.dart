@@ -1,106 +1,68 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:dartz/dartz.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
-import 'login_event.dart';
-import 'login_state.dart';
+class LoginBloc {
+  LoginWithPhoneUseCase _loginWithPhoneUseCase;
+  SignOutUseCase _signOutUseCase;
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginWithGoogleUseCase loginWithGoogle;
-  LoginWithFacebookUseCase loginWithFacebook;
-  LoginWithPhoneUseCase loginWithPhoneUseCase;
-  LoginWithPhoneVerifyCodeUseCase loginWithPhoneVerifyCodeUseCase;
-  SignOutUseCase signOut;
+  LoginBloc(this._loginWithPhoneUseCase, this._signOutUseCase);
 
-  LoginBloc(
-      this.loginWithGoogle,
-      this.loginWithFacebook,
-      this.loginWithPhoneUseCase,
-      this.loginWithPhoneVerifyCodeUseCase,
-      this.signOut)
-      : super(InitialLoginState()){
-    streamController = StreamController<int?>.broadcast();
+  final _codeSentSubject = PublishSubject<void>();
+  final _loggedOutSubject = PublishSubject<void>();
+  final _errorSubject = PublishSubject<String>();
+  final _isLoadingSubject = PublishSubject<bool>();
+
+  // output stream
+  Stream<void> get loggedOutSuccess => _loggedOutSubject.stream;
+
+  Stream<void> get codeSentSuccess => _codeSentSubject.stream;
+
+  Stream<String> get errorMessage => _errorSubject.stream;
+
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
+
+  void loginWithPhone(String phone) async {
+    _isLoadingSubject.add(true);
+    final response = await _loginWithPhoneUseCase(phone);
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _codeSentSubject.add(null);
+    }
+    _isLoadingSubject.add(false);
   }
 
-  @override
-  LoginState get initialState => InitialLoginState();
-
-  late StreamController<int?> streamController;
-  StreamSink<int?> get streamSink => streamController.sink;
-  Stream<int?> get streamTime => streamController.stream;
-  int _timeToResendCode = 60;
-  Timer? _timer;
-
-  @override
-  Stream<LoginState> mapEventToState(
-    LoginEvent event,
-  ) async* {
-    if (event is LoginWithGoogleEvent) {
-      yield LoadingLoginState();
-      final loginResult = await loginWithGoogle();
-      yield* _loggedInOrFailure(loginResult);
-    } else if (event is LoginWithFacebookEvent) {
-      yield LoadingLoginState();
-      final loginResult = await loginWithFacebook();
-      yield* _loggedInOrFailure(loginResult);
-    } else if (event is LoginWithPhoneEvent) {
-      yield LoadingLoginState();
-      final loginResult = await loginWithPhoneUseCase(event.phone);
-      yield loginResult.fold((failure) => ErrorLoginState(failure),
-          (_) => VerifyCodeSentState());
-    }  else if (event is ResendCodePhoneEvent) {
-      yield LoadingCodeVerifyState();
-      final loginResult = await loginWithPhoneUseCase(event.phone);
-      yield loginResult.fold((failure) => ErrorCodeVerifyState(failure),
-          (_) => VerifyCodeResentState());
-    } else if (event is LoginWithPhoneVerifyCodeEvent) {
-      yield LoadingCodeVerifyState();
-      final loginResult = await loginWithPhoneVerifyCodeUseCase(event.code, event.phoneNumber);
-      yield loginResult.fold((failure) => ErrorCodeVerifyState(failure),
-              (response) {
-            return LoggedInState(response.keys.first, response.values.first);
-          });
-    } else if (event is LogoutEvent) {
-      yield LoadingLoginState();
-      final signoutResult = await signOut();
-      yield* _signedOutOrFailure(signoutResult);
-    } else if (event is StartTimerEvent) {
-      _timeToResendCode = 60;
-      _timer = Timer.periodic(
-        const Duration(seconds: 1),
-            (Timer timer) {
-          if (_timeToResendCode == 0) {
-            streamSink.add(null);
-            timer.cancel();
-          } else {
-            _timeToResendCode--;
-            streamSink.add(_timeToResendCode);
-          }
-        },
-      );
+  void logout() async {
+    final response = await _signOutUseCase();
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _loggedOutSubject.add(null);
     }
   }
 
-  Stream<LoginState> _loggedInOrFailure(
-    Either<Failure, Map<UserEntity, bool?>> failureOrUserId,
-  ) async* {
-    yield failureOrUserId.fold((failure) => ErrorLoginState(failure),
-        (response) {
-      return LoggedInState(response.keys.first, response.values.first);
-    });
-  }
+// void loginWithGoogle() async {
+//   _isLoadingSubject.add(true);
+//   final response = await loginWithGoogleUseCase();
+//   if (response.isLeft) {
+//     _errorSubject.add(response.left.message);
+//   } else {
+//     _loggedInSubject.add(null);
+//   }
+//   _isLoadingSubject.add(false);
+// }
+//
+// void loginWithFacebook() async {
+//   _isLoadingSubject.add(true);
+//   final response = await loginWithFacebookUseCase();
+//   if (response.isLeft) {
+//     _errorSubject.add(response.left.message);
+//   } else {
+//     _loggedInSubject.add(null);
+//   }
+//   _isLoadingSubject.add(false);
+// }
 
-  Stream<LoginState> _signedOutOrFailure(
-    Either<Failure, void> failureOrUserId,
-  ) async* {
-    yield failureOrUserId.fold((failure) => ErrorLoginState(failure),
-        (voidResult) => LoggedOutState());
-  }
-
-  void dispose() {
-    streamController.close();
-    _timer?.cancel();
-  }
 }

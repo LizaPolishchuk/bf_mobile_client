@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/services_bloc.dart';
-import 'package:salons_app_mobile/prezentation/choose_service/services_event.dart';
-import 'package:salons_app_mobile/prezentation/choose_service/services_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -52,88 +48,78 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
   }
 
   void _onRefresh() async {
-    _serviceBloc.add(LoadServicesListEvent(widget.salonId, widget.categoryId));
+    _serviceBloc.getServices(widget.salonId, widget.categoryId);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _serviceBloc,
-      child: BlocListener<ServicesBloc, ServicesState>(
-        listener: (BuildContext context, state) {},
-        child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: SvgPicture.asset(
-                  icArrowLeftWithShadow,
-                  color: darkGreyText,
-                )),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: StreamBuilder<List<Service>>(
-                      stream: _serviceBloc.streamServices,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState !=
-                            ConnectionState.waiting) {
-                          SchedulerBinding.instance.addPostFrameCallback((_) {
-                            if (_refreshController.isRefresh)
-                              _refreshController.refreshCompleted();
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: SvgPicture.asset(
+              icArrowLeftWithShadow,
+              color: darkGreyText,
+            )),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: StreamBuilder<List<Service>>(
+                  stream: _serviceBloc.servicesLoaded,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.waiting) {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        if (_refreshController.isRefresh)
+                          _refreshController.refreshCompleted();
 
-                            if (snapshot.hasError) {
-                              String errorMsg = snapshot.error.toString();
-                              if (errorMsg ==
-                                  NoInternetException.noInternetCode) {
-                                errorMsg = tr(AppStrings.noInternetConnection);
-                              } else {
-                                errorMsg = tr(AppStrings.somethingWentWrong);
-                              }
-                              _alertBuilder.showErrorSnackBar(
-                                  context, errorMsg);
-                            }
-                          });
-
-                          var services = snapshot.data ?? [];
-                          return SmartRefresher(
-                            enablePullDown: true,
-                            controller: _refreshController,
-                            onRefresh: _onRefresh,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return services.length > 0
-                                    ? _buildServiceItem(services[index])
-                                    : _buildEmptyList();
-                              },
-                              itemCount:
-                                  services.length > 0 ? services.length : 1,
-                            ),
-                          );
-                        } else {
-                          return Center(child: CircularProgressIndicator());
+                        if (snapshot.hasError) {
+                          String errorMsg = snapshot.error.toString();
+                          if (errorMsg == NoInternetException.noInternetCode) {
+                            errorMsg = tr(AppStrings.noInternetConnection);
+                          } else {
+                            errorMsg = tr(AppStrings.somethingWentWrong);
+                          }
+                          _alertBuilder.showErrorSnackBar(context, errorMsg);
                         }
-                      }),
-                ),
-                Spacer(),
-                Align(
-                  alignment: Alignment.center,
-                  child: roundedButton(
-                    context,
-                    tr(AppStrings.next),
-                    () {
-                      Navigator.of(context).pop(_chosenService);
-                    },
-                  ),
-                ),
-              ],
+                      });
+
+                      var services = snapshot.data ?? [];
+                      return SmartRefresher(
+                        enablePullDown: true,
+                        controller: _refreshController,
+                        onRefresh: _onRefresh,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return services.length > 0
+                                ? _buildServiceItem(services[index])
+                                : _buildEmptyList();
+                          },
+                          itemCount: services.length > 0 ? services.length : 1,
+                        ),
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  }),
             ),
-          ),
+            Spacer(),
+            Align(
+              alignment: Alignment.center,
+              child: roundedButton(
+                context,
+                tr(AppStrings.next),
+                () {
+                  Navigator.of(context).pop(_chosenService);
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -184,11 +170,5 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
       alignment: Alignment.center,
       child: Text("Empty list"),
     );
-  }
-
-  @override
-  void dispose() {
-    _serviceBloc.dispose();
-    super.dispose();
   }
 }

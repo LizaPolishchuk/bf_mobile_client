@@ -1,16 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
-import 'package:salons_app_mobile/prezentation/registration/registration_event.dart';
-import 'package:salons_app_mobile/prezentation/registration/registration_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -52,43 +44,24 @@ class _RegistrationPageState extends State<RegistrationPage> {
         _formKey.currentState!.validate();
       }
     });
+
+    _registrationBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
+
+    _registrationBloc.isLoading.listen((isLoading) {
+      if (isLoading) {
+        _alertBuilder.showLoaderDialog(context);
+      } else {
+        _alertBuilder.stopLoaderDialog(context);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<RegistrationBloc, RegistrationState>(
-          bloc: _registrationBloc,
-          listener: (BuildContext context, state) {
-            if (state is LoadingRegistrationState) {
-              _alertBuilder.showLoaderDialog(context);
-            } else {
-              _alertBuilder.stopLoaderDialog(context);
-            }
-
-            if (state is ErrorRegistrationState) {
-              String errorMsg = state.failure.message;
-              if (errorMsg == NoInternetException.noInternetCode) {
-                errorMsg = tr(AppStrings.noInternetConnection);
-              } else {
-                errorMsg = tr(AppStrings.somethingWentWrong);
-              }
-              _alertBuilder.showErrorSnackBar(context, errorMsg);
-            }
-
-            if (state is UserUpdatedState) {
-              SchedulerBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => HomeContainer(),
-                    ),
-                    (Route<dynamic> route) => false);
-              });
-            }
-          },
-          builder: (BuildContext context, RegistrationState state) {
-            return _buildPage();
-          }),
+      body: _buildPage(),
     );
   }
 
@@ -169,7 +142,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   name: _teControllerName.text,
                   gender: _selectedGender,
                 );
-                _registrationBloc.add(UpdateUserEvent(userToUpdate));
+                _registrationBloc.updateUser(userToUpdate);
               } else {
                 _alertBuilder.showErrorSnackBar(
                     context, tr(AppStrings.noInternetConnection));

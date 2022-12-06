@@ -1,42 +1,33 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/prezentation/choose_service/services_event.dart';
-import 'package:salons_app_mobile/prezentation/choose_service/services_state.dart';
 
-class ServicesBloc extends Bloc<ServicesEvent, ServicesState> {
-  final GetServicesListUseCase getServicesListUseCase;
+class ServicesBloc {
+  final GetServicesListUseCase _getServicesListUseCase;
 
-  List<Service> serviceList = [];
+  List<Service> _servicesList = [];
 
-  ServicesBloc(this.getServicesListUseCase)
-      : super(InitialServicesListState()) {
-    streamController = StreamController<List<Service>>.broadcast();
-  }
+  ServicesBloc(this._getServicesListUseCase);
 
-  void dispose() {
-    streamController.close();
-  }
+  final _servicesLoadedSubject = PublishSubject<List<Service>>();
+  final _errorSubject = PublishSubject<String>();
+  final _isLoadingSubject = PublishSubject<bool>();
 
-  late StreamController<List<Service>> streamController;
+  // output stream
+  Stream<List<Service>> get servicesLoaded => _servicesLoadedSubject.stream;
 
-  StreamSink<List<Service>> get streamSink => streamController.sink;
+  Stream<String> get errorMessage => _errorSubject.stream;
 
-  Stream<List<Service>> get streamServices => streamController.stream;
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
 
-  @override
-  Stream<ServicesState> mapEventToState(
-    ServicesEvent event,
-  ) async* {
-    if (event is LoadServicesListEvent) {
-      final servicesListOrError = await getServicesListUseCase(event.salonId, event.categoryId);
-      servicesListOrError.fold((failure) {
-        streamSink.addError(failure.message);
-      }, (serviceList) {
-        this.serviceList = serviceList;
-        streamSink.add(serviceList);
-      });
+  getServices(String salonId, String? categoryId) async {
+    var response = await _getServicesListUseCase(salonId, categoryId);
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _servicesList = response.right;
+      _servicesLoadedSubject.add(_servicesList);
     }
   }
 }

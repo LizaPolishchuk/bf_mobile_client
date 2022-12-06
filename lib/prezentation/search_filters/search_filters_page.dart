@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/search_filters/search_filters_bloc.dart';
-import 'package:salons_app_mobile/prezentation/search_filters/search_filters_event.dart';
-import 'package:salons_app_mobile/prezentation/search_filters/search_filters_state.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -44,7 +40,11 @@ class _SearchFiltersPageState extends State<SearchFiltersPage> {
         widget.searchFilters?.priceTo?.toDouble() ?? 5000);
 
     _filtersBloc = getItApp<SearchFiltersBloc>();
-    _filtersBloc.add(LoadFiltersEvent());
+    _filtersBloc.loadSearchFilters();
+
+    _filtersBloc.errorMessage.listen((errorMsg) {
+      _alertBuilder.showErrorSnackBar(context, errorMsg);
+    });
   }
 
   @override
@@ -75,22 +75,16 @@ class _SearchFiltersPageState extends State<SearchFiltersPage> {
             ),
             Flexible(
               fit: FlexFit.tight,
-              child: BlocConsumer<SearchFiltersBloc, SearchFiltersState>(
-                bloc: _filtersBloc,
-                listener: (_, state) {
-                  if (state is ErrorFiltersState) {
-                    _alertBuilder.showErrorDialog(
-                        context, state.failure.message);
+              child: StreamBuilder<Filters>(
+                stream: _filtersBloc.filtersLoaded,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator.adaptive());
+                  } else if (snapshot.data != null) {
+                    return _buildPage(snapshot.data!);
                   } else {
-                    _alertBuilder.stopErrorDialog(context);
+                    return SizedBox.shrink();
                   }
-                },
-                builder: (context, state) {
-                  if (state is FiltersLoadedState) {
-                    return _buildPage(state.filters);
-                  }
-
-                  return Center(child: CircularProgressIndicator.adaptive());
                 },
               ),
             ),

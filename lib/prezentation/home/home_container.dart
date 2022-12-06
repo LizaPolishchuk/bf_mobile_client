@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/prezentation/login/login_event.dart';
-import 'package:salons_app_mobile/prezentation/login/login_page.dart';
-import 'package:salons_app_mobile/prezentation/login/login_state.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
@@ -82,78 +78,59 @@ class _HomeContainerState extends State<HomeContainer> {
           return true;
         }
       },
-      child: BlocProvider.value(
-        value: _loginBloc,
-        child: BlocListener<LoginBloc, LoginState>(
-          listener: (BuildContext context, state) {
-            if (state is ErrorLoginState) {
-              _alertBuilder.showErrorDialog(context, state.failure.message);
-            } else {
-              _alertBuilder.stopErrorDialog(context);
-            }
-
-            if (state is LoggedOutState) {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
-                  ),
-                  (Route<dynamic> route) => false);
-            }
-          },
-          child: Scaffold(
-            key: _scaffoldKey,
-            appBar: AppBar(
-              actions: <Widget>[
-                _currentTab == TabItem.home
-                    ? Container()
-                    : IconButton(
-                        icon: SvgPicture.asset(
-                          icFilters,
-                          color: _searchFilters != null ? primaryColor : null,
-                        ),
-                        onPressed: () {
-                          _scaffoldKey.currentState?.openEndDrawer();
-                        },
-                      )
-              ],
-              leading: IconButton(
-                icon: SvgPicture.asset(icMenu),
-                onPressed: () {
-                  _scaffoldKey.currentState?.openDrawer();
-                },
-              ),
-              title: Text(tr(AppStrings.appName)),
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          actions: <Widget>[
+            _currentTab == TabItem.home
+                ? Container()
+                : IconButton(
+                    icon: SvgPicture.asset(
+                      icFilters,
+                      color: _searchFilters != null ? primaryColor : null,
+                    ),
+                    onPressed: () {
+                      _scaffoldKey.currentState?.openEndDrawer();
+                    },
+                  )
+          ],
+          leading: IconButton(
+            icon: SvgPicture.asset(icMenu),
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+          ),
+          title: Text(tr(AppStrings.appName)),
+        ),
+        drawer: _buildDrawerMenu(),
+        endDrawer:
+            Drawer(child: SearchFiltersPage(searchFilters: _searchFilters)),
+        body: _children[_currentTab.index],
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
             ),
-            drawer: _buildDrawerMenu(),
-            endDrawer:
-                Drawer(child: SearchFiltersPage(searchFilters: _searchFilters)),
-            body: _children[_currentTab.index],
-            bottomNavigationBar: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25),
-                  topRight: Radius.circular(25),
-                ),
+          ),
+          height: 95,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Flexible(
+                flex: 1,
+                fit: FlexFit.tight,
+                child: _buildBottomMenuItem(
+                    tr(AppStrings.home), icHome, TabItem.home),
               ),
-              height: 95,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Flexible(
-                    flex: 1,
-                    fit: FlexFit.tight,
-                    child: _buildBottomMenuItem(tr(AppStrings.home), icHome, TabItem.home),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    fit: FlexFit.tight,
-                    child: _buildBottomMenuItem(
-                        tr(AppStrings.searching), icSearch, TabItem.search),
-                  ),
-                ],
+              Flexible(
+                flex: 1,
+                fit: FlexFit.tight,
+                child: _buildBottomMenuItem(
+                    tr(AppStrings.searching), icSearch, TabItem.search),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -235,7 +212,8 @@ class _HomeContainerState extends State<HomeContainer> {
                   marginVertical(42),
                   Row(
                     children: [
-                      imageWithPlaceholder(_currentUser.avatar, avatarPlaceholder),
+                      imageWithPlaceholder(
+                          _currentUser.avatar, avatarPlaceholder),
                       marginHorizontal(10),
                       Expanded(
                         child: Text(_currentUser.name ?? "",
@@ -259,7 +237,7 @@ class _HomeContainerState extends State<HomeContainer> {
             Navigator.of(context).pushNamed(SettingsPage.routeName);
           }),
           _buildDrawerItem(tr(AppStrings.exit), icExit,
-              onClick: () => _loginBloc.add(LogoutEvent())),
+              onClick: () => _loginBloc.logout()),
         ],
       ),
     );

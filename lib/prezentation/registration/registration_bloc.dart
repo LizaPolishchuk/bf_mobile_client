@@ -1,26 +1,38 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/prezentation/registration/registration_event.dart';
-import 'package:salons_app_mobile/prezentation/registration/registration_state.dart';
+import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
+import 'package:salons_app_mobile/event_bus_events/user_registered_event.dart';
 
-class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
-  UpdateUserUseCase updateUserUseCase;
+class RegistrationBloc {
+  UpdateUserUseCase _updateUserUseCase;
 
-  RegistrationBloc(this.updateUserUseCase)
-      : super(InitialRegistrationState());
+  RegistrationBloc(this._updateUserUseCase);
 
-  @override
-  Stream<RegistrationState> mapEventToState(
-    RegistrationEvent event,
-  ) async* {
-    if (event is UpdateUserEvent) {
-      yield LoadingRegistrationState();
-      final updateResult = await updateUserUseCase(event.user);
-      yield updateResult.fold((error) => ErrorRegistrationState(error), (user) {
-        return UserUpdatedState();
-      });
+  final _userUpdatedSubject = PublishSubject<UserEntity>();
+  final _errorSubject = PublishSubject<String>();
+  final _isLoadingSubject = PublishSubject<bool>();
+
+  // output stream
+  Stream<UserEntity> get userUpdated => _userUpdatedSubject.stream;
+
+  Stream<String> get errorMessage => _errorSubject.stream;
+
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
+
+  updateUser(UserEntity user) async {
+    _isLoadingSubject.add(true);
+
+    final response = await _updateUserUseCase(user);
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      eventBus.fire(UserRegisteredEvent());
+      _userUpdatedSubject.add(response.right);
     }
+
+    _isLoadingSubject.add(false);
   }
 }

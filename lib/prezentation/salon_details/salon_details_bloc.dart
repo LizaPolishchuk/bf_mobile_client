@@ -1,30 +1,35 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
-import 'salon_details_event.dart';
-import 'salon_details_state.dart';
+class SalonDetailsBloc {
+  final GetSalonByIdUseCase _getSalonByIdUseCase;
 
-class SalonDetailsBloc extends Bloc<SalonDetailsEvent, SalonDetailsState> {
-  final GetSalonByIdUseCase getSalonByIdUseCase;
+  SalonDetailsBloc(this._getSalonByIdUseCase);
 
-  SalonDetailsBloc(this.getSalonByIdUseCase) : super(InitialSalonDetailsState());
+  final _salonLoadedSubject = PublishSubject<Salon>();
+  final _errorSubject = PublishSubject<String>();
+  final _isLoadingSubject = PublishSubject<bool>();
 
-  @override
-  Stream<SalonDetailsState> mapEventToState(
-    SalonDetailsEvent event,
-  ) async* {
-    if (event is LoadSalonByIdEvent) {
-      yield LoadingSalonDetailsState();
+  // output stream
+  Stream<Salon> get salonLoaded => _salonLoadedSubject.stream;
 
-      final salonOrError = await getSalonByIdUseCase(event.salonId);
+  Stream<String> get errorMessage => _errorSubject.stream;
 
-      yield salonOrError.fold((failure) {
-        return ErrorSalonDetailsState(failure);
-      }, (salon) {
-        return SalonDetailsLoadedState(salon);
-      });
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
+
+  loadSalonById(String salonId) async {
+    _isLoadingSubject.add(true);
+
+    final response = await _getSalonByIdUseCase(salonId);
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _salonLoadedSubject.add(response.right);
     }
+
+    _isLoadingSubject.add(false);
   }
 }

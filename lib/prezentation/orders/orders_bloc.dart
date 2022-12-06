@@ -1,86 +1,107 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_event.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_state.dart';
 
-class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
-  final GetOrdersListUseCase getOrdersListUseCase;
-  final GetAvailableTimeUseCase getAvailableTimeUseCase;
-  final UpdateOrderUseCase updateOrderUseCase;
-  final LocalStorage localStorage;
+class OrdersBloc {
+  final GetOrdersListUseCase _getOrdersListUseCase;
+  final GetAvailableTimeUseCase _getAvailableTimeUseCase;
+  final UpdateOrderUseCase _updateOrderUseCase;
+  final LocalStorage _localStorage;
 
-  List<OrderEntity> ordersList = [];
+  OrdersBloc(this._getOrdersListUseCase, this._updateOrderUseCase,
+      this._getAvailableTimeUseCase, this._localStorage);
 
-  late StreamController<List<OrderEntity>> streamController;
+  List<OrderEntity> _ordersList = [];
 
-  StreamSink<List<OrderEntity>> get ordersStreamSink => streamController.sink;
+  final _ordersLoadedSubject = PublishSubject<List<OrderEntity>>();
+  final _orderUpdatedSubject = PublishSubject<void>();
+  final _errorSubject = PublishSubject<String>();
+  final _isLoadingSubject = PublishSubject<bool>();
 
-  Stream<List<OrderEntity>> get streamOrders => streamController.stream;
+  // output stream
+  Stream<List<OrderEntity>> get ordersLoaded => _ordersLoadedSubject.stream;
 
-  OrdersBloc(this.getOrdersListUseCase, this.updateOrderUseCase, this.getAvailableTimeUseCase,
-      this.localStorage)
-      : super(InitialOrdersState()) {
-    streamController = StreamController<List<OrderEntity>>.broadcast();
-  }
+  Stream<void> get orderUpdated => _orderUpdatedSubject.stream;
 
-  void dispose() {
-    streamController.close();
-  }
+  Stream<String> get errorMessage => _errorSubject.stream;
 
-  @override
-  Stream<OrdersState> mapEventToState(
-    OrdersEvent event,
-  ) async* {
-    if (event is LoadOrdersForCurrentUserEvent) {
-      String userId = localStorage.getUserId();
-      final ordersListOrError = await getOrdersListUseCase(userId, OrderForType.USER, dateFor: event.dateFor, dateFrom: event.dateFrom, dateTo: event.dateTo);
-      ordersListOrError.fold((failure) {
-        ordersStreamSink.addError(failure.message);
-      }, (ordersList) {
-        this.ordersList = ordersList;
-        localStorage.setOrdersList(ordersList);
-        ordersStreamSink.add(ordersList);
-      });
-    }else if (event is LoadAvailableOrdersByTimeEvent) {
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
 
-      final ordersListOrError = await getAvailableTimeUseCase(event.salonId, event.serviceId, event.masterId, event.date);
-      print("LoadAvailableTimeEvent");
+  getOrdersForCurrentUser(
+      {String? dateFor, String? dateFrom, String? dateTo}) async {
+    String userId = _localStorage.getUserId();
+    final response = await _getOrdersListUseCase(userId, OrderForType.USER,
+        dateFor: dateFor, dateFrom: dateFrom, dateTo: dateTo);
 
-      ordersListOrError.fold((failure) {
-        ordersStreamSink.addError(failure.message);
-      }, (ordersList) {
-        this.ordersList = ordersList;
-        localStorage.setOrdersList(ordersList);
-        ordersStreamSink.add(ordersList);
-      });
-    } else if (event is CancelOrderEvent) {
-      //todo after canceling order should be checking on BE side if there is signed users on it and send push to them
-      OrderEntity orderToUpdate =
-          event.orderEntity.copy(clientName: "", clientId: "");
-      final successOrError = await updateOrderUseCase(orderToUpdate);
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _ordersList = response.right;
+      _ordersLoadedSubject.add(_ordersList);
 
-      successOrError.fold((failure) {
-        ordersStreamSink.addError(failure.message);
-      }, (_) {
-        ordersList.remove(orderToUpdate);
-        localStorage.setOrdersList(ordersList);
-        ordersStreamSink.add(ordersList);
-      });
-    }  else if (event is UpdateOrderEvent) {
-      final successOrError = await updateOrderUseCase(event.orderEntity);
-
-
-    } else if (event is PinOrderEvent) {
-      OrderEntity orderToUpdate = event.orderEntity;
-      orderToUpdate.isPinned = !orderToUpdate.isPinned;
-
-      if (ordersList.contains(orderToUpdate)) {
-        ordersList[ordersList.indexOf(orderToUpdate)] = orderToUpdate;
-        localStorage.setOrdersList(ordersList);
-        ordersStreamSink.add(ordersList);
-      }
+      _localStorage.setOrdersList(_ordersList);
     }
+  }
+
+  getAvailableOrdersByTime(
+      String salonId, String serviceId, String masterId, String date) async {
+    final response =
+        await _getAvailableTimeUseCase(salonId, serviceId, masterId, date);
+    print("LoadAvailableTimeEvent");
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _ordersList = response.right;
+      _ordersLoadedSubject.add(_ordersList);
+    }
+  }
+
+  cancelOrder(OrderEntity order) async {
+    //todo after canceling order should be checking on BE side if there is signed users on it and send push to them
+    OrderEntity orderToUpdate = order.copy(clientName: "", clientId: "");
+    final response = await _updateOrderUseCase(orderToUpdate);
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _ordersList.remove(orderToUpdate);
+      _ordersLoadedSubject.add(_ordersList);
+
+      _localStorage.setOrdersList(_ordersList);
+    }
+  }
+
+  updateOrder(OrderEntity order) async {
+    final response = await _updateOrderUseCase(order);
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      // _ordersList[index] = response.right;
+      // _ordersLoadedSubject.add(_ordersList);
+      //
+      // _localStorage.setOrdersList(_ordersList);
+    }
+  }
+
+  pinOrder(OrderEntity order, int index) async {
+    OrderEntity orderToUpdate = order;
+    orderToUpdate.isPinned = !orderToUpdate.isPinned;
+
+    if (_ordersList.contains(orderToUpdate)) {
+      _ordersList[index] = orderToUpdate;
+      _ordersLoadedSubject.add(_ordersList);
+
+      _localStorage.setOrdersList(_ordersList);
+    }
+  }
+
+  dispose() {
+    _orderUpdatedSubject.close();
+    _ordersLoadedSubject.close();
+    _isLoadingSubject.close();
+    _errorSubject.close();
   }
 }

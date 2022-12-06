@@ -1,27 +1,33 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
-import 'search_filters_event.dart';
-import 'search_filters_state.dart';
-
-class SearchFiltersBloc extends Bloc<SearchFiltersEvent, SearchFiltersState> {
-  final GetFiltersUseCase getFiltersUseCase;
+class SearchFiltersBloc {
+  final GetFiltersUseCase _getFiltersUseCase;
 
   SearchFiltersBloc(
-    this.getFiltersUseCase,
-  ) : super(InitialFiltersState());
+    this._getFiltersUseCase,
+  );
 
-  @override
-  Stream<SearchFiltersState> mapEventToState(
-    SearchFiltersEvent event,
-  ) async* {
-    if (event is LoadFiltersEvent) {
-      final filtersListOrError = await getFiltersUseCase();
+  final _filtersLoadedSubject = PublishSubject<Filters>();
+  final _errorSubject = PublishSubject<String>();
+  final _isLoadingSubject = PublishSubject<bool>();
 
-      yield filtersListOrError.fold((failure) => ErrorFiltersState(failure),
-          (filters) => FiltersLoadedState(filters));
+  // output stream
+  Stream<Filters> get filtersLoaded => _filtersLoadedSubject.stream;
+
+  Stream<String> get errorMessage => _errorSubject.stream;
+
+  Stream<bool> get isLoading => _isLoadingSubject.stream;
+
+  loadSearchFilters() async {
+    var response = await _getFiltersUseCase();
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _filtersLoadedSubject.add(response.right);
     }
   }
 }
