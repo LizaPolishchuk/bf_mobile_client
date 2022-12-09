@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
+import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -18,7 +19,9 @@ import 'package:salons_app_mobile/utils/app_styles.dart';
 class TopSalonsWidget extends StatefulWidget {
   final SalonsBloc salonsBloc;
 
-  const TopSalonsWidget(this.salonsBloc,);
+  const TopSalonsWidget(
+    this.salonsBloc,
+  );
 
   @override
   _TopSalonsWidgetState createState() => _TopSalonsWidgetState();
@@ -91,7 +94,8 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
       ),
       child: InkWell(
         onTap: () {
-          //todo open salon details page
+          Navigator.of(context)
+              .pushNamed(SalonDetailsPage.routeName, arguments: salon);
         },
         child: Container(
           decoration: BoxDecoration(
