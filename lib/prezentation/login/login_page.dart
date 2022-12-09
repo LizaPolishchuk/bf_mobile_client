@@ -45,7 +45,10 @@ class _LoginPageState extends State<LoginPage> {
       }
     });
 
-    _loginBloc.codeSentSuccess.listen((errorMsg) {
+    print("login init state");
+
+    _loginBloc.codeSentSuccess.listen((_) {
+      print("_loginBloc.codeSentSuccess");
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             CodeVerificationPage(_loginBloc, uaCode + _teControllerPhone.text),
@@ -57,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     _loginBloc.isLoading.listen((isLoading) {
+      print("login isLoading: $isLoading");
       if (isLoading) {
         _alertBuilder.showLoaderDialog(context);
       } else {

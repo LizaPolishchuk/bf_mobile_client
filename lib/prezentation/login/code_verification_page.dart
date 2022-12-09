@@ -34,6 +34,8 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
   void initState() {
     super.initState();
 
+    print("code verification page init");
+
     widget.loginBloc.codeSentSuccess.listen((event) {
       SmsAutoFill().listenForCode();
     });
@@ -44,17 +46,9 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
 
     _codeVerifyBloc.startTimerToResendCode();
 
-    // _codeVerifyBloc.loggedInSuccess.listen((event) {
-    //   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-    //     Navigator.of(context).pushAndRemoveUntil(
-    //         MaterialPageRoute(
-    //           builder: (context) => (event.values.first ?? false)
-    //               ? RegistrationPage(event.keys.last)
-    //               : HomeContainer(),
-    //         ),
-    //         (Route<dynamic> route) => false);
-    //   });
-    // });
+    _codeVerifyBloc.loggedInSuccess.listen((event) {
+     Navigator.of(context).pop();
+    });
 
     _codeVerifyBloc.errorMessage.listen((errorMsg) {
       _alertBuilder.showErrorSnackBar(context, errorMsg);

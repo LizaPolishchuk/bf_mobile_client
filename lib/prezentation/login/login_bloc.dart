@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
+import 'package:salons_app_mobile/event_bus_events/user_logout_event.dart';
 
 class LoginBloc {
   LoginWithPhoneUseCase _loginWithPhoneUseCase;
@@ -24,14 +26,21 @@ class LoginBloc {
   Stream<bool> get isLoading => _isLoadingSubject.stream;
 
   void loginWithPhone(String phone) async {
+    print("loginWithPhone");
+
     _isLoadingSubject.add(true);
     final response = await _loginWithPhoneUseCase(phone);
+
+    _isLoadingSubject.add(false);
+
     if (response.isLeft) {
       _errorSubject.add(response.left.message);
     } else {
+      print("_codeSentSubject add ");
+
       _codeSentSubject.add(null);
     }
-    _isLoadingSubject.add(false);
+
   }
 
   void logout() async {
@@ -39,6 +48,7 @@ class LoginBloc {
     if (response.isLeft) {
       _errorSubject.add(response.left.message);
     } else {
+      eventBus.fire(UserLoggedOutEvent());
       _loggedOutSubject.add(null);
     }
   }

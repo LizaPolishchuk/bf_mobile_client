@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/event_bus_events/go_to_search_salons_event.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
@@ -50,6 +51,10 @@ class _HomeContainerState extends State<HomeContainer> {
     _currentUser = getIt<LocalStorage>().getCurrentUser();
 
     _loginBloc = getItApp<LoginBloc>();
+
+    eventBus.on<GoToSearchSalonsEvent>().listen((event) {
+      setState(() => _currentTab = TabItem.search);
+    });
 
     eventBus.on<ApplySearchFiltersEvent>().listen((event) {
       print("catch in home container : ${event.searchFilters?.priceFrom}");
@@ -245,15 +250,15 @@ class _HomeContainerState extends State<HomeContainer> {
 
   Widget _buildDrawerItem(String title, String icon,
       {Widget? widgetToOpen, Function()? onClick}) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 28, left: 16, right: 16),
-      child: InkWell(
-        onTap: () {
-          if (widgetToOpen != null)
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => widgetToOpen));
-          else if (onClick != null) onClick();
-        },
+    return InkWell(
+      onTap: () {
+        if (widgetToOpen != null)
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => widgetToOpen));
+        else if (onClick != null) onClick();
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             SvgPicture.asset(icon),

@@ -132,6 +132,8 @@ class _InitialPageState extends State<InitialPage> {
         "Main: user: $user, token: $token, isRegistered: ${user?.isRegistered}");
 
     eventBus.on<UserSuccessLoggedInEvent>().listen((event) {
+      print("UserSuccessLoggedInEvent: $event");
+
       setState(() {
         _initialPage = event.isNewUser
             ? RegistrationPage(event.user)
@@ -144,6 +146,8 @@ class _InitialPageState extends State<InitialPage> {
     });
 
     eventBus.on<UserLoggedOutEvent>().listen((event) {
+      print("UserLoggedOutEvent: $event");
+
       setState(() {
         _initialPage = LoginPage();
       });

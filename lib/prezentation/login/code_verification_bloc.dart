@@ -39,6 +39,7 @@ class CodeVerifyBloc {
   void verifyCode(String phone, String code) async {
     _isLoadingSubject.add(true);
     final response = await _verifyCodeUseCase(code, phone);
+    _isLoadingSubject.add(false);
 
     if (response.isLeft) {
       String errorMsg = (response.left.codeStr == "invalid-verification-code")
@@ -53,7 +54,6 @@ class CodeVerifyBloc {
       eventBus.fire(UserSuccessLoggedInEvent(
           response.right.values.first ?? false, response.right.keys.first));
     }
-    _isLoadingSubject.add(false);
   }
 
   void resendCode(String phone) async {

@@ -54,16 +54,14 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(tr(AppStrings.ordersHistory)),
+      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              tr(AppStrings.ordersHistory),
-              style: titleText3,
-            ),
-            marginVertical(16),
             GestureDetector(
               child: _buildSearch(),
               onTap: () {

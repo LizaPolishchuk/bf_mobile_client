@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/event_bus_events/go_to_search_salons_event.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
+import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/events/event_bus.dart';
 
 import '../orders/order_item_widget.dart';
 
@@ -48,7 +51,10 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
           children: [
             Text(tr(AppStrings.comingOrders), style: bodyText3),
             buttonMoreWithRightArrow(
-                onPressed: () {}, text: tr(AppStrings.all)),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
+                },
+                text: tr(AppStrings.all)),
           ],
         ),
         marginVertical(16),
@@ -60,16 +66,6 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
                   SchedulerBinding.instance.addPostFrameCallback((_) {
                     if (widget.refreshController.isRefresh)
                       widget.refreshController.refreshCompleted();
-
-                    if (snapshot.hasError) {
-                      String errorMsg = snapshot.error.toString();
-                      if (errorMsg == NoInternetException.noInternetCode) {
-                        errorMsg = tr(AppStrings.noInternetConnection);
-                      } else {
-                        errorMsg = tr(AppStrings.somethingWentWrong);
-                      }
-                      _alertBuilder.showErrorSnackBar(context, errorMsg);
-                    }
                   });
 
                   if (snapshot.data != null && snapshot.data!.length > 0) {
@@ -124,7 +120,7 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
                     style: bodyText3.copyWith(color: primaryColor),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        print('Terms of Service"');
+                        eventBus.fire(GoToSearchSalonsEvent());
                       }),
                 TextSpan(text: "!"),
               ],
