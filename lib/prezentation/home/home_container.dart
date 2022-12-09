@@ -8,6 +8,7 @@ import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
+import 'package:salons_app_mobile/prezentation/salons_list/favourite_salons_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
 import 'package:salons_app_mobile/prezentation/search_filters/search_filters_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
@@ -234,6 +235,10 @@ class _HomeContainerState extends State<HomeContainer> {
           _buildDrawerItem(tr(AppStrings.history), icHistory, onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
+          }),
+          _buildDrawerItem("Favourite salons", icStarUnchecked, onClick: (){
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
           }),
           _buildDrawerItem(tr(AppStrings.promo), icPromo),
           _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),

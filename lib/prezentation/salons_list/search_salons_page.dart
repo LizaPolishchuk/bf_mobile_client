@@ -160,11 +160,19 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                               shrinkWrap: true,
                               itemCount: salons.length,
                               itemBuilder: (context, index) {
-                                return CardItemWidget(salons[index], () {
-                                  Navigator.of(context).pushNamed(
-                                      SalonDetailsPage.routeName,
-                                      arguments: salons[index]);
-                                });
+                                return CardItemWidget(
+                                  salons[index],
+                                  () {
+                                    Navigator.of(context).pushNamed(
+                                        SalonDetailsPage.routeName,
+                                        arguments: salons[index]);
+                                  },
+                                  onClickStar: () {
+                                    var salonToUpdate = salons[index];
+                                    salonToUpdate.isFavourite = !salonToUpdate.isFavourite;
+                                    _salonsBloc.updateSalon(salonToUpdate, index);
+                                  },
+                                );
                               },
                             )
                           : _buildEmptyList(),

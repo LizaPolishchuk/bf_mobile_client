@@ -3,12 +3,13 @@ import 'dart:async';
 import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
-
 class SalonsBloc {
   final GetSalonsListUseCase _getSalonsListUseCase;
+  final UpdateSalonUseCase _updateSalonUseCase;
 
   SalonsBloc(
     this._getSalonsListUseCase,
+    this._updateSalonUseCase,
   );
 
   List<Salon> _salonsList = [];
@@ -80,6 +81,47 @@ class SalonsBloc {
         this._salonsList.addAll(salonsList);
       }
 
+      _salonsLoadedSubject.add(_salonsList);
+    }
+  }
+
+  loadFavouriteSalons(String searchText) async {
+    //todo change here to search for favourites salons
+    final response = await _getSalonsListUseCase(
+        searchText: searchText,
+        page: page,
+        limit: limit,);
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      List<Salon> salonsList = response.right;
+
+      print("_parseFavouriteSalonsResponse ${salonsList.length}, page: $page");
+      noMoreData = false;
+
+      if (page == 1) {
+        this._salonsList = salonsList;
+      } else {
+        if (salonsList.length == 0) {
+          print("_parseFavouriteSalonsResponse no more data set tot true");
+
+          noMoreData = true;
+        }
+        this._salonsList.addAll(salonsList);
+      }
+
+      _salonsLoadedSubject.add(_salonsList);
+    }
+  }
+
+  updateSalon(Salon salon, int index) async {
+    var response = await _updateSalonUseCase(salon);
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _salonsList[index] = salon;
       _salonsLoadedSubject.add(_salonsList);
     }
   }

@@ -9,6 +9,7 @@ import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
+import 'package:salons_app_mobile/prezentation/salons_list/favourite_salons_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
 
 MaterialPageRoute onGenerateRoutes(RouteSettings settings) {
@@ -36,6 +37,8 @@ MaterialPageRoute onGenerateRoutes(RouteSettings settings) {
       return materialPageRoute(OrdersHistoryPage());
     case SettingsPage.routeName:
       return materialPageRoute(SettingsPage());
+    case FavouriteSalonsPage.routeName:
+      return materialPageRoute(FavouriteSalonsPage());
     default:
       return materialPageRoute(HomePage());
   }

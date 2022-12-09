@@ -24,6 +24,8 @@ const String icMenu = 'assets/icons/ic_menu.svg';
 const String icFilters = 'assets/icons/ic_filters.svg';
 const String icCamera = 'assets/icons/ic_camera.svg';
 const String icArrowLeftWithShadow = 'assets/icons/ic_arrow_left_with_shadow.svg';
+const String icStarUnchecked = 'assets/icons/ic_star.svg';
+const String icStarChecked = 'assets/icons/ic_star_filled.svg';
 
 ///Images
 const String masterPlaceholder = 'assets/images/master_image.png';
