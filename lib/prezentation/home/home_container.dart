@@ -41,6 +41,8 @@ class _HomeContainerState extends State<HomeContainer> {
   late UserEntity _currentUser;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  //! is not used
   final AlertBuilder _alertBuilder = AlertBuilder();
 
   SearchFilters? _searchFilters;

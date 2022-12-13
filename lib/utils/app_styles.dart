@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
@@ -6,7 +5,6 @@ import 'app_colors.dart';
 ThemeData mainTheme = ThemeData(
   scaffoldBackgroundColor: bgGrey,
   appBarTheme: AppBarTheme(
-    backwardsCompatibility: false,
     backgroundColor: bgGrey,
     iconTheme: IconThemeData(
       color: Colors.black, //change your color here

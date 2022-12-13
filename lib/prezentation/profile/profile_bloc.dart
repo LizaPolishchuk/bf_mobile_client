@@ -48,7 +48,7 @@ class ProfileBloc {
     UserEntity userToUpdate = user;
 
     if (userAvatar != null) {
-      final response = await _updateUserAvatarUseCase(userAvatar!);
+      final response = await _updateUserAvatarUseCase(userAvatar);
 
       if (response.isLeft) {
         _errorSubject.add(response.left.message);

@@ -230,10 +230,11 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   }
 
   Future<void> openMap(double latitude, double longitude) async {
-    String googleUrl =
-        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-    if (await canLaunch(googleUrl)) {
-      await launch(googleUrl);
+    Uri _googleUrl = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
+
+    if (await canLaunchUrl(_googleUrl)) {
+      await launchUrl(_googleUrl);
     } else {
       throw 'Could not open the map.';
     }

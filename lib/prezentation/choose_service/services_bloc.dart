@@ -14,6 +14,8 @@ class ServicesBloc {
   final _errorSubject = PublishSubject<String>();
   final _isLoadingSubject = PublishSubject<bool>();
 
+  void dispoce() => _isLoadingSubject.close();
+
   // output stream
   Stream<List<Service>> get servicesLoaded => _servicesLoadedSubject.stream;
 

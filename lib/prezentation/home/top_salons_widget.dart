@@ -30,6 +30,8 @@ class TopSalonsWidget extends StatefulWidget {
 class _TopSalonsWidgetState extends State<TopSalonsWidget> {
   late SalonsBloc _salonsBloc;
   bool isEmptyList = false;
+
+  //! is not used
   AlertBuilder _alertBuilder = AlertBuilder();
 
   @override

@@ -12,7 +12,10 @@ class SearchFiltersBloc {
 
   final _filtersLoadedSubject = PublishSubject<Filters>();
   final _errorSubject = PublishSubject<String>();
+
   final _isLoadingSubject = PublishSubject<bool>();
+
+  void dispose() => _isLoadingSubject.close();
 
   // output stream
   Stream<Filters> get filtersLoaded => _filtersLoadedSubject.stream;

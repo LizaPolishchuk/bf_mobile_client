@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 
 class ErrorAnimatedContainer extends StatefulWidget {

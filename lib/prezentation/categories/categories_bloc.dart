@@ -16,6 +16,8 @@ class CategoriesBloc {
   final _errorSubject = PublishSubject<String>();
   final _isLoadingSubject = PublishSubject<bool>();
 
+  void dispoce() => _isLoadingSubject.close();
+
   // output stream
   Stream<List<Category>> get categoriesLoaded =>
       _categoriesLoadedSubject.stream;

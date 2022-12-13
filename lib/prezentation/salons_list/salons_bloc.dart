@@ -22,6 +22,8 @@ class SalonsBloc {
   final _errorSubject = PublishSubject<String>();
   final _isLoadingSubject = PublishSubject<bool>();
 
+  void dispoce() => _isLoadingSubject.close();
+
   // output stream
   Stream<List<Salon>> get salonsLoaded => _salonsLoadedSubject.stream;
 
@@ -88,9 +90,10 @@ class SalonsBloc {
   loadFavouriteSalons(String searchText) async {
     //todo change here to search for favourites salons
     final response = await _getSalonsListUseCase(
-        searchText: searchText,
-        page: page,
-        limit: limit,);
+      searchText: searchText,
+      page: page,
+      limit: limit,
+    );
 
     if (response.isLeft) {
       _errorSubject.add(response.left.message);

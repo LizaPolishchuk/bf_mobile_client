@@ -142,13 +142,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           child: InkWell(
                             onTap: () async {
                               if (_isEditMode) {
-                                final PickedFile? image = await ImagePicker()
-                                    .getImage(source: ImageSource.gallery);
-                                if (image != null) {
-                                  setState(() {
-                                    _pickedAvatar = File(image.path);
-                                  });
-                                }
+                                final image = File(await ImagePicker()
+                                    .pickImage(source: ImageSource.gallery)
+                                    .then((pickedFile) => pickedFile!.path));
+                                setState(() {
+                                  _pickedAvatar = File(image.path);
+                                });
                               }
                             },
                             child: Container(
