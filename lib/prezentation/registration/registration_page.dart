@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/widgets/gender_selector.dart';
 
 import '../../injection_container_app.dart';
+import '../../utils/app_images.dart';
 
 class RegistrationPage extends StatefulWidget {
   static const routeName = '/registration';
@@ -72,28 +74,42 @@ class _RegistrationPageState extends State<RegistrationPage> {
       padding: const EdgeInsets.only(left: 28, right: 28, bottom: 28),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 120),
-              child: Text(
-                tr(AppStrings.appName),
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: accentColor,
-                  fontSize: 50,
-                ),
-              ),
-            ),
-          ),
-          marginVertical(48),
           Text(
-            tr(AppStrings.enterName),
+            tr(AppStrings.signIn),
             style: titleText2,
           ),
-          marginVertical(25),
+          marginVertical(8),
+          Text(
+            tr(AppStrings.signInHintText),
+            style: hintText2,
+          ),
+          marginVertical(8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                tr(AppStrings.downloadPhotoText),
+                style: text16W400,
+              ),
+              CircleAvatar(
+                child: Image.asset(
+                  avatarPlaceholder,
+                  fit: BoxFit.fill,
+                ),
+                backgroundColor: Colors.transparent,
+                radius: 50,
+              ),
+            ],
+          ),
+          marginVertical(8),
+          Text(
+            tr(AppStrings.enterName),
+            style: text16W400,
+          ),
+          marginVertical(10),
           Form(
             key: _formKey,
             child: textFieldWithBorders(tr(AppStrings.name), _teControllerName,
@@ -119,15 +135,37 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 : titleText2.copyWith(color: errorRed),
           ),
           marginVertical(48),
+          // GenderSelector(
+          //     genderSelectorType: GenderSelectorType.icons,
+          //     onSelectGender: (int selectedGender) {
+          //       _selectedGender = selectedGender;
+          //       if (_showGenderError == true) {
+          //         setState(() {
+          //           _showGenderError = false;
+          //         });
+          //       }
+          //     }),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              CircleAvatar(
+                child: SvgPicture.asset(icMan),
+                backgroundColor: Colors.transparent,
+                radius: 50,
+              ),
+              CircleAvatar(
+                child: SvgPicture.asset(icWoman),
+                backgroundColor: Colors.transparent,
+                radius: 50,
+              ),
+            ],
+          ),
           GenderSelector(
-              genderSelectorType: GenderSelectorType.icons,
+              genderSelectorType: GenderSelectorType.radio_buttons,
+              initialGender: _selectedGender,
+              enabled: true,
               onSelectGender: (int selectedGender) {
                 _selectedGender = selectedGender;
-                if (_showGenderError == true) {
-                  setState(() {
-                    _showGenderError = false;
-                  });
-                }
               }),
           marginVertical(isKeyboard ? 40 : 80),
           roundedButton(context, tr(AppStrings.continueTxt), () async {

@@ -70,9 +70,9 @@ Widget searchTextField(TextEditingController? controller,
     child: TextFormField(
       controller: controller,
       enabled: isEnabled,
-        inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z ]'))
-        ],
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.allow(RegExp('[0-9a-zA-Z ]'))
+      ],
       textCapitalization: TextCapitalization.sentences,
       style: hintText2.copyWith(color: Colors.black),
       decoration: InputDecoration(
@@ -121,7 +121,7 @@ Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
     width: width,
     child: Container(
       height: height ?? 50,
-      width: width,
+      width: width ?? MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: ElevatedButton(
         onPressed: onPressed,

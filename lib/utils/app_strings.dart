@@ -5,6 +5,8 @@ class AppStrings {
   static const String topSalons = "top_salons";
   static const String phoneNumber = "phone_number";
   static const String signIn = "sign_in";
+  static const String signInHintText = "sing_in_hint_text";
+  static const String downloadPhotoText = "download_photo_text";
   static const String continueWith = "continue_with";
   static const String phoneError = "phone_error";
   static const String phoneVerification = "phone_verification";
