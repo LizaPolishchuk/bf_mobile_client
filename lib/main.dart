@@ -153,17 +153,15 @@ class _InitialPageState extends State<InitialPage> {
         _initialPage = LoginPage();
       });
     });
-
+    if (token != null && user == null) {
+      token = null;
+      getIt<LoginBloc>().logout();
+    }
     _initialPage = (token?.isNotEmpty != true)
         ? LoginPage()
         : (user?.isRegistered != true)
             ? RegistrationPage(user!)
             : HomeContainer();
-
-    if (token != null && user == null) {
-      token = null;
-      getIt<LoginBloc>().logout();
-    }
   }
 
   @override
