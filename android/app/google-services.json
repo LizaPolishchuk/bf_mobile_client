@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "883762712602-l6tjrebcitipod7eou8n96mgkerb9i8p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pea.salonsapp",
+            "certificate_hash": "af71f7bcf5d4c08b127fdc8bac7b6e80f4cc0a46"
+          }
+        },
+        {
           "client_id": "883762712602-ncev4dc9d4vsbqet2an0oeuij7mp3fl8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

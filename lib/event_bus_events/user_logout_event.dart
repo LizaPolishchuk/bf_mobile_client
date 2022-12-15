@@ -1,0 +1,3 @@
+class UserLoggedOutEvent {
+  UserLoggedOutEvent();
+}
