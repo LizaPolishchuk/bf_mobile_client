@@ -63,7 +63,7 @@ class _GenderSelectorState extends State<GenderSelector> {
           ? _buildGenderIconItem(name, image, genderIndex)
           : _buildGenderRadioItem(name, genderIndex),
       onTap: () {
-        if(widget.enabled) {
+        if (widget.enabled) {
           widget.onSelectGender(genderIndex);
           setState(() {
             _selectedGender = genderIndex;
@@ -80,17 +80,19 @@ class _GenderSelectorState extends State<GenderSelector> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              child: SvgPicture.asset(
+              child: Image.asset(
                 image,
                 height: (genderIndex == _selectedGender) ? 110 : 70,
                 width: (genderIndex == _selectedGender) ? 110 : 70,
               ),
+              // SvgPicture.asset(
+              //   image,
+              //   height: (genderIndex == _selectedGender) ? 110 : 70,
+              //   width: (genderIndex == _selectedGender) ? 110 : 70,
+              // ),
             ),
             marginVertical(6),
-            Text(
-              name,
-              style: bodyText3,
-            ),
+            _buildGenderRadioItem(name, genderIndex),
           ],
         ),
         if (genderIndex != _selectedGender && _selectedGender != null)
@@ -116,14 +118,14 @@ class _GenderSelectorState extends State<GenderSelector> {
   Widget _buildGenderRadioItem(String name, int genderIndex) {
     return Container(
       height: 55,
-      width: 135,
+      width: 100,
       alignment: Alignment.center,
-      decoration: (genderIndex == _selectedGender)
-          ? BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: accentColor,
-            )
-          : null,
+      // decoration: (genderIndex == _selectedGender)
+      //     ? BoxDecoration(
+      //         borderRadius: BorderRadius.circular(20),
+      //         color: accentColor,
+      //       )
+      //     : null,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

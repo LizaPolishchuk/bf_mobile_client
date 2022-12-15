@@ -1,17 +1,17 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/widgets/app_dowland_photo.dart';
 import 'package:salons_app_mobile/utils/widgets/gender_selector.dart';
 
 import '../../injection_container_app.dart';
@@ -78,7 +78,6 @@ class _SettingsPageState extends State<SettingsPage> {
             if (!snapshot.hasData || snapshot.data == null) {
               return SizedBox.shrink();
             }
-
             return _buildPage(snapshot.data!);
           }),
     );
@@ -106,67 +105,20 @@ class _SettingsPageState extends State<SettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    height: 88,
-                    width: 93,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: 88,
-                          width: 88,
-                          decoration: BoxDecoration(
-                            color: accentColor,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: _pickedAvatar != null
-                              ? ClipRRect(
-                                  child: Image.file(
-                                    _pickedAvatar!,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  borderRadius: BorderRadius.circular(100),
-                                )
-                              : user.avatar?.isNotEmpty == true
-                                  ? ClipRRect(
-                                      child: Image.network(
-                                        user.avatar!,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius: BorderRadius.circular(100),
-                                    )
-                                  : SvgPicture.asset(icProfilePlaceholder),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: InkWell(
-                            onTap: () async {
-                              if (_isEditMode) {
-                                final image = File(await ImagePicker()
-                                    .pickImage(source: ImageSource.gallery)
-                                    .then((pickedFile) => pickedFile!.path));
-                                setState(() {
-                                  _pickedAvatar = File(image.path);
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: 24,
-                              width: 24,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  width: 1,
-                                  color: primaryColor,
-                                ),
-                              ),
-                              child: SvgPicture.asset(icCamera),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                  AppDowlandPhoto(
+                    onTap: () async {
+                      if (_isEditMode) {
+                        final XFile? image = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
+                        if (image != null) {
+                          setState(() {
+                            _pickedAvatar = File(image.path);
+                          });
+                        }
+                      }
+                    },
+                    pickedAvatar: _pickedAvatar,
+                    user: user,
                   ),
                   marginVertical(24),
                   Form(

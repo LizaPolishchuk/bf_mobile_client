@@ -7,6 +7,9 @@ class AppStrings {
   static const String signIn = "sign_in";
   static const String signInHintText = "sing_in_hint_text";
   static const String downloadPhotoText = "download_photo_text";
+  static const String addPhotoGalery = "add_photo_galery";
+  static const String deletePhoto = "delete_photo";
+  static const String makePhoto = "make_photo";
   static const String continueWith = "continue_with";
   static const String phoneError = "phone_error";
   static const String phoneVerification = "phone_verification";

@@ -52,6 +52,9 @@ final TextStyle appBarText =
     TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500);
 final TextStyle buttonText =
     TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500);
+
+final TextStyle buttonSheetText =
+    TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400);
 final TextStyle calendarText =
     TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w400);
 

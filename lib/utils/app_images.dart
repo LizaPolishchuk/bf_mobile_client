@@ -1,8 +1,12 @@
 ///Icons
 const String icGoogle = 'assets/icons/ic_google.svg';
 const String icFacebook = 'assets/icons/ic_facebook.svg';
-const String icMan = 'assets/icons/boy.svg';
-const String icWoman = 'assets/icons/girl.svg';
+//! This .svg do not opened. (Exception caught by SVG Failed to find definition for url(#pattern7))
+//const String icBoy = 'assets/icons/boy.svg';
+//const String icGirl = 'assets/icons/girl.svg';
+
+const String icMan = 'assets/images/boy.png';
+const String icWoman = 'assets/images/girl.png';
 const String icExit = 'assets/icons/ic_exit.svg';
 const String icSettings = 'assets/icons/ic_settings.svg';
 const String icBonusCards = 'assets/icons/ic_bonus_cards.svg';
