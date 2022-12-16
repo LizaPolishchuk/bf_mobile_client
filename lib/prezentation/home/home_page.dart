@@ -34,7 +34,8 @@ class _HomePageState extends State<HomePage> {
       RefreshController(initialRefresh: true);
 
   void _onRefresh() async {
-    _ordersBloc.getOrdersForCurrentUser(dateFrom: DateTime.now().formatToYYYYMMddWithTime());
+    _ordersBloc.getOrdersForCurrentUser(
+        dateFrom: DateTime.now().formatToYYYYMMddWithTime());
     _salonsBloc.loadTopSalons();
   }
 

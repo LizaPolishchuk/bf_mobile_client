@@ -47,7 +47,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
     _codeVerifyBloc.startTimerToResendCode();
 
     _codeVerifyBloc.loggedInSuccess.listen((event) {
-     Navigator.of(context).pop();
+      Navigator.of(context).pop();
     });
 
     _codeVerifyBloc.errorMessage.listen((errorMsg) {

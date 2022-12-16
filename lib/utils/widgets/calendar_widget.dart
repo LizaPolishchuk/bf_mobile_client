@@ -15,7 +15,13 @@ class Calendar extends StatefulWidget {
   final double? height;
   final GlobalKey? dateKey;
 
-  const Calendar({Key? key, this.onSelectDay, this.calendarFormat, this.height, this.dateKey}) : super(key: key);
+  const Calendar(
+      {Key? key,
+      this.onSelectDay,
+      this.calendarFormat,
+      this.height,
+      this.dateKey})
+      : super(key: key);
 
   @override
   _CalendarState createState() => _CalendarState();
@@ -48,7 +54,8 @@ class _CalendarState extends State<Calendar> {
             formatButtonVisible: false,
           ),
           onDaySelected: (selectedDay, focusedDay) {
-            if (widget.calendarFormat == CalendarFormat.twoWeeks || !selectedDay.isDayBeforeNow()) {
+            if (widget.calendarFormat == CalendarFormat.twoWeeks ||
+                !selectedDay.isDayBeforeNow()) {
               setState(() {
                 _selectedDay = selectedDay;
               });
@@ -100,7 +107,8 @@ class _CalendarState extends State<Calendar> {
 
     if (day.year == now.year && day.month == now.month && day.day == now.day) {
       dayType = CalendarDayType.TODAY;
-    } else if (widget.calendarFormat != CalendarFormat.twoWeeks && day.isBefore(now)) {
+    } else if (widget.calendarFormat != CalendarFormat.twoWeeks &&
+        day.isBefore(now)) {
       dayType = CalendarDayType.OUTSIDE;
     } else {
       dayType = CalendarDayType.DEFAULT;

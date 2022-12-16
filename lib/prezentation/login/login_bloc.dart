@@ -40,7 +40,6 @@ class LoginBloc {
 
       _codeSentSubject.add(null);
     }
-
   }
 
   void logout() async {

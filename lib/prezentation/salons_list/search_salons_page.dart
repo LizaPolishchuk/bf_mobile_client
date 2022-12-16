@@ -169,8 +169,10 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                                   },
                                   onClickStar: () {
                                     var salonToUpdate = salons[index];
-                                    salonToUpdate.isFavourite = !salonToUpdate.isFavourite;
-                                    _salonsBloc.updateSalon(salonToUpdate, index);
+                                    salonToUpdate.isFavourite =
+                                        !salonToUpdate.isFavourite;
+                                    _salonsBloc.updateSalon(
+                                        salonToUpdate, index);
                                   },
                                 );
                               },

@@ -63,7 +63,7 @@ class _GenderSelectorState extends State<GenderSelector> {
           ? _buildGenderIconItem(name, image, genderIndex)
           : _buildGenderRadioItem(name, genderIndex),
       onTap: () {
-        if(widget.enabled) {
+        if (widget.enabled) {
           widget.onSelectGender(genderIndex);
           setState(() {
             _selectedGender = genderIndex;

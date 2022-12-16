@@ -82,8 +82,9 @@ class CardItemWidget extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: Color(0xffEBEAEA),
-                      borderRadius:
-                          BorderRadius.only(topLeft: Radius.circular(25), bottomRight: Radius.circular(25)),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          bottomRight: Radius.circular(25)),
                     ),
                     child: SvgPicture.asset(
                       (item as Salon).isFavourite

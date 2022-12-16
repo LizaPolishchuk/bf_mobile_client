@@ -236,7 +236,7 @@ class _HomeContainerState extends State<HomeContainer> {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
           }),
-          _buildDrawerItem("Favourite salons", icStarUnchecked, onClick: (){
+          _buildDrawerItem("Favourite salons", icStarUnchecked, onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
           }),

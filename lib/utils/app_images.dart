@@ -23,7 +23,8 @@ const String icCheck = 'assets/icons/ic_check.svg';
 const String icMenu = 'assets/icons/ic_menu.svg';
 const String icFilters = 'assets/icons/ic_filters.svg';
 const String icCamera = 'assets/icons/ic_camera.svg';
-const String icArrowLeftWithShadow = 'assets/icons/ic_arrow_left_with_shadow.svg';
+const String icArrowLeftWithShadow =
+    'assets/icons/ic_arrow_left_with_shadow.svg';
 const String icStarUnchecked = 'assets/icons/ic_star.svg';
 const String icStarChecked = 'assets/icons/ic_star_filled.svg';
 
@@ -32,4 +33,5 @@ const String masterPlaceholder = 'assets/images/master_image.png';
 const String avatarPlaceholder = 'assets/images/avatar_placeholder.png';
 const String loginPlaceholder = 'assets/images/login_placeholder.png';
 const String emptyListPlaceholder = 'assets/images/empty_list_placeholder.png';
-const String emptyOrdersPlaceholder = 'assets/images/empty_orders_placeholder.png';
+const String emptyOrdersPlaceholder =
+    'assets/images/empty_orders_placeholder.png';

@@ -8,7 +8,8 @@ class AppStrings {
   static const String continueWith = "continue_with";
   static const String phoneError = "phone_error";
   static const String phoneVerification = "phone_verification";
-  static const String phoneVerificationDescription = "phone_verification_description";
+  static const String phoneVerificationDescription =
+      "phone_verification_description";
   static const String continueTxt = "continue";
   static const String enterName = "enter_name";
   static const String name = "name";
@@ -46,7 +47,8 @@ class AppStrings {
   static const String chooseDate = "choose_date";
   static const String chooseTime = "choose_time";
   static const String sum = "sum";
-  static const String ifTimeReservedDescription = "if_time_reserved_description";
+  static const String ifTimeReservedDescription =
+      "if_time_reserved_description";
   static const String reserved = "reserved";
   static const String nothingFound = "nothing_found";
   static const String ordersHistory = "orders_history";
@@ -67,7 +69,6 @@ class AppStrings {
   static const String enterPhoneDescription = "enter_phone_description";
   static const String didNotReceiveCode = "did_not_receive_code";
   static const String resendCode = "resend_code";
-
 }
 
 // Tool to quick set text to camelCase https://textedit.tools/camelcase

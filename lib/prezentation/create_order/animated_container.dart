@@ -100,10 +100,11 @@ class ErrorAnimatedContainerState extends State<ErrorAnimatedContainer>
             child: widget.child,
             decoration: BoxDecoration(
                 color: Colors.white,
-                border: widget.border ?? Border.all(
-                  width: 1,
-                  color: _colorAnimation.value!,
-                ),
+                border: widget.border ??
+                    Border.all(
+                      width: 1,
+                      color: _colorAnimation.value!,
+                    ),
                 borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
                 boxShadow: _showError
                     ? [

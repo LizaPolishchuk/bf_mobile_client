@@ -100,7 +100,6 @@ class _FavouriteSalonsPageState extends State<FavouriteSalonsPage> {
           children: [
             searchTextField(_searchController),
             marginVertical(24),
-
             Expanded(
               child: StreamBuilder<List<Salon>>(
                   stream: _salonsBloc.salonsLoaded,
@@ -161,8 +160,10 @@ class _FavouriteSalonsPageState extends State<FavouriteSalonsPage> {
                                     },
                                     onClickStar: () {
                                       var salonToUpdate = salons[index];
-                                      salonToUpdate.isFavourite = !salonToUpdate.isFavourite;
-                                      _salonsBloc.updateSalon(salonToUpdate, index);
+                                      salonToUpdate.isFavourite =
+                                          !salonToUpdate.isFavourite;
+                                      _salonsBloc.updateSalon(
+                                          salonToUpdate, index);
                                     },
                                   );
                                 },

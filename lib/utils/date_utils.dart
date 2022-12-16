@@ -1,4 +1,3 @@
-
 import 'package:intl/intl.dart';
 
 extension DayBefore on DateTime {
@@ -6,8 +5,8 @@ extension DayBefore on DateTime {
     var now = DateTime.now();
 
     return (!(this.year == now.year &&
-        this.month == now.month &&
-        this.day == now.day) &&
+            this.month == now.month &&
+            this.day == now.day) &&
         this.isBefore(now));
   }
 }
