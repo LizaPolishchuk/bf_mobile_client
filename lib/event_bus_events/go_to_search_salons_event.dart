@@ -1,3 +1,0 @@
-class GoToSearchSalonsEvent {
-  GoToSearchSalonsEvent();
-}

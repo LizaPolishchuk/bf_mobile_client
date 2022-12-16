@@ -1,19 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
-import 'package:salons_app_mobile/utils/alert_builder.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
 
 import 'login_bloc.dart';
-
-const uaCode = "+380";
+import 'login_state.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
@@ -24,182 +17,113 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late LoginBloc _loginBloc;
-  late TextEditingController _teControllerPhone;
-  final _formKey = GlobalKey<FormState>();
-  final AlertBuilder _alertBuilder = new AlertBuilder();
-  late FocusNode _teFocusNode;
 
-  bool _isButtonPressed = false;
+  // late NavBloc navBloc;
+
+  late TextEditingController _teControllerEmail;
+  late TextEditingController _teControllerPassword;
+
+  bool rememberMe = false;
+
+  String? _emailErrorText;
+  String? _passwordErrorText;
 
   @override
   void initState() {
     super.initState();
 
     _loginBloc = getItApp<LoginBloc>();
-    _teControllerPhone = new TextEditingController();
-    _teFocusNode = FocusNode();
+    // navBloc = getItWeb<NavBloc>();
 
-    _teControllerPhone.addListener(() {
-      if (_isButtonPressed != false) {
-        _isButtonPressed = false;
-      }
-    });
-
-    print("login init state");
-
-    _loginBloc.codeSentSuccess.listen((_) {
-      print("_loginBloc.codeSentSuccess");
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            CodeVerificationPage(_loginBloc, uaCode + _teControllerPhone.text),
-      ));
-    });
-
-    _loginBloc.errorMessage.listen((errorMsg) {
-      _alertBuilder.showErrorSnackBar(context, errorMsg);
-    });
-
-    _loginBloc.isLoading.listen((isLoading) {
-      print("login isLoading: $isLoading");
-      if (isLoading) {
-        _alertBuilder.showLoaderDialog(context);
-      } else {
-        _alertBuilder.stopLoaderDialog(context);
-      }
-    });
+    _teControllerEmail = new TextEditingController();
+    _teControllerPassword = new TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xff193a3c),
-      body: Stack(
-        children: [
-          Image.asset(
-            loginPlaceholder,
-            fit: BoxFit.fill,
-            width: MediaQuery.of(context).size.width,
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
+    return Container(
+        child: BlocBuilder<LoginBloc, LoginState>(
+            bloc: _loginBloc,
+            builder: (BuildContext context, LoginState state) {
+              if (state is LoadingLoginState) {
+                return Text("Loading...");
+                // SchedulerBinding.instance?.addPostFrameCallback((_) {
+                //   showLoaderDialog(context);
+                // });
+              } else if (state is ErrorLoginState) {
+                print(
+                    "ErrorLoginState code:  ${state.errorCode}, message: ${state.errorMessage}");
+
+                // stopLoaderDialog(context);
+
+                // if (state.errorCode == "user-not-found") {
+                //   _emailErrorText = tr(AppStrings.wrong_email);
+                // } else if (state.errorCode == "wrong-password") {
+                //   _passwordErrorText = tr(AppStrings.wrong_password);
+                // } else {
+                //   SchedulerBinding.instance?.addPostFrameCallback((_) {
+                //     showAlertDialog(context, description: state.errorMessage);
+                //   });
+                // }
+              }
+              return buildLoginPage();
+            }));
+  }
+
+  Widget buildLoginPage() {
+    return Column(
+      children: [
+        Flexible(
+          flex: 1,
+          child: InkWell(
             child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25),
-                  topRight: Radius.circular(25),
-                ),
+              height: 60,
+              child: Row(
+                children: [
+                  SvgPicture.asset(icGoogle),
+                  Text("Google"),
+                ],
               ),
-              child: buildLogin(),
             ),
+            onTap: () => _loginBloc.loginWithGoogle,
           ),
-        ],
-      ),
+        ),
+        Flexible(
+          flex: 1,
+          child: InkWell(
+            child: Container(
+              color: Color(0xff3B5998),
+              height: 60,
+              child: Row(
+                children: [
+                  SvgPicture.asset(icFacebook),
+                  Text("Facebook"),
+                ],
+              ),
+            ),
+            onTap: () => _loginBloc.loginWithFacebook,
+          ),
+        ),
+      ],
     );
   }
 
-  Widget buildLogin() {
-    print(_teFocusNode.hasFocus);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            tr(AppStrings.welcome),
-            style: TextStyle(
-              color: primaryColor,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          marginVertical(2),
-          Text(
-            tr(AppStrings.enterPhoneDescription),
-            style: TextStyle(
-              color: grey,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          marginVertical(24),
-          Form(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            child: textFieldWithBorders(
-              "",
-              _teControllerPhone,
-              // hintText: "+380",
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
-              focusNode: _teFocusNode,
-              maxLength: 9,
-              prefixIcon: Padding(
-                padding: const EdgeInsets.only(left: 16, bottom: 1.5),
-                child: Text(
-                  uaCode,
-                  style: bodyText1,
-                ),
-              ),
-              prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
-              keyboardType:
-                  TextInputType.numberWithOptions(signed: true, decimal: true),
-              validator: (String? arg) {
-                if (!_isButtonPressed) {
-                  return null;
-                }
-                return (arg?.length == null || arg!.length < 9)
-                    ? tr(AppStrings.phoneError)
-                    : null;
-              },
-            ),
-          ),
-          marginVertical(22),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: roundedButton(
-              context,
-              tr(AppStrings.signIn),
-              () async {
-                _isButtonPressed = true;
-                if (_formKey.currentState!.validate()) {
-                  var hasConnection =
-                      await ConnectivityManager.checkInternetConnection();
-                  if (hasConnection) {
-                    _loginBloc.loginWithPhone(uaCode + _teControllerPhone.text);
-                  } else {
-                    _alertBuilder.showErrorSnackBar(
-                        context, tr(AppStrings.noInternetConnection));
-                  }
-                }
-              },
-              width: double.infinity,
-            ),
-          ),
-          // marginVertical(22),
-          // Text(
-          //   tr(AppStrings.continueWith).toUpperCase(),
-          //   style: bodyText1,
-          // ),
-          // marginVertical(22),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     InkWell(
-          //       child: SvgPicture.asset(icGoogle),
-          //       onTap: () => _loginBloc..add(LoginWithGoogleEvent()),
-          //     ),
-          //     marginHorizontal(10),
-          //     InkWell(
-          //       child: SvgPicture.asset(icFacebook),
-          //       onTap: () => _loginBloc.add(LoginWithFacebookEvent()),
-          //     ),
-          //   ],
-          // ),
-        ],
-      ),
-    );
-  }
+// bool validateFields() {
+//   setState(() {
+//     _emailErrorText = _teControllerEmail.text.isEmpty ||
+//             !_teControllerEmail.text.isEmailValid()
+//         ? 'Error email'
+//         : null;
+//     _passwordErrorText =
+//         _teControllerPassword.text.isEmpty ? 'Error password' : null;
+//   });
+//
+//   return _passwordErrorText == null && _emailErrorText == null;
+// }
+//
+// Widget buildError() {
+//   return Center(
+//     child: Text('Error login'),
+//   );
+// }
 }

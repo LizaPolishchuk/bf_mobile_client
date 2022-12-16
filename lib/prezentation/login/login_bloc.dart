@@ -1,78 +1,70 @@
 import 'dart:async';
 
-import 'package:rxdart/subjects.dart';
+import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
-import 'package:salons_app_mobile/event_bus_events/user_logout_event.dart';
 
-class LoginBloc {
-  LoginWithPhoneUseCase _loginWithPhoneUseCase;
-  SignOutUseCase _signOutUseCase;
+import 'login_event.dart';
+import 'login_state.dart';
 
-  LoginBloc(this._loginWithPhoneUseCase, this._signOutUseCase);
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  LoginWithGoogleUseCase loginWithGoogle;
+  LoginWithFacebookUseCase loginWithFacebook;
+  LoginWithEmailAndPasswordUseCase loginWithEmailAndPasswordUseCase;
+  SignUpWithEmailAndPasswordUseCase signUpWithEmailAndPasswordUseCase;
+  SignOutUseCase signOut;
 
-  final _codeSentSubject = PublishSubject<void>();
-  final _loggedOutSubject = PublishSubject<void>();
-  final _errorSubject = PublishSubject<String>();
-  final _isLoadingSubject = PublishSubject<bool>();
+  LoginBloc(
+      this.loginWithGoogle,
+      this.loginWithFacebook,
+      this.loginWithEmailAndPasswordUseCase,
+      this.signUpWithEmailAndPasswordUseCase,
+      this.signOut) : super(InitialLoginState());
 
-  // output stream
-  Stream<void> get loggedOutSuccess => _loggedOutSubject.stream;
+  @override
+  LoginState get initialState => InitialLoginState();
 
-  Stream<void> get codeSentSuccess => _codeSentSubject.stream;
-
-  Stream<String> get errorMessage => _errorSubject.stream;
-
-  Stream<bool> get isLoading => _isLoadingSubject.stream;
-
-  void loginWithPhone(String phone) async {
-    print("loginWithPhone");
-
-    _isLoadingSubject.add(true);
-    final response = await _loginWithPhoneUseCase(phone);
-
-    _isLoadingSubject.add(false);
-
-    if (response.isLeft) {
-      _errorSubject.add(response.left.message);
-    } else {
-      print("_codeSentSubject add ");
-
-      _codeSentSubject.add(null);
+  @override
+  Stream<LoginState> mapEventToState(
+    LoginEvent event,
+  ) async* {
+    if (event is LoginWithGoogleEvent) {
+      yield LoadingLoginState();
+      final loginResult = await loginWithGoogle();
+      yield* _loggedInOrFailure(loginResult);
+    } else if (event is LoginWithFacebookEvent) {
+      yield LoadingLoginState();
+      final loginResult = await loginWithFacebook();
+      yield* _loggedInOrFailure(loginResult);
+    } else if (event is LoginWithEmailAndPasswordEvent) {
+      yield LoadingLoginState();
+      final loginResult =
+          await loginWithEmailAndPasswordUseCase(event.email, event.password);
+      yield* _loggedInOrFailure(loginResult);
+    } else if (event is SignUpWithEmailAndPasswordEvent) {
+      yield LoadingLoginState();
+      final loginResult =
+          await signUpWithEmailAndPasswordUseCase(event.email, event.password);
+      yield* _loggedInOrFailure(loginResult);
+    } else if (event is LogoutEvent) {
+      yield LoadingLoginState();
+      final signoutResult = await signOut();
+      yield* _signedOutOrFailure(signoutResult);
     }
-
   }
 
-  void logout() async {
-    final response = await _signOutUseCase();
-    if (response.isLeft) {
-      _errorSubject.add(response.left.message);
-    } else {
-      eventBus.fire(UserLoggedOutEvent());
-      _loggedOutSubject.add(null);
-    }
+  Stream<LoginState> _loggedInOrFailure(
+    Either<Failure, String> failureOrUserId,
+  ) async* {
+    yield failureOrUserId.fold((failure) => ErrorLoginState(failure.codeStr, failure.message), (userId) {
+      return LoggedInState();
+    });
   }
 
-// void loginWithGoogle() async {
-//   _isLoadingSubject.add(true);
-//   final response = await loginWithGoogleUseCase();
-//   if (response.isLeft) {
-//     _errorSubject.add(response.left.message);
-//   } else {
-//     _loggedInSubject.add(null);
-//   }
-//   _isLoadingSubject.add(false);
-// }
-//
-// void loginWithFacebook() async {
-//   _isLoadingSubject.add(true);
-//   final response = await loginWithFacebookUseCase();
-//   if (response.isLeft) {
-//     _errorSubject.add(response.left.message);
-//   } else {
-//     _loggedInSubject.add(null);
-//   }
-//   _isLoadingSubject.add(false);
-// }
-
+  Stream<LoginState> _signedOutOrFailure(
+    Either<Failure, void> failureOrUserId,
+  ) async* {
+    yield failureOrUserId.fold(
+        (failure) => ErrorLoginState(failure.codeStr, failure.message), (voidResult) => LoggedOutState());
+  }
 }
