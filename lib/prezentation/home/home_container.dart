@@ -47,9 +47,12 @@ class _HomeContainerState extends State<HomeContainer> {
 
   SearchFilters? _searchFilters;
 
+  bool? _isSelectedRole;
+
   @override
   void initState() {
     super.initState();
+    _isSelectedRole = false;
 
     _currentUser = getIt<LocalStorage>().getCurrentUser();
 
@@ -194,21 +197,19 @@ class _HomeContainerState extends State<HomeContainer> {
 
   Widget _buildDrawerMenu() {
     return Drawer(
-      child: Column(
-        children: [
-          Container(
-              padding:
-                  EdgeInsets.only(top: 56, bottom: 20, left: 16, right: 16),
-              decoration: BoxDecoration(color: accentColor),
+      child: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        tr(AppStrings.appName),
-                        style: titleText2.copyWith(color: greyText),
-                      ),
-                      Spacer(),
+                      imageWithPlaceholder(
+                          _currentUser.avatar, avatarPlaceholder),
                       InkWell(
                         child: SvgPicture.asset(icCancel),
                         onTap: () {
@@ -217,40 +218,58 @@ class _HomeContainerState extends State<HomeContainer> {
                       ),
                     ],
                   ),
-                  marginVertical(42),
-                  Row(
-                    children: [
-                      imageWithPlaceholder(
-                          _currentUser.avatar, avatarPlaceholder),
-                      marginHorizontal(10),
-                      Expanded(
-                        child: Text(_currentUser.name ?? "",
-                            style: bodyText3,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                    ],
-                  ),
+                  marginVertical(22),
+                  Text(_currentUser.name ?? "",
+                      style: bodyText3,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis),
                 ],
-              )),
-          marginVertical(40),
-          _buildDrawerItem(tr(AppStrings.history), icHistory, onClick: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
-          }),
-          _buildDrawerItem("Favourite salons", icStarUnchecked, onClick: (){
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
-          }),
-          _buildDrawerItem(tr(AppStrings.promo), icPromo),
-          _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),
-          _buildDrawerItem(tr(AppStrings.settings), icSettings, onClick: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed(SettingsPage.routeName);
-          }),
-          _buildDrawerItem(tr(AppStrings.exit), icExit,
-              onClick: () => _loginBloc.logout()),
-        ],
+              ),
+            ),
+            Divider(
+              thickness: 1,
+              endIndent: 24,
+              height: 16,
+            ),
+            //* switch between roles is not ready. I haven't figured out how to do it yet.
+            AppSelectRoleWidget(
+              onPressedClient: () {
+                if (_isSelectedRole == false)
+                  setState(() {
+                    _isSelectedRole = true;
+                  });
+              },
+              colorPrimaryClient:
+                  _isSelectedRole! ? primaryColor : Colors.transparent,
+              colorTextClient: _isSelectedRole! ? Colors.white : Colors.black,
+              onPressedMaster: () {
+                if (_isSelectedRole == true)
+                  setState(() {
+                    _isSelectedRole = false;
+                  });
+              },
+              colorPrimaryMaster:
+                  _isSelectedRole! ? Colors.transparent : primaryColor,
+              colorTextMaster: _isSelectedRole! ? Colors.black : Colors.white,
+            ),
+            _buildDrawerItem(tr(AppStrings.history), icHistory, onClick: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
+            }),
+            _buildDrawerItem("Favourite salons", icStarUnchecked, onClick: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
+            }),
+            _buildDrawerItem(tr(AppStrings.promo), icPromo),
+            _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),
+            _buildDrawerItem(tr(AppStrings.settings), icSettings, onClick: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(SettingsPage.routeName);
+            }),
+            _buildDrawerItem(tr(AppStrings.exit), icExit,
+                onClick: () => _loginBloc.logout()),
+          ],
+        ),
       ),
     );
   }
@@ -265,7 +284,7 @@ class _HomeContainerState extends State<HomeContainer> {
         else if (onClick != null) onClick();
       },
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
         child: Row(
           children: [
             SvgPicture.asset(icon),
@@ -275,6 +294,83 @@ class _HomeContainerState extends State<HomeContainer> {
               style: bodyText3.copyWith(color: primaryColor),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class AppSelectRoleWidget extends StatelessWidget {
+  const AppSelectRoleWidget({
+    Key? key,
+    required this.onPressedClient,
+    required this.colorPrimaryClient,
+    required this.colorTextClient,
+    required this.onPressedMaster,
+    required this.colorPrimaryMaster,
+    required this.colorTextMaster,
+  }) : super(key: key);
+
+  final Function() onPressedClient;
+  final Color colorPrimaryClient;
+  final Color colorTextClient;
+  final Function() onPressedMaster;
+  final Color colorPrimaryMaster;
+  final Color colorTextMaster;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: grey.withOpacity(0.1),
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 6,
+          ),
+          child: Row(
+            children: [
+              _selectButton(
+                'Client',
+                onPressedClient,
+                colorPrimaryClient,
+                colorTextClient,
+              ),
+              _selectButton(
+                'Master',
+                onPressedMaster,
+                colorPrimaryMaster,
+                colorTextMaster,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Expanded _selectButton(
+      String name, Function() onPressed, Color colorPrimary, Color colorText) {
+    return Expanded(
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
+            primary: colorPrimary),
+        child: Text(
+          name,
+          style: TextStyle(color: colorText),
         ),
       ),
     );
