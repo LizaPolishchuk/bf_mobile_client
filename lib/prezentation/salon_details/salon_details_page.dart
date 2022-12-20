@@ -88,7 +88,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                   "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg",
               fit: BoxFit.fill,
               height: 280,
-              width: MediaQuery.of(context).size.width,
+              width: double.infinity
             ),
             Expanded(
               child: Padding(
@@ -230,11 +230,11 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
   }
 
   Future<void> openMap(double latitude, double longitude) async {
-    Uri _googleUrl = Uri.parse(
+    Uri googleUrl = Uri.parse(
         'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
 
-    if (await canLaunchUrl(_googleUrl)) {
-      await launchUrl(_googleUrl);
+    if (await canLaunchUrl(googleUrl)) {
+      await launchUrl(googleUrl);
     } else {
       throw 'Could not open the map.';
     }

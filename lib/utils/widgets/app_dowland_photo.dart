@@ -11,12 +11,12 @@ class AppDowlandPhoto extends StatelessWidget {
     Key? key,
     required this.onTap,
     required this.pickedAvatar,
-    required this.user,
+    this.user,
   }) : super(key: key);
 
   final Function() onTap;
   final File? pickedAvatar;
-  final UserEntity user;
+  final UserEntity? user;
 
   @override
   Widget build(BuildContext context) {
@@ -31,30 +31,30 @@ class AppDowlandPhoto extends StatelessWidget {
             width: 88,
             decoration: BoxDecoration(
               color: accentColor,
-              borderRadius: BorderRadius.circular(150),
+              borderRadius: BorderRadius.circular(100),
             ),
           ),
-          SizedBox(
-            height: 50,
-            width: 50,
-            child: pickedAvatar != null
-                ? ClipRRect(
-                    child: Image.file(
-                      pickedAvatar!,
-                      fit: BoxFit.cover,
+          pickedAvatar != null
+              ? ClipRRect(
+                  child: Image.file(
+                    pickedAvatar!,
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(100),
+                )
+              : user?.avatar?.isNotEmpty == true
+                  ? ClipRRect(
+                      child: Image.network(
+                        user!.avatar!,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(100),
+                    )
+                  : SvgPicture.asset(
+                      icProfilePlaceholder,
+                      height: 50,
+                      width: 50,
                     ),
-                    borderRadius: BorderRadius.circular(100),
-                  )
-                : user.avatar?.isNotEmpty == true
-                    ? ClipRRect(
-                        child: Image.network(
-                          user.avatar!,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(100),
-                      )
-                    : SvgPicture.asset(icProfilePlaceholder),
-          ),
           Align(
             alignment: Alignment.bottomRight,
             child: InkWell(
@@ -73,7 +73,7 @@ class AppDowlandPhoto extends StatelessWidget {
                 child: SvgPicture.asset(icCamera),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

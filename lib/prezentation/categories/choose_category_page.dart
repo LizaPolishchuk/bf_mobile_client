@@ -95,7 +95,7 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
             children: [
               Container(
                 height: 280,
-                width: MediaQuery.of(context).size.width,
+                width: double.infinity,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.fill,

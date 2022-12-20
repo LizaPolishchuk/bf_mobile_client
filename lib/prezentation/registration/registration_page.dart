@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
-import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -13,7 +12,7 @@ import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/widgets/app_dowland_photo.dart';
-import 'package:salons_app_mobile/utils/widgets/app_text_button.dart';
+import 'package:salons_app_mobile/utils/widgets/app_gecture_detector_photo.dart';
 import 'package:salons_app_mobile/utils/widgets/gender_selector.dart';
 
 import '../../injection_container_app.dart';
@@ -35,8 +34,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   AlertBuilder _alertBuilder = new AlertBuilder();
 
   File? _pickedAvatar;
-  late ProfileBloc _profileBloc;
-  bool _isEditMode = false;
 
   int? _selectedGender;
   bool? _showGenderError;
@@ -45,9 +42,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   void initState() {
     super.initState();
-
-    _profileBloc = getItApp<ProfileBloc>();
-    _profileBloc.loadUserProfile();
 
     _registrationBloc = getItApp<RegistrationBloc>();
     _teControllerName = new TextEditingController();
@@ -75,29 +69,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          //! How better way to do back button?
-          //* Whet click back, black screen.
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_ios),
-        ),
         backgroundColor: bgGrey,
         title: Text(
           tr(AppStrings.appName),
         ),
       ),
-      body: StreamBuilder<UserEntity>(
-          stream: _profileBloc.profileLoaded,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data == null) {
-              return SizedBox.shrink();
-            }
-            return _buildPage(snapshot.data!);
-          }),
+      body: _buildPage(),
     );
   }
 
-  Widget _buildPage(UserEntity user) {
+  Widget _buildPage() {
     final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Padding(
@@ -126,57 +107,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   style: text16W400,
                 ),
                 AppDowlandPhoto(
-                  onTap: () => showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) => FractionallySizedBox(
-                      widthFactor: 0.95,
-                      heightFactor: 0.55,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 13),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 10),
-                              AppTextButton(
-                                onPressed: () async {
-                                  if (_isEditMode) {
-                                    final XFile? image = await ImagePicker()
-                                        .pickImage(source: ImageSource.gallery);
-                                    if (image != null) {
-                                      setState(() {
-                                        _pickedAvatar = File(image.path);
-                                      });
-                                    }
-                                  }
-                                },
-                                text: tr(AppStrings.addPhotoGalery),
-                              ),
-                              Divider(thickness: 1),
-                              AppTextButton(
-                                onPressed: () {},
-                                text: tr(AppStrings.deletePhoto),
-                              ),
-                              Divider(thickness: 1),
-                              AppTextButton(
-                                onPressed: () {},
-                                text: tr(AppStrings.makePhoto),
-                              ),
-                              //! In figma 4 buttons. I did not add cacell button.
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  onTap: () => _showModalBottomSheet(),
                   pickedAvatar: _pickedAvatar,
-                  user: user,
                 ),
               ],
             ),
@@ -243,6 +175,57 @@ class _RegistrationPageState extends State<RegistrationPage> {
               }
             }),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showModalBottomSheet() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => FractionallySizedBox(
+        widthFactor: 0.95,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 13),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 10),
+                AppGestureDetectorPhoto(
+                  onTap: () async {
+                    final XFile? image = await ImagePicker()
+                        .pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      setState(() {
+                        _pickedAvatar = File(image.path);
+                      });
+                    }
+                  },
+                  text: tr(AppStrings.addPhotoGalery),
+                ),
+                Divider(thickness: 1),
+                AppGestureDetectorPhoto(
+                  onTap: () {},
+                  text: tr(AppStrings.deletePhoto),
+                ),
+                Divider(thickness: 1),
+                AppGestureDetectorPhoto(
+                  onTap: () {},
+                  text: tr(AppStrings.makePhoto),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
         ),
       ),
     );

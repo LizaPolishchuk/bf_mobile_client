@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
           Image.asset(
             loginPlaceholder,
             fit: BoxFit.fill,
-            width: MediaQuery.of(context).size.width,
+            width: double.infinity,
           ),
           Align(
             alignment: Alignment.bottomCenter,

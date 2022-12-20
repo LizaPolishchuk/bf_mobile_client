@@ -121,7 +121,7 @@ Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
     width: width,
     child: Container(
       height: height ?? 50,
-      width: width ?? MediaQuery.of(context).size.width,
+      width: width ?? double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: ElevatedButton(
         onPressed: onPressed,
