@@ -135,10 +135,9 @@ class _InitialPageState extends State<InitialPage> {
       print("UserSuccessLoggedInEvent: $event");
 
       setState(() {
-        _initialPage = RegistrationPage(event.user);
-        // _initialPage = event.isNewUser
-        //     ? RegistrationPage(event.user)
-        //     : const HomeContainer();
+        _initialPage = event.isNewUser
+            ? RegistrationPage(event.user)
+            : const HomeContainer();
       });
     });
 
