@@ -8,7 +8,8 @@ import 'package:salons_app_mobile/localization/application.dart';
 String tr(String key) => LocalTranslations._translate(key);
 
 class LocalTranslations {
-  static LocalTranslations currentAppTranslations = LocalTranslations(application.defaultLocale);
+  static LocalTranslations currentAppTranslations =
+      LocalTranslations(application.defaultLocale);
 
   static LocalTranslations of(BuildContext context) {
     return Localizations.of<LocalTranslations>(context, LocalTranslations)!;
@@ -31,7 +32,8 @@ class LocalTranslations {
   late Locale locale;
   static late Map<dynamic, dynamic> _localisedValues;
 
-  static Map<String, dynamic> get localisedValues => _localisedValues as Map<String, dynamic>;
+  static Map<String, dynamic> get localisedValues =>
+      _localisedValues as Map<String, dynamic>;
   static String currentLocaleCode = application.defaultLocaleCode;
 
   LocalTranslations(this.locale);

@@ -88,9 +88,10 @@ class SalonsBloc {
   loadFavouriteSalons(String searchText) async {
     //todo change here to search for favourites salons
     final response = await _getSalonsListUseCase(
-        searchText: searchText,
-        page: page,
-        limit: limit,);
+      searchText: searchText,
+      page: page,
+      limit: limit,
+    );
 
     if (response.isLeft) {
       _errorSubject.add(response.left.message);

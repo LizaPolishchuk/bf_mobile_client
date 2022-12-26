@@ -12,7 +12,8 @@ class EmptyListImageWidget extends StatelessWidget {
       child: Column(
         children: [
           Image.asset('assets/images/empty_list_placeholder.png'),
-          Text('У Вас пока что нет записей.', style: text16W600.copyWith(height: 0.5)),
+          Text('У Вас пока что нет записей.',
+              style: text16W600.copyWith(height: 0.5)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -24,8 +25,7 @@ class EmptyListImageWidget extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   'новую!',
-                  style: text16W600.copyWith(
-                      color: Colors.blue, height: 0.5),
+                  style: text16W600.copyWith(color: Colors.blue, height: 0.5),
                 ),
               ),
             ],

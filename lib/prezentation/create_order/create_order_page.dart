@@ -65,7 +65,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   Widget _buildPage() {
     return SingleChildScrollView(
       child: Padding(
-        padding:  EdgeInsets.only(
+        padding: EdgeInsets.only(
             left: 16,
             right: 16,
             bottom: 16,
@@ -192,8 +192,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             ),
             marginHorizontal(6),
             buttonMoreWithRightArrow(
-                onPressed: null,
-                text: tr(AppStrings.choose)),
+                onPressed: null, text: tr(AppStrings.choose)),
           ],
         ),
       ),

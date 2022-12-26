@@ -12,6 +12,7 @@ class LoginWithPhoneEvent extends LoginEvent {
 
   LoginWithPhoneEvent(this.phone);
 }
+
 class ResendCodePhoneEvent extends LoginEvent {
   final String phone;
 
