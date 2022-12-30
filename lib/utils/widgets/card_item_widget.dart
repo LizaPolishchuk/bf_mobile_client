@@ -10,8 +10,9 @@ class CardItemWidget extends StatelessWidget {
   final BaseEntity item;
   final VoidCallback onClick;
   final VoidCallback? onClickStar;
+  final bool smallSize;
 
-  const CardItemWidget(this.item, this.onClick, {this.onClickStar});
+  const CardItemWidget(this.item, this.onClick, {this.onClickStar, this.smallSize = false});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class CardItemWidget extends StatelessWidget {
       onTap: onClick,
       child: Container(
         margin: const EdgeInsets.only(bottom: 18),
-        height: 120,
+        height: smallSize ? 95 : 120,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
@@ -38,8 +39,8 @@ class CardItemWidget extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    height: 85,
-                    width: 90,
+                    height: smallSize ? 65 : 85,
+                    width: smallSize ? 60 : 90,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         fit: BoxFit.fill,
@@ -47,25 +48,30 @@ class CardItemWidget extends StatelessWidget {
                             // salon.photoPath ??
                             "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg"),
                       ),
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(smallSize ? 15 : 25),
                     ),
                   ),
                   marginHorizontal(20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.name,
-                        style: bodyText4,
-                      ),
-                      marginVertical(6),
-                      Text(
-                        item.description ?? "",
-                        style: bodyText1.copyWith(color: Colors.black),
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          style: bodyText4,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        marginVertical(6),
+                        Text(
+                          item.description ?? "",
+                          style: bodyText1.copyWith(color: Colors.black),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
-                  Spacer(),
                 ],
               ),
             ),

@@ -5,12 +5,15 @@ import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/categories/choose_category_page.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.dart';
+import 'package:salons_app_mobile/prezentation/salon_details/widgets/bonus_cards_list.dart';
+import 'package:salons_app_mobile/prezentation/salon_details/widgets/promos_list.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/widgets/debounced_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum ContentTab { INFO, PROMO, BONUSES }
@@ -143,36 +146,15 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                         scrollDirection: Axis.horizontal,
                       ),
                     ),
-                    marginVertical(22),
                     Flexible(
                       fit: FlexFit.loose,
-                      child: SingleChildScrollView(
-                        child: _buildTabContent(salon),
-                      ),
+                      child: _buildTabContent(salon),
                     ),
                   ],
                 ),
               ),
             ),
-            Align(
-              child: roundedButton(
-                context,
-                tr(AppStrings.signUp),
-                () async {
-                  var hasConnection =
-                      await ConnectivityManager.checkInternetConnection();
-                  if (hasConnection) {
-                    Navigator.of(context).pushNamed(
-                        ChooseCategoryPage.routeName,
-                        arguments: salon);
-                  } else {
-                    _alertBuilder.showErrorSnackBar(
-                        context, tr(AppStrings.noInternetConnection));
-                  }
-                },
-              ),
-              alignment: Alignment.center,
-            ),
+            _buildButtons(salon),
             marginVertical(12),
           ],
         ),
@@ -186,23 +168,73 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
     );
   }
 
+  Widget _buildButtons(Salon salon) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+            child: roundedButton(
+              context,
+              tr(AppStrings.signUp),
+              () async {
+                Navigator.of(context)
+                    .pushNamed(ChooseCategoryPage.routeName, arguments: salon);
+              },
+              width: double.infinity,
+              padding: 0,
+            ),
+          ),
+          marginHorizontal(8),
+          DebouncedButton(
+            onPressed: () {
+              print("onPressed");
+
+              // salon.isFavourite = !salon.isFavourite;
+              // _salonDetailsBloc.updateSalon(salon);
+            },
+            child: Container(
+              height: 50,
+              width: 82,
+              decoration: BoxDecoration(
+                  color: Color(0xffBBB8B8).withAlpha(50),
+                  borderRadius: BorderRadius.circular(25)),
+              alignment: Alignment.center,
+              child: SvgPicture.asset(
+                  salon.isFavourite ? icStarChecked : icStarUnchecked),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _buildTabContent(Salon salon) {
     switch (_selectedTab) {
       case ContentTab.INFO:
-        return Text(
-          salon.description ?? "",
-          style: hintText2.copyWith(color: Colors.black),
+        return SingleChildScrollView(
+          child: Text(
+            salon.description ?? "",
+            style: hintText2.copyWith(color: Colors.black),
+          ),
         );
       case ContentTab.PROMO:
-        return Text("Promos");
+        return PromosList(promosStream: _salonDetailsBloc.promosLoaded);
       case ContentTab.BONUSES:
-        return Text("Bonuses");
+        return BonusCardsList(cardsStream: _salonDetailsBloc.bonusCardsLoaded);
     }
   }
 
   Widget _buildTabItem(String text, ContentTab contentTab) {
     return InkWell(
       onTap: () {
+        if (contentTab == ContentTab.PROMO) {
+          _salonDetailsBloc.loadPromos(widget.salon.id);
+        } else if (contentTab == ContentTab.BONUSES) {
+          _salonDetailsBloc.loadBonusCards(widget.salon.id);
+        }
         setState(() {
           _selectedTab = contentTab;
         });

@@ -117,13 +117,13 @@ Widget _buildButtonContainer({required Widget child, double? width}) {
 }
 
 Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
-    {Color? buttonColor, Color? textColor, double? height, double? width}) {
+    {Color? buttonColor, Color? textColor, double? height, double? width, double? padding}) {
   return _buildButtonContainer(
     width: width,
     child: Container(
       height: height ?? 50,
       width: width,
-      padding: EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: padding ?? 24),
       child: ElevatedButton(
         onPressed: onPressed,
         style: buttonColor != null
