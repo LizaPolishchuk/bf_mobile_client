@@ -69,6 +69,7 @@ class AppStrings {
   static const String enterPhoneDescription = "enter_phone_description";
   static const String didNotReceiveCode = "did_not_receive_code";
   static const String resendCode = "resend_code";
+  static const String client = "client";
 }
 
 // Tool to quick set text to camelCase https://textedit.tools/camelcase

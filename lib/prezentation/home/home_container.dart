@@ -22,6 +22,8 @@ import 'package:salons_app_mobile/utils/events/event_bus.dart';
 
 enum TabItem { home, search }
 
+enum DrawerItem { history, favourites, promo, bonusCards, settings, exit }
+
 class HomeContainer extends StatefulWidget {
   const HomeContainer({Key? key}) : super(key: key);
 
@@ -31,6 +33,7 @@ class HomeContainer extends StatefulWidget {
 
 class _HomeContainerState extends State<HomeContainer> {
   TabItem _currentTab = TabItem.home;
+  DrawerItem? _currentDrawerItem;
 
   final List _children = [
     const HomePage(),
@@ -194,85 +197,236 @@ class _HomeContainerState extends State<HomeContainer> {
     return Drawer(
       child: Column(
         children: [
-          Container(
-              padding:
-                  EdgeInsets.only(top: 56, bottom: 20, left: 16, right: 16),
-              decoration: BoxDecoration(color: accentColor),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        tr(AppStrings.appName),
-                        style: titleText2.copyWith(color: greyText),
+          Padding(
+            padding: const EdgeInsets.only(top: 48, left: 24, right: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    imageWithPlaceholder(
+                        _currentUser.avatar, avatarPlaceholder),
+                    Spacer(),
+                    InkWell(
+                      child: SvgPicture.asset(
+                        icCancel,
+                        color: Colors.black,
                       ),
-                      Spacer(),
-                      InkWell(
-                        child: SvgPicture.asset(icCancel),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+                marginVertical(22),
+                Text(_currentUser.name ?? "",
+                    style: titleText2.copyWith(fontSize: 24, fontWeight: FontWeight.w500),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Divider(
+                    color: accentColor,
+                    thickness: 1,
                   ),
-                  marginVertical(42),
-                  Row(
-                    children: [
-                      imageWithPlaceholder(
-                          _currentUser.avatar, avatarPlaceholder),
-                      marginHorizontal(10),
-                      Expanded(
-                        child: Text(_currentUser.name ?? "",
-                            style: bodyText3,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                    ],
-                  ),
-                ],
-              )),
-          marginVertical(40),
-          _buildDrawerItem(tr(AppStrings.history), icHistory, onClick: () {
+                ),
+                _buildMasterModeSwitcher(),
+                marginVertical(32),
+              ],
+            ),
+          ),
+          _buildDrawerItem(
+              tr(AppStrings.history), icHistory, DrawerItem.history,
+              onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
           }),
-          _buildDrawerItem("Favourite salons", icStarUnchecked, onClick: () {
+          _buildDrawerItem(
+              "Favourite salons", icStarUnchecked, DrawerItem.favourites,
+              onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
           }),
-          _buildDrawerItem(tr(AppStrings.promo), icPromo),
-          _buildDrawerItem(tr(AppStrings.bonusCards), icBonusCards),
-          _buildDrawerItem(tr(AppStrings.settings), icSettings, onClick: () {
+          _buildDrawerItem(tr(AppStrings.promo), icPromo, DrawerItem.promo),
+          _buildDrawerItem(
+              tr(AppStrings.bonusCards), icBonusCards, DrawerItem.bonusCards),
+          _buildDrawerItem(
+              tr(AppStrings.settings), icSettings, DrawerItem.settings,
+              onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(SettingsPage.routeName);
           }),
-          _buildDrawerItem(tr(AppStrings.exit), icExit,
+          _buildDrawerItem(tr(AppStrings.exit), icExit, DrawerItem.exit,
               onClick: () => _loginBloc.logout()),
         ],
       ),
     );
   }
 
-  Widget _buildDrawerItem(String title, String icon,
+  ValueNotifier<bool> _isMasterModeNotifier = ValueNotifier<bool>(false);
+
+  Widget _buildMasterModeSwitcher() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isMasterModeNotifier,
+      builder: (context, isMaster, child) {
+        return Container(
+          height: 48,
+          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: grey.withAlpha(40),
+          ),
+          child: Row(
+            children: [
+              Flexible(
+                child: InkWell(
+                  onTap: (){
+                    _isMasterModeNotifier.value = false;
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: isMaster ? null : primaryColor,
+                    ),
+                    child: Text(
+                      tr(AppStrings.client),
+                      style: hintText2.copyWith(fontSize: 14, color: isMaster ? Colors.black : Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              Flexible(
+                child: InkWell(
+                  onTap: (){
+                    _isMasterModeNotifier.value = true;
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: isMaster ? primaryColor : null,
+                    ),
+                    child: Text(
+                      tr(AppStrings.master),
+                      style: hintText2.copyWith(fontSize: 14, color: isMaster ? Colors.white : Colors.black),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      }
+    );
+  }
+
+  Widget _buildDrawerItem(String title, String icon, DrawerItem drawerItem,
       {Widget? widgetToOpen, Function()? onClick}) {
     return InkWell(
       onTap: () {
+        if (drawerItem != DrawerItem.exit) _currentDrawerItem = drawerItem;
+
         if (widgetToOpen != null)
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => widgetToOpen));
         else if (onClick != null) onClick();
       },
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        color: _currentDrawerItem == drawerItem ? accentColor : null,
         child: Row(
           children: [
-            SvgPicture.asset(icon),
-            marginHorizontal(8),
+            SvgPicture.asset(icon,
+                color:
+                    _currentDrawerItem == drawerItem ? primaryColor : greyText),
+            marginHorizontal(6),
             Text(
               title,
-              style: bodyText3.copyWith(color: primaryColor),
+              style: _currentDrawerItem == drawerItem
+                  ? bodyText7.copyWith(color: primaryColor)
+                  : bodyText7,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class AppSelectRoleWidget extends StatelessWidget {
+  const AppSelectRoleWidget({
+    Key? key,
+    required this.onPressedClient,
+    required this.colorPrimaryClient,
+    required this.colorTextClient,
+    required this.onPressedMaster,
+    required this.colorPrimaryMaster,
+    required this.colorTextMaster,
+  }) : super(key: key);
+
+  final Function() onPressedClient;
+  final Color colorPrimaryClient;
+  final Color colorTextClient;
+  final Function() onPressedMaster;
+  final Color colorPrimaryMaster;
+  final Color colorTextMaster;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: grey.withOpacity(0.1),
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 6,
+          ),
+          child: Row(
+            children: [
+              _selectButton(
+                'Client',
+                onPressedClient,
+                colorPrimaryClient,
+                colorTextClient,
+              ),
+              _selectButton(
+                'Master',
+                onPressedMaster,
+                colorPrimaryMaster,
+                colorTextMaster,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Expanded _selectButton(
+      String name, Function() onPressed, Color colorPrimary, Color colorText) {
+    return Expanded(
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
+            primary: colorPrimary),
+        child: Text(
+          name,
+          style: TextStyle(color: colorText),
         ),
       ),
     );

@@ -64,5 +64,6 @@
   "welcome": "Добро пожаловать!",
   "enter_phone_description": "Введите номер для того, чтобы войти в приложение",
   "did_not_receive_code": "Не получили код?",
-  "resend_code": "Отправить ещё раз"
+  "resend_code": "Отправить ещё раз",
+  "client": "Client"
 }
