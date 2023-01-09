@@ -12,7 +12,6 @@ import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
 import 'package:salons_app_mobile/utils/events/event_bus.dart';
@@ -102,7 +101,7 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          searchTextField(_searchController),
+          searchTextField(context, _searchController),
           marginVertical(24),
           Text(
             AppLocalizations.of(context)!.salons,

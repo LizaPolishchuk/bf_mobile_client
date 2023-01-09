@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
 import 'package:salons_app_mobile/event_bus_events/user_success_logged_in_event.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
 
 class CodeVerifyBloc {
   LoginWithPhoneVerifyCodeUseCase _verifyCodeUseCase;
@@ -36,7 +36,7 @@ class CodeVerifyBloc {
 
   Stream<bool> get isLoading => _isLoadingSubject.stream;
 
-  void verifyCode(String phone, String code) async {
+  void verifyCode(BuildContext context, String phone, String code) async {
     _isLoadingSubject.add(true);
     final response = await _verifyCodeUseCase(code, phone);
     _isLoadingSubject.add(false);

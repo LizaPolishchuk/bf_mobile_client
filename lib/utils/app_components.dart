@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 
 import 'app_colors.dart';
-import 'app_strings.dart';
 import 'app_styles.dart';
 
 ///TextInputs
@@ -60,7 +59,7 @@ Widget textFieldWithBorders(
   );
 }
 
-Widget searchTextField(TextEditingController? controller,
+Widget searchTextField(BuildContext context, TextEditingController? controller,
     {String? hintText, double? topAndBottomPadding, bool isEnabled = true}) {
   return Material(
     color: bgGrey,
@@ -140,7 +139,7 @@ Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
   );
 }
 
-Widget buttonMoreWithRightArrow(
+Widget buttonMoreWithRightArrow(BuildContext context,
     {required VoidCallback? onPressed,
     String? text,
     Color? color,

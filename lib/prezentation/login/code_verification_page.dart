@@ -7,7 +7,6 @@ import 'package:salons_app_mobile/prezentation/login/code_verification_bloc.dart
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
@@ -143,7 +142,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             onCodeSubmitted: (code) {},
             onCodeChanged: (code) async {
               if (code!.length == 6) {
-                _codeVerifyBloc.verifyCode(
+                _codeVerifyBloc.verifyCode(context,
                     widget.phoneNumber, _teControllerCode.text);
               }
             },
@@ -151,7 +150,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
           marginVertical(42),
           roundedButton(context, AppLocalizations.of(context)!.continueTxt,
               () async {
-            _codeVerifyBloc.verifyCode(
+            _codeVerifyBloc.verifyCode(context,
                 widget.phoneNumber, _teControllerCode.text);
           }),
           Spacer(),

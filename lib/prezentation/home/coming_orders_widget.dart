@@ -11,7 +11,6 @@ import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/events/event_bus.dart';
 
@@ -50,11 +49,9 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(AppLocalizations.of(context)!.comingOrders, style: bodyText3),
-            buttonMoreWithRightArrow(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
-                },
-                text: AppLocalizations.of(context)!.all),
+            buttonMoreWithRightArrow(context, onPressed: () {
+              Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
+            }, text: AppLocalizations.of(context)!.all),
           ],
         ),
         marginVertical(16),

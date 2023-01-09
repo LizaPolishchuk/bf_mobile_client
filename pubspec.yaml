@@ -81,7 +81,6 @@ flutter:
     - assets/icons/
     - assets/images/
 
-    - localizations/localization_en.json
 #  fonts:
 #    - family: Poppins
 #      fonts:

@@ -10,7 +10,6 @@ import 'package:salons_app_mobile/prezentation/create_order/create_order_page.da
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/widgets/card_item_widget.dart';
 
@@ -129,7 +128,7 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       marginVertical(12),
-                      searchTextField(_searchController,
+                      searchTextField(context, _searchController,
                           hintText: AppLocalizations.of(context)!.searchService,
                           topAndBottomPadding: 8),
                     ],

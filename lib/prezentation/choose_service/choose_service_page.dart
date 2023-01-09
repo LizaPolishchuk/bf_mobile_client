@@ -9,7 +9,6 @@ import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
 import '../../injection_container_app.dart';
@@ -151,7 +150,7 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
               )),
               marginHorizontal(6),
               Text(
-                "${tr(AppStrings.from)} ${service.price?.toStringAsFixed(0) ?? 0} ${AppLocalizations.of(context)!.uah}",
+                "${AppLocalizations.of(context)!.from} ${service.price?.toStringAsFixed(0) ?? 0} ${AppLocalizations.of(context)!.uah}",
                 style: hintText2.copyWith(color: Colors.black),
               ),
             ],
