@@ -1,10 +1,10 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/categories/categories_bloc.dart';
 import 'package:salons_app_mobile/prezentation/create_order/create_order_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
@@ -65,7 +65,7 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
         _categoriesBloc.searchCategories(_searchController.text);
       } else {
         _alertBuilder.showErrorSnackBar(
-            context, tr(AppStrings.noInternetConnection));
+            context, AppLocalizations.of(context)!.noInternetConnection);
       }
     });
   }
@@ -80,7 +80,7 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
       }
     } else {
       _alertBuilder.showErrorSnackBar(
-          context, tr(AppStrings.noInternetConnection));
+          context, AppLocalizations.of(context)!.noInternetConnection);
     }
   }
 
@@ -130,7 +130,7 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
                       ),
                       marginVertical(12),
                       searchTextField(_searchController,
-                          hintText: tr(AppStrings.searchService),
+                          hintText: AppLocalizations.of(context)!.searchService,
                           topAndBottomPadding: 8),
                     ],
                   ),
@@ -145,7 +145,7 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        tr(AppStrings.chooseCategory),
+                        AppLocalizations.of(context)!.chooseCategory,
                         style: titleText2,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -167,11 +167,11 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
                                     String errorMsg = snapshot.error.toString();
                                     if (errorMsg ==
                                         NoInternetException.noInternetCode) {
-                                      errorMsg =
-                                          tr(AppStrings.noInternetConnection);
+                                      errorMsg = AppLocalizations.of(context)!
+                                          .noInternetConnection;
                                     } else {
-                                      errorMsg =
-                                          tr(AppStrings.somethingWentWrong);
+                                      errorMsg = AppLocalizations.of(context)!
+                                          .somethingWentWrong;
                                     }
                                     _alertBuilder.showErrorSnackBar(
                                         context, errorMsg);
@@ -233,7 +233,7 @@ class _ChooseCategoryPageState extends State<ChooseCategoryPage> {
       children: [
         Image.asset(emptyListPlaceholder),
         Text(
-          tr(AppStrings.nothingFound),
+          AppLocalizations.of(context)!.nothingFound,
           style: bodyText3,
         )
       ],

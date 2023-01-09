@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
@@ -45,7 +45,7 @@ class OrdersItemWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                        '${order.serviceName} ${tr(AppStrings.inTxt)} ${order.salonName}',
+                        '${order.serviceName} ${AppLocalizations.of(context)!.inTxt} ${order.salonName}',
                         style: bodyText3.copyWith(fontSize: 16)),
                   ),
                   Text(DateFormat('EE dd MMMM', "ru").format(order.date),
@@ -67,7 +67,7 @@ class OrdersItemWidget extends StatelessWidget {
                 children: [
                   imageWithPlaceholder(order.masterAvatar, masterPlaceholder),
                   marginHorizontal(8),
-                  Text('${tr(AppStrings.master)} ${order.masterName}',
+                  Text('${AppLocalizations.of(context)!.master} ${order.masterName}',
                       style: bodyText3.copyWith(fontSize: 12)),
                   Spacer(),
                   // Text('${order.price} ${tr(AppStrings.uah)}',

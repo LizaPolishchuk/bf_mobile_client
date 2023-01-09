@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -76,7 +76,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
       appBar: AppBar(
         backgroundColor: bgGrey,
         title: Text(
-          tr(AppStrings.appName),
+          AppLocalizations.of(context)!.appName,
         ),
       ),
       body: SafeArea(
@@ -114,12 +114,12 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Text(
-            tr(AppStrings.phoneVerification),
+            AppLocalizations.of(context)!.phoneVerification,
             style: titleText1,
           ),
           marginVertical(7),
           Text(
-            tr(AppStrings.phoneVerificationDescription),
+            AppLocalizations.of(context)!.phoneVerificationDescription,
             style: bodyText2,
             textAlign: TextAlign.center,
           ),
@@ -149,7 +149,8 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
             },
           ),
           marginVertical(42),
-          roundedButton(context, tr(AppStrings.continueTxt), () async {
+          roundedButton(context, AppLocalizations.of(context)!.continueTxt,
+              () async {
             _codeVerifyBloc.verifyCode(
                 widget.phoneNumber, _teControllerCode.text);
           }),
@@ -161,11 +162,14 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                   text: TextSpan(
                     style: bodyText4,
                     children: <TextSpan>[
-                      TextSpan(text: tr(AppStrings.didNotReceiveCode) + " "),
+                      TextSpan(
+                          text:
+                              AppLocalizations.of(context)!.didNotReceiveCode +
+                                  " "),
                       TextSpan(
                           text: (snapshot.data == null)
-                              ? tr(AppStrings.resendCode)
-                              : '${tr(AppStrings.resendCode)} 0:${snapshot.data! < 10 ? "0" : ""}${snapshot.data}',
+                              ? AppLocalizations.of(context)!.resendCode
+                              : '${AppLocalizations.of(context)!.resendCode} 0:${snapshot.data! < 10 ? "0" : ""}${snapshot.data}',
                           style: bodyText4.copyWith(
                             color: primaryColor,
                             decoration: TextDecoration.underline,
@@ -180,8 +184,10 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                                       .resendCode(widget.phoneNumber);
                                 }
                               } else {
-                                _alertBuilder.showErrorSnackBar(context,
-                                    tr(AppStrings.noInternetConnection));
+                                _alertBuilder.showErrorSnackBar(
+                                    context,
+                                    AppLocalizations.of(context)!
+                                        .noInternetConnection);
                               }
                             }),
                     ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/categories/choose_category_page.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/widgets/bonus_cards_list.dart';
@@ -62,7 +62,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
       _salonDetailsBloc.loadSalonById(widget.salon.id);
     } else {
       _alertBuilder.showErrorSnackBar(
-          context, tr(AppStrings.noInternetConnection));
+          context, AppLocalizations.of(context)!.noInternetConnection);
     }
   }
 
@@ -137,11 +137,12 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
                       constraints: const BoxConstraints(maxHeight: 35),
                       child: ListView(
                         children: [
-                          _buildTabItem(
-                              tr(AppStrings.aboutUs), ContentTab.INFO),
-                          _buildTabItem(tr(AppStrings.promo), ContentTab.PROMO),
-                          _buildTabItem(
-                              tr(AppStrings.bonuses), ContentTab.BONUSES),
+                          _buildTabItem(AppLocalizations.of(context)!.aboutUs,
+                              ContentTab.INFO),
+                          _buildTabItem(AppLocalizations.of(context)!.promo,
+                              ContentTab.PROMO),
+                          _buildTabItem(AppLocalizations.of(context)!.bonuses,
+                              ContentTab.BONUSES),
                         ],
                         scrollDirection: Axis.horizontal,
                       ),
@@ -178,7 +179,7 @@ class _SalonDetailsPageState extends State<SalonDetailsPage> {
           Expanded(
             child: roundedButton(
               context,
-              tr(AppStrings.signUp),
+              AppLocalizations.of(context)!.signUp,
               () async {
                 Navigator.of(context)
                     .pushNamed(ChooseCategoryPage.routeName, arguments: salon);

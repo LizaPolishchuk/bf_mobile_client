@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            tr(AppStrings.welcome),
+            AppLocalizations.of(context)!.welcome,
             style: TextStyle(
               color: primaryColor,
               fontSize: 24,
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           marginVertical(2),
           Text(
-            tr(AppStrings.enterPhoneDescription),
+            AppLocalizations.of(context)!.enterPhoneDescription,
             style: TextStyle(
               color: grey,
               fontSize: 12,
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 }
                 return (arg?.length == null || arg!.length < 9)
-                    ? tr(AppStrings.phoneError)
+                    ? AppLocalizations.of(context)!.phoneError
                     : null;
               },
             ),
@@ -161,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: roundedButton(
               context,
-              tr(AppStrings.signIn),
+              AppLocalizations.of(context)!.signIn,
               () async {
                 _isButtonPressed = true;
                 if (_formKey.currentState!.validate()) {
@@ -170,8 +170,8 @@ class _LoginPageState extends State<LoginPage> {
                   if (hasConnection) {
                     _loginBloc.loginWithPhone(uaCode + _teControllerPhone.text);
                   } else {
-                    _alertBuilder.showErrorSnackBar(
-                        context, tr(AppStrings.noInternetConnection));
+                    _alertBuilder.showErrorSnackBar(context,
+                        AppLocalizations.of(context)!.noInternetConnection);
                   }
                 }
               },

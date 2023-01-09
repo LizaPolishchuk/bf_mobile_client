@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
@@ -82,7 +82,7 @@ class _FavouriteSalonsPageState extends State<FavouriteSalonsPage> {
       _salonsBloc.loadFavouriteSalons(searchKey.trim());
     } else {
       _alertBuilder.showErrorSnackBar(
-          context, tr(AppStrings.noInternetConnection));
+          context, AppLocalizations.of(context)!.noInternetConnection);
       // _refreshController.loadComplete();
     }
   }
@@ -121,7 +121,7 @@ class _FavouriteSalonsPageState extends State<FavouriteSalonsPage> {
                         if (snapshot.hasError) {
                           String errorMsg = kDebugMode
                               ? snapshot.error.toString()
-                              : tr(AppStrings.somethingWentWrong);
+                              : AppLocalizations.of(context)!.somethingWentWrong;
                           _alertBuilder.showErrorSnackBar(context, errorMsg);
                         }
                       });
@@ -189,7 +189,7 @@ class _FavouriteSalonsPageState extends State<FavouriteSalonsPage> {
       children: [
         Image.asset(emptyListPlaceholder),
         Text(
-          tr(AppStrings.nothingFound),
+        AppLocalizations.of(context)!.nothingFound,
           style: bodyText3,
         )
       ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -79,7 +79,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             child: Padding(
               padding: const EdgeInsets.only(top: 120),
               child: Text(
-                tr(AppStrings.appName),
+                AppLocalizations.of(context)!.appName,
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: accentColor,
@@ -90,13 +90,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           marginVertical(48),
           Text(
-            tr(AppStrings.enterName),
+            AppLocalizations.of(context)!.enterName,
             style: titleText2,
           ),
           marginVertical(25),
           Form(
             key: _formKey,
-            child: textFieldWithBorders(tr(AppStrings.name), _teControllerName,
+            child: textFieldWithBorders(
+                AppLocalizations.of(context)!.name, _teControllerName,
                 maxLength: 250,
                 keyboardType: TextInputType.name,
                 textCapitalization: TextCapitalization.words,
@@ -113,7 +114,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           marginVertical(isKeyboard ? 33 : 66),
           Text(
-            tr(AppStrings.chooseGender),
+            AppLocalizations.of(context)!.chooseGender,
             style: (_showGenderError == null || _showGenderError == false)
                 ? titleText2
                 : titleText2.copyWith(color: errorRed),
@@ -130,7 +131,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 }
               }),
           marginVertical(isKeyboard ? 40 : 80),
-          roundedButton(context, tr(AppStrings.continueTxt), () async {
+          roundedButton(context, AppLocalizations.of(context)!.continueTxt,
+              () async {
             _isButtonPressed = true;
             bool validName = _formKey.currentState!.validate();
             bool validGender = checkIsGenderSelected();
@@ -144,8 +146,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 );
                 _registrationBloc.updateUser(userToUpdate);
               } else {
-                _alertBuilder.showErrorSnackBar(
-                    context, tr(AppStrings.noInternetConnection));
+                _alertBuilder.showErrorSnackBar(context,
+                    AppLocalizations.of(context)!.noInternetConnection);
               }
             }
           }),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
@@ -55,7 +55,7 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    tr(AppStrings.topSalons),
+                    AppLocalizations.of(context)!.topSalons,
                     style: bodyText3,
                   ),
                   marginVertical(16),

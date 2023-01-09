@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -70,7 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr(AppStrings.settings)),
+        title: Text(AppLocalizations.of(context)!.settings),
       ),
       body: StreamBuilder<UserEntity>(
           stream: _profileBloc.profileLoaded,
@@ -173,7 +173,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   Form(
                     key: _formKeyName,
                     child: textFieldWithBorders(
-                      tr(AppStrings.name),
+                      AppLocalizations.of(context)!.name,
                       _teControllerName,
                       enabled: _isEditMode,
                       validator: (text) => (text?.isEmpty == true)
@@ -185,7 +185,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   Form(
                     key: _formKeyPhone,
                     child: textFieldWithBorders(
-                      tr(AppStrings.phoneNumber),
+                      AppLocalizations.of(context)!.phoneNumber,
                       _teControllerPhone,
                       maxLength: 9,
                       enabled: false,
@@ -193,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       keyboardType: TextInputType.phone,
                       validator: (String? arg) {
                         return (arg?.length == null || arg!.length < 9)
-                            ? tr(AppStrings.phoneError)
+                            ? AppLocalizations.of(context)!.phoneError
                             : null;
                       },
                     ),
@@ -202,7 +202,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      tr(AppStrings.yourGender),
+                      AppLocalizations.of(context)!.yourGender,
                       style: appBarText,
                     ),
                   ),
@@ -218,8 +218,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   roundedButton(
                       context,
                       _isEditMode
-                          ? tr(AppStrings.saveChanges)
-                          : tr(AppStrings.editProfile), () {
+                          ? AppLocalizations.of(context)!.saveChanges
+                          : AppLocalizations.of(context)!.editProfile, () {
                     if (!_isEditMode) {
                       setState(() {
                         _isEditMode = true;
@@ -240,7 +240,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   if (_isEditMode)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: roundedButton(context, tr(AppStrings.cancel), () {
+                      child: roundedButton(
+                          context, AppLocalizations.of(context)!.cancel, () {
                         setState(() {
                           _isEditMode = false;
                         });

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/services_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -80,9 +80,9 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
                         if (snapshot.hasError) {
                           String errorMsg = snapshot.error.toString();
                           if (errorMsg == NoInternetException.noInternetCode) {
-                            errorMsg = tr(AppStrings.noInternetConnection);
+                            errorMsg = AppLocalizations.of(context)!.noInternetConnection;
                           } else {
-                            errorMsg = tr(AppStrings.somethingWentWrong);
+                            errorMsg = AppLocalizations.of(context)!.somethingWentWrong;
                           }
                           _alertBuilder.showErrorSnackBar(context, errorMsg);
                         }
@@ -113,7 +113,7 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
               alignment: Alignment.center,
               child: roundedButton(
                 context,
-                tr(AppStrings.next),
+                  AppLocalizations.of(context)!.next,
                 () {
                   Navigator.of(context).pop(_chosenService);
                 },
@@ -151,7 +151,7 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
               )),
               marginHorizontal(6),
               Text(
-                "${tr(AppStrings.from)} ${service.price?.toStringAsFixed(0) ?? 0} ${tr(AppStrings.uah)}",
+                "${tr(AppStrings.from)} ${service.price?.toStringAsFixed(0) ?? 0} ${AppLocalizations.of(context)!.uah}",
                 style: hintText2.copyWith(color: Colors.black),
               ),
             ],

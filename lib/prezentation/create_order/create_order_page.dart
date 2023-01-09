@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/choose_service_page.dart';
 import 'package:salons_app_mobile/prezentation/create_order/animated_container.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
@@ -77,14 +77,14 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             _buildServiceSelector(),
             marginVertical(22),
             Text(
-              tr(AppStrings.chooseMaster),
+              AppLocalizations.of(context)!.chooseMaster,
               style: bodyText4,
             ),
             marginVertical(10),
             _buildMasterSelector(widget.salon.mastersList),
             marginVertical(22),
             Text(
-              tr(AppStrings.chooseDate),
+              AppLocalizations.of(context)!.chooseDate,
               style: bodyText4,
             ),
             marginVertical(10),
@@ -110,7 +110,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                           width: 1.0,
                           style: BorderStyle.solid))),
                   child: Text(
-                    tr(AppStrings.chooseTime),
+                    AppLocalizations.of(context)!.chooseTime,
                     style: bodyText4,
                   ),
                 ),
@@ -123,7 +123,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               children: [
                 Expanded(
                   child: Text(
-                    tr(AppStrings.sum),
+                    AppLocalizations.of(context)!.sum,
                     style: bodyText4,
                   ),
                 ),
@@ -138,7 +138,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               alignment: Alignment.center,
               child: roundedButton(
                 context,
-                tr(AppStrings.next),
+                AppLocalizations.of(context)!.next,
                 () {
                   if (_selectedOrder == null) {
                     Fluttertoast.showToast(msg: "Please choose time");
@@ -184,15 +184,15 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             Expanded(
               child: Text(
                 _selectedService != null
-                    ? "${_selectedService!.name} (${_selectedService!.price?.toStringAsFixed(0)} ${tr(AppStrings.uah)})"
-                    : tr(AppStrings.chooseSpecificCategory),
+                    ? "${_selectedService!.name} (${_selectedService!.price?.toStringAsFixed(0)} ${AppLocalizations.of(context)!.uah})"
+                    : AppLocalizations.of(context)!.chooseSpecificCategory,
                 style: hintText2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             marginHorizontal(6),
             buttonMoreWithRightArrow(
-                onPressed: null, text: tr(AppStrings.choose)),
+                onPressed: null, text: AppLocalizations.of(context)!.choose),
           ],
         ),
       ),
@@ -259,7 +259,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       children: [
         marginVertical(4),
         Text(
-          tr(AppStrings.ifTimeReservedDescription),
+          AppLocalizations.of(context)!.ifTimeReservedDescription,
           style: bodyText5.copyWith(fontWeight: FontWeight.w400),
         ),
         marginVertical(12),
@@ -271,9 +271,11 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   if (snapshot.hasError) {
                     String errorMsg = snapshot.error.toString();
                     if (errorMsg == NoInternetException.noInternetCode) {
-                      errorMsg = tr(AppStrings.noInternetConnection);
+                      errorMsg =
+                          AppLocalizations.of(context)!.noInternetConnection;
                     } else {
-                      errorMsg = tr(AppStrings.somethingWentWrong);
+                      errorMsg =
+                          AppLocalizations.of(context)!.somethingWentWrong;
                     }
                     _alertBuilder.showErrorSnackBar(context, errorMsg);
                   }
@@ -335,7 +337,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                         ),
                         if (isReserved)
                           Text(
-                            tr(AppStrings.reserved),
+                            AppLocalizations.of(context)!.reserved,
                             style: bodyText5,
                           ),
                       ],

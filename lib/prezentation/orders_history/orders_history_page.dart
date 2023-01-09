@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/orders/order_item_widget.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
@@ -55,7 +55,7 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr(AppStrings.ordersHistory)),
+        title: Text(AppLocalizations.of(context)!.ordersHistory),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -110,9 +110,9 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
               if (snapshot.hasError) {
                 String errorMsg = snapshot.error.toString();
                 if (errorMsg == NoInternetException.noInternetCode) {
-                  errorMsg = tr(AppStrings.noInternetConnection);
+                  errorMsg = AppLocalizations.of(context)!.noInternetConnection;
                 } else {
-                  errorMsg = tr(AppStrings.somethingWentWrong);
+                  errorMsg = AppLocalizations.of(context)!.somethingWentWrong;
                 }
                 _alertBuilder.showErrorSnackBar(context, errorMsg);
               }
@@ -195,7 +195,7 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
       child: TextFormField(
         enabled: false,
         decoration: InputDecoration(
-          hintText: tr(AppStrings.searchByDate),
+          hintText: AppLocalizations.of(context)!.searchByDate,
           hintStyle: hintText2,
           suffixIcon: Padding(
             padding: EdgeInsets.only(top: 16, bottom: 16, right: 22, left: 6),
@@ -225,7 +225,7 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
     return Column(
       children: [
         Image.asset(emptyListPlaceholder),
-        Text(tr(AppStrings.nothingFound)),
+        Text(AppLocalizations.of(context)!.nothingFound),
       ],
     );
   }

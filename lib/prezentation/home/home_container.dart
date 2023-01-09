@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/event_bus_events/go_to_search_salons_event.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
@@ -109,7 +109,7 @@ class _HomeContainerState extends State<HomeContainer> {
               _scaffoldKey.currentState?.openDrawer();
             },
           ),
-          title: Text(tr(AppStrings.appName)),
+          title: Text(AppLocalizations.of(context)!.appName),
         ),
         drawer: _buildDrawerMenu(),
         endDrawer:
@@ -131,13 +131,15 @@ class _HomeContainerState extends State<HomeContainer> {
                 flex: 1,
                 fit: FlexFit.tight,
                 child: _buildBottomMenuItem(
-                    tr(AppStrings.home), icHome, TabItem.home),
+                    AppLocalizations.of(context)!.home, icHome, TabItem.home),
               ),
               Flexible(
                 flex: 1,
                 fit: FlexFit.tight,
                 child: _buildBottomMenuItem(
-                    tr(AppStrings.searching), icSearch, TabItem.search),
+                    AppLocalizations.of(context)!.searching,
+                    icSearch,
+                    TabItem.search),
               ),
             ],
           ),
@@ -220,7 +222,8 @@ class _HomeContainerState extends State<HomeContainer> {
                 ),
                 marginVertical(22),
                 Text(_currentUser.name ?? "",
-                    style: titleText2.copyWith(fontSize: 24, fontWeight: FontWeight.w500),
+                    style: titleText2.copyWith(
+                        fontSize: 24, fontWeight: FontWeight.w500),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis),
                 Padding(
@@ -235,28 +238,27 @@ class _HomeContainerState extends State<HomeContainer> {
               ],
             ),
           ),
-          _buildDrawerItem(
-              tr(AppStrings.history), icHistory, DrawerItem.history,
-              onClick: () {
+          _buildDrawerItem(AppLocalizations.of(context)!.history, icHistory,
+              DrawerItem.history, onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
           }),
-          _buildDrawerItem(
-              "Favourite salons", icStarUnchecked, DrawerItem.favourites,
-              onClick: () {
+          _buildDrawerItem(AppLocalizations.of(context)!.favouriteSalons,
+              icStarUnchecked, DrawerItem.favourites, onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
           }),
-          _buildDrawerItem(tr(AppStrings.promo), icPromo, DrawerItem.promo),
           _buildDrawerItem(
-              tr(AppStrings.bonusCards), icBonusCards, DrawerItem.bonusCards),
-          _buildDrawerItem(
-              tr(AppStrings.settings), icSettings, DrawerItem.settings,
-              onClick: () {
+              AppLocalizations.of(context)!.promo, icPromo, DrawerItem.promo),
+          _buildDrawerItem(AppLocalizations.of(context)!.bonusCards,
+              icBonusCards, DrawerItem.bonusCards),
+          _buildDrawerItem(AppLocalizations.of(context)!.settings, icSettings,
+              DrawerItem.settings, onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(SettingsPage.routeName);
           }),
-          _buildDrawerItem(tr(AppStrings.exit), icExit, DrawerItem.exit,
+          _buildDrawerItem(
+              AppLocalizations.of(context)!.exit, icExit, DrawerItem.exit,
               onClick: () => _loginBloc.logout()),
         ],
       ),
@@ -267,60 +269,63 @@ class _HomeContainerState extends State<HomeContainer> {
 
   Widget _buildMasterModeSwitcher() {
     return ValueListenableBuilder<bool>(
-      valueListenable: _isMasterModeNotifier,
-      builder: (context, isMaster, child) {
-        return Container(
-          height: 48,
-          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: grey.withAlpha(40),
-          ),
-          child: Row(
-            children: [
-              Flexible(
-                child: InkWell(
-                  onTap: (){
-                    _isMasterModeNotifier.value = false;
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: isMaster ? null : primaryColor,
-                    ),
-                    child: Text(
-                      tr(AppStrings.client),
-                      style: hintText2.copyWith(fontSize: 14, color: isMaster ? Colors.black : Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-              Flexible(
-                child: InkWell(
-                  onTap: (){
-                    _isMasterModeNotifier.value = true;
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: isMaster ? primaryColor : null,
-                    ),
-                    child: Text(
-                      tr(AppStrings.master),
-                      style: hintText2.copyWith(fontSize: 14, color: isMaster ? Colors.white : Colors.black),
+        valueListenable: _isMasterModeNotifier,
+        builder: (context, isMaster, child) {
+          return Container(
+            height: 48,
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: grey.withAlpha(40),
+            ),
+            child: Row(
+              children: [
+                Flexible(
+                  child: InkWell(
+                    onTap: () {
+                      _isMasterModeNotifier.value = false;
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: isMaster ? null : primaryColor,
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.AppStrings.client,
+                        style: hintText2.copyWith(
+                            fontSize: 14,
+                            color: isMaster ? Colors.black : Colors.white),
+                      ),
                     ),
                   ),
                 ),
-              )
-            ],
-          ),
-        );
-      }
-    );
+                Flexible(
+                  child: InkWell(
+                    onTap: () {
+                      _isMasterModeNotifier.value = true;
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: isMaster ? primaryColor : null,
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.master,
+                        style: hintText2.copyWith(
+                            fontSize: 14,
+                            color: isMaster ? Colors.white : Colors.black),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          );
+        });
   }
 
   Widget _buildDrawerItem(String title, String icon, DrawerItem drawerItem,

@@ -1,10 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/event_bus_events/go_to_search_salons_event.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
@@ -49,12 +49,12 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(tr(AppStrings.comingOrders), style: bodyText3),
+            Text(AppLocalizations.of(context)!.comingOrders, style: bodyText3),
             buttonMoreWithRightArrow(
                 onPressed: () {
                   Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
                 },
-                text: tr(AppStrings.all)),
+                text: AppLocalizations.of(context)!.all),
           ],
         ),
         marginVertical(16),
@@ -97,7 +97,7 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
   }
 
   Widget _buildEmptyList() {
-    var words = tr(AppStrings.noOrdersYet).split(" ");
+    var words = AppLocalizations.of(context)!.noOrdersYet.split(" ");
     var lastWord = words.removeLast().replaceAll("!", "");
 
     return Column(

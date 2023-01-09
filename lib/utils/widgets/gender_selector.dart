@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
@@ -50,9 +50,9 @@ class _GenderSelectorState extends State<GenderSelector> {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildGenderItem(tr(AppStrings.man), icMan, 0),
+        _buildGenderItem(AppLocalizations.of(context)!.man, icMan, 0),
         marginHorizontal(52),
-        _buildGenderItem(tr(AppStrings.woman), icWoman, 1),
+        _buildGenderItem(AppLocalizations.of(context)!.woman, icWoman, 1),
       ],
     );
   }

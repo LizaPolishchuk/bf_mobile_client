@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 
 import 'app_colors.dart';
@@ -77,7 +77,7 @@ Widget searchTextField(TextEditingController? controller,
       textCapitalization: TextCapitalization.sentences,
       style: hintText2.copyWith(color: Colors.black),
       decoration: InputDecoration(
-        hintText: hintText ?? tr(AppStrings.search),
+        hintText: hintText ?? AppLocalizations.of(context)!.search,
         hintStyle: hintText2,
         prefixIcon: Padding(
             padding: EdgeInsets.only(
@@ -148,7 +148,7 @@ Widget buttonMoreWithRightArrow(
   return InkWell(
     child: Row(
       children: [
-        Text(text ?? tr(AppStrings.more),
+        Text(text ?? AppLocalizations.of(context)!.more,
             style: bodyText1.copyWith(color: color ?? primaryColor)),
         marginHorizontal(4),
         SvgPicture.asset(

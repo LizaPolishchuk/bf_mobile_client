@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/localization/translations.dart';
 import 'package:salons_app_mobile/prezentation/search_filters/search_filters_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -62,7 +62,7 @@ class _SearchFiltersPageState extends State<SearchFiltersPage> {
                 Flexible(
                   fit: FlexFit.tight,
                   child: Text(
-                    tr(AppStrings.filters),
+                      AppLocalizations.of(context)!.filters,
                     style: titleText2.copyWith(color: greyText),
                   ),
                 ),
@@ -90,7 +90,7 @@ class _SearchFiltersPageState extends State<SearchFiltersPage> {
             ),
             roundedButton(
               context,
-              tr(AppStrings.apply),
+                AppLocalizations.of(context)!.apply,
               () {
                 SearchFilters searchFilters = SearchFilters(
                     services: _selectedServices,
@@ -107,7 +107,7 @@ class _SearchFiltersPageState extends State<SearchFiltersPage> {
             marginVertical(16),
             roundedButton(
               context,
-              tr(AppStrings.cancel),
+                AppLocalizations.of(context)!.cancel,
               () {
                 eventBus.fire(ApplySearchFiltersEvent(null));
                 Navigator.of(context).pop();
@@ -131,14 +131,14 @@ class _SearchFiltersPageState extends State<SearchFiltersPage> {
       children: [
         marginVertical(24),
         Text(
-          tr(AppStrings.services),
+        AppLocalizations.of(context)!.services,
           style: appBarText,
         ),
         marginVertical(8),
         _buildMultipleSelector(filters.popularServices, FilterType.categories),
         marginVertical(24),
         Text(
-          tr(AppStrings.price),
+    AppLocalizations.of(context)!.price,
           style: appBarText,
         ),
         marginVertical(16),
@@ -191,7 +191,7 @@ class _SearchFiltersPageState extends State<SearchFiltersPage> {
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(left: 8),
         labelText: label,
-        hintText: "$value ${tr(AppStrings.uah)}",
+        hintText: "$value ${AppLocalizations.of(context)!.uah}",
         hintStyle: hintText2,
         floatingLabelBehavior: FloatingLabelBehavior.always,
         disabledBorder: OutlineInputBorder(

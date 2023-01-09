@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
@@ -8,8 +9,7 @@ import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
 import 'package:salons_app_mobile/event_bus_events/user_logout_event.dart';
 import 'package:salons_app_mobile/event_bus_events/user_registered_event.dart';
 import 'package:salons_app_mobile/event_bus_events/user_success_logged_in_event.dart';
-import 'package:salons_app_mobile/localization/app_translation_delegate.dart';
-import 'package:salons_app_mobile/localization/application.dart';
+import 'package:salons_app_mobile/l10n/l10n.dart';
 import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
@@ -51,18 +51,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late LocalTranslationsDelegate _newLocaleDelegate;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _newLocaleDelegate = LocalTranslationsDelegate(
-      newLocale: Locale(application.defaultLocaleCode),
-      onLocaleLoaded: _onLocaleLoaded,
-    );
-    application.onLocaleChanged = _onLocaleChange;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,42 +58,43 @@ class _MyAppState extends State<MyApp> {
       title: 'Salons App',
       theme: mainTheme,
       onGenerateRoute: onGenerateRoutes,
-      localeListResolutionCallback: (locales, supportedLocales) {
-        return application.resolveLocale(updatedDeviceLocaleList: locales);
-      },
-      localizationsDelegates: [
-        _newLocaleDelegate,
-        GlobalCupertinoLocalizations.delegate,
+
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: application.supportedLocales(),
-      localeResolutionCallback: (locale, supportedLocales) {
-        for (var supportedLocaleLanguage in supportedLocales) {
-          if (supportedLocaleLanguage.languageCode == locale!.languageCode &&
-              supportedLocaleLanguage.countryCode == locale.countryCode) {
-            return supportedLocaleLanguage;
-          }
-        }
-        return supportedLocales.first;
-      },
+      supportedLocales: L10n.all,
+      // localeResolutionCallback: (locale, supportedLocales) {
+      //   for (var supportedLocaleLanguage in supportedLocales) {
+      //     if (supportedLocaleLanguage.languageCode == locale!.languageCode &&
+      //         supportedLocaleLanguage.countryCode == locale.countryCode) {
+      //       return supportedLocaleLanguage;
+      //     }
+      //   }
+      //   return supportedLocales.first;
+      // },
+      // localeListResolutionCallback: (locales, supportedLocales) {
+      //   return application.resolveLocale(updatedDeviceLocaleList: locales);
+      // },
       home: InitialPage(),
     );
   }
 
-  void _onLocaleLoaded() {
-    // BlocProvider.of<AuthenticationBloc>(context).add(AppStartedEvent());
-    // locator<ConnectedAppsDataService>().onChangeLocale();
-  }
-
-  void _onLocaleChange(Locale locale) {
-    setState(() {
-      _newLocaleDelegate = LocalTranslationsDelegate(
-        newLocale: locale,
-        onLocaleLoaded: _onLocaleLoaded,
-      );
-    });
-  }
+  // void _onLocaleLoaded() {
+  //   // BlocProvider.of<AuthenticationBloc>(context).add(AppStartedEvent());
+  //   // locator<ConnectedAppsDataService>().onChangeLocale();
+  // }
+  //
+  // void _onLocaleChange(Locale locale) {
+  //   setState(() {
+  //     _newLocaleDelegate = LocalTranslationsDelegate(
+  //       newLocale: locale,
+  //       onLocaleLoaded: _onLocaleLoaded,
+  //     );
+  //   });
+  // }
 }
 
 class InitialPage extends StatefulWidget {
@@ -114,7 +103,6 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> {
-  late LocalTranslationsDelegate _newLocaleDelegate;
   String? token;
   UserEntity? user;
   late Widget _initialPage;
