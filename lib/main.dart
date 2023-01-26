@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -16,6 +17,7 @@ import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/navigation/routes.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/notifications/firebase_push_notifications_service.dart';
 
 import 'injection_container_app.dart' as appDi;
 
@@ -23,6 +25,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
+
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
+  if (await FlutterAppBadger.isAppBadgeSupported()) {
+    FlutterAppBadger.removeBadge();
+  }
 
   await di.init();
   await appDi.init();
@@ -52,6 +60,20 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
+  @override
+  void initState() {
+    super.initState();
+
+    // FirebaseInstallations.id.then((value) {
+    //   BuildInfo().firebaseInstallationId = value;
+    //   debugPrint('Firebase installation id: $value');
+    // });
+    FirebasePushNotificationsService.instance.init(onPermissionAsked: (permissionStatus) {
+      // AppAnalytics.instance.init();
+      // AppAnalytics.instance.setUserId(BuildInfo().firebaseUserId);
+    });
+    // FirebaseInAppMessaging _ = FirebaseInAppMessaging.instance;
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
