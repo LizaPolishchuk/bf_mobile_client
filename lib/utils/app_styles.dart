@@ -30,6 +30,8 @@ ThemeData mainTheme = ThemeData(
 final TextStyle hintText1 = TextStyle(color: greyText, fontSize: 13);
 final TextStyle hintText2 =
     TextStyle(color: greyText, fontSize: 16, fontWeight: FontWeight.w400);
+final TextStyle hintText3 =
+    TextStyle(color: grey, fontSize: 12, fontWeight: FontWeight.w400);
 
 final TextStyle bodyText1 = TextStyle(color: darkGreyText, fontSize: 13);
 final TextStyle bodyText2 =

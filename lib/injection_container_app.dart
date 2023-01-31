@@ -10,6 +10,8 @@ import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/prezentation/search_filters/search_filters_bloc.dart';
 
+import 'prezentation/notifications/notifications_bloc.dart';
+
 final getItApp = GetIt.instance;
 
 Future<void> init() async {
@@ -17,6 +19,7 @@ Future<void> init() async {
   getItApp.registerFactory(() => LoginBloc(getItApp(), getItApp()));
   getItApp.registerFactory(() => CodeVerifyBloc(getItApp()));
   getItApp.registerFactory(() => RegistrationBloc(getItApp()));
+  getItApp.registerFactory(() => NotificationsBloc(getItApp()));
   getItApp.registerFactory(() => SalonsBloc(getItApp(), getItApp()));
   getItApp.registerFactory(
       () => OrdersBloc(getItApp(), getItApp(), getItApp(), getItApp()));

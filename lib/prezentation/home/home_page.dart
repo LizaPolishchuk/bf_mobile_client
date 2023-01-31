@@ -126,6 +126,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     Provider.of<MasterMode>(context, listen: false)
         .removeListener(_masterModeListener);
+
     super.dispose();
   }
 }
