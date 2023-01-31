@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/event_bus_events/go_to_search_salons_event.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
+import 'package:salons_app_mobile/prezentation/notifications/notifications_page.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/favourite_salons_page.dart';
@@ -18,8 +22,9 @@ import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
 import 'package:salons_app_mobile/utils/events/event_bus.dart';
+import 'package:salons_app_mobile/utils/master_mode.dart';
 
-enum TabItem { home, search }
+enum TabItem { home, search, notifications }
 
 enum DrawerItem { history, favourites, promo, bonusCards, settings, exit }
 
@@ -34,9 +39,13 @@ class _HomeContainerState extends State<HomeContainer> {
   TabItem _currentTab = TabItem.home;
   DrawerItem? _currentDrawerItem;
 
+  // ValueNotifier<bool> _isMasterModeNotifier = ValueNotifier<bool>(false);
+  // late LocalStorage _localStorage;
+
   final List _children = [
     const HomePage(),
     const SearchSalonsPage(),
+    const NotificationsPage()
   ];
 
   late LoginBloc _loginBloc;
@@ -52,6 +61,8 @@ class _HomeContainerState extends State<HomeContainer> {
     super.initState();
 
     _currentUser = getIt<LocalStorage>().getCurrentUser();
+
+    print("_currentUser : $_currentUser");
 
     _loginBloc = getItApp<LoginBloc>();
 
@@ -90,9 +101,8 @@ class _HomeContainerState extends State<HomeContainer> {
         key: _scaffoldKey,
         appBar: AppBar(
           actions: <Widget>[
-            _currentTab == TabItem.home
-                ? Container()
-                : IconButton(
+            _currentTab == TabItem.search
+                ? IconButton(
                     icon: SvgPicture.asset(
                       icFilters,
                       color: _searchFilters != null ? primaryColor : null,
@@ -101,6 +111,7 @@ class _HomeContainerState extends State<HomeContainer> {
                       _scaffoldKey.currentState?.openEndDrawer();
                     },
                   )
+                : SizedBox.shrink()
           ],
           leading: IconButton(
             icon: SvgPicture.asset(icMenu),
@@ -110,7 +121,7 @@ class _HomeContainerState extends State<HomeContainer> {
           ),
           title: Text(AppLocalizations.of(context)!.appName),
         ),
-        drawer: _buildDrawerMenu(),
+        drawer: _buildDrawerMenu(Provider.of<MasterMode>(context).isMaster),
         endDrawer:
             Drawer(child: SearchFiltersPage(searchFilters: _searchFilters)),
         body: _children[_currentTab.index],
@@ -132,14 +143,24 @@ class _HomeContainerState extends State<HomeContainer> {
                 child: _buildBottomMenuItem(
                     AppLocalizations.of(context)!.home, icHome, TabItem.home),
               ),
-              Flexible(
-                flex: 1,
-                fit: FlexFit.tight,
-                child: _buildBottomMenuItem(
-                    AppLocalizations.of(context)!.searching,
-                    icSearch,
-                    TabItem.search),
-              ),
+              if (!Provider.of<MasterMode>(context).isMaster)
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.tight,
+                  child: _buildBottomMenuItem(
+                      AppLocalizations.of(context)!.searching,
+                      icSearch,
+                      TabItem.search),
+                ),
+              if (Provider.of<MasterMode>(context).isMaster)
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.tight,
+                  child: _buildBottomMenuItem(
+                      AppLocalizations.of(context)!.notifications,
+                      icSearch,
+                      TabItem.notifications),
+                ),
             ],
           ),
         ),
@@ -194,7 +215,7 @@ class _HomeContainerState extends State<HomeContainer> {
     );
   }
 
-  Widget _buildDrawerMenu() {
+  Widget _buildDrawerMenu(bool isMasterMode) {
     return Drawer(
       child: Column(
         children: [
@@ -232,7 +253,7 @@ class _HomeContainerState extends State<HomeContainer> {
                     thickness: 1,
                   ),
                 ),
-                _buildMasterModeSwitcher(),
+                _buildMasterModeSwitcher(isMasterMode),
                 marginVertical(32),
               ],
             ),
@@ -242,15 +263,18 @@ class _HomeContainerState extends State<HomeContainer> {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
           }),
-          _buildDrawerItem(AppLocalizations.of(context)!.favouriteSalons,
-              icStarUnchecked, DrawerItem.favourites, onClick: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
-          }),
-          _buildDrawerItem(
-              AppLocalizations.of(context)!.promo, icPromo, DrawerItem.promo),
-          _buildDrawerItem(AppLocalizations.of(context)!.bonusCards,
-              icBonusCards, DrawerItem.bonusCards),
+          if (!isMasterMode)
+            _buildDrawerItem(AppLocalizations.of(context)!.favouriteSalons,
+                icStarUnchecked, DrawerItem.favourites, onClick: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
+            }),
+          if (!isMasterMode)
+            _buildDrawerItem(
+                AppLocalizations.of(context)!.promo, icPromo, DrawerItem.promo),
+          if (!isMasterMode)
+            _buildDrawerItem(AppLocalizations.of(context)!.bonusCards,
+                icBonusCards, DrawerItem.bonusCards),
           _buildDrawerItem(AppLocalizations.of(context)!.settings, icSettings,
               DrawerItem.settings, onClick: () {
             Navigator.of(context).pop();
@@ -264,67 +288,89 @@ class _HomeContainerState extends State<HomeContainer> {
     );
   }
 
-  ValueNotifier<bool> _isMasterModeNotifier = ValueNotifier<bool>(false);
+  Timer? _timer;
+  ValueNotifier<bool> _masterSwitcherCanClick = ValueNotifier(true);
 
-  Widget _buildMasterModeSwitcher() {
-    return ValueListenableBuilder<bool>(
-        valueListenable: _isMasterModeNotifier,
-        builder: (context, isMaster, child) {
-          return Container(
-            height: 48,
-            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: grey.withAlpha(40),
-            ),
-            child: Row(
-              children: [
-                Flexible(
-                  child: InkWell(
-                    onTap: () {
-                      _isMasterModeNotifier.value = false;
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: isMaster ? null : primaryColor,
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.client,
-                        style: hintText2.copyWith(
-                            fontSize: 14,
-                            color: isMaster ? Colors.black : Colors.white),
-                      ),
-                    ),
-                  ),
+  bool _masterSwitcherEnabled = true;
+
+  Widget _buildMasterModeSwitcher(bool isMaster) {
+    var provider = Provider.of<MasterMode>(context, listen: false);
+
+    return Container(
+      height: 48,
+      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: grey.withAlpha(40),
+      ),
+      child: Row(
+        children: [
+          Flexible(
+            child: InkWell(
+              onTap: () {
+                if (provider.isMaster) {
+                  print("_masterSwitcherEnabled ${_masterSwitcherEnabled}");
+                  _onClickMasterSwitcher(false, provider);
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(8),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: isMaster ? null : primaryColor,
                 ),
-                Flexible(
-                  child: InkWell(
-                    onTap: () {
-                      _isMasterModeNotifier.value = true;
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: isMaster ? primaryColor : null,
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.master,
-                        style: hintText2.copyWith(
-                            fontSize: 14,
-                            color: isMaster ? Colors.white : Colors.black),
-                      ),
-                    ),
-                  ),
-                )
-              ],
+                child: Text(
+                  AppLocalizations.of(context)!.client,
+                  style: hintText2.copyWith(
+                      fontSize: 14,
+                      color: isMaster ? Colors.black : Colors.white),
+                ),
+              ),
             ),
-          );
-        });
+          ),
+          Flexible(
+            child: InkWell(
+              onTap: () {
+                if (!provider.isMaster) {
+                  print("_masterSwitcherEnabled ${_masterSwitcherEnabled}");
+
+                  _onClickMasterSwitcher(true, provider);
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(8),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: isMaster ? primaryColor : null,
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.master,
+                  style: hintText2.copyWith(
+                      fontSize: 14,
+                      color: isMaster ? Colors.white : Colors.black),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _onClickMasterSwitcher(bool clickedOnMaster, provider){
+
+    if (_masterSwitcherEnabled) {
+      _masterSwitcherEnabled = false;
+
+      provider.setMasterMode(clickedOnMaster);
+      SwitchMasterModeUseCase(getItApp()).call(clickedOnMaster);
+    }
+
+    _timer = Timer(Duration(milliseconds: 1000), (){
+      _masterSwitcherEnabled = true;
+    });
   }
 
   Widget _buildDrawerItem(String title, String icon, DrawerItem drawerItem,
@@ -357,6 +403,13 @@ class _HomeContainerState extends State<HomeContainer> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+
+    super.dispose();
   }
 }
 

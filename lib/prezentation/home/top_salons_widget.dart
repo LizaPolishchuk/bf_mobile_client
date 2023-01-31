@@ -5,7 +5,6 @@ import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
 //   var salons = [
@@ -43,7 +42,7 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Salon>>(
-      stream: _salonsBloc.salonsLoaded,
+      stream: _salonsBloc.topSalonsLoaded,
       builder: (context, snapshot) {
         //todo add here animation to better showing
 
@@ -73,7 +72,7 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
             return SizedBox.shrink();
           }
         } else {
-          return SizedBox(height: 160);
+          return SizedBox(height: 177);
         }
       },
     );

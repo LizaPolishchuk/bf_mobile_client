@@ -8,4 +8,5 @@ class BuildInfo {
   String? firebaseUserId;
   String? firebaseInstallationId;
   String? pushToken;
+  bool isMasterMode = false;
 }

@@ -19,11 +19,13 @@ class SalonsBloc {
   bool noMoreData = false;
 
   final _salonsLoadedSubject = PublishSubject<List<Salon>>();
+  final _topSalonsLoadedSubject = PublishSubject<List<Salon>>();
   final _errorSubject = PublishSubject<String>();
   final _isLoadingSubject = PublishSubject<bool>();
 
   // output stream
   Stream<List<Salon>> get salonsLoaded => _salonsLoadedSubject.stream;
+  Stream<List<Salon>> get topSalonsLoaded => _topSalonsLoadedSubject.stream;
 
   Stream<String> get errorMessage => _errorSubject.stream;
 
@@ -51,7 +53,7 @@ class SalonsBloc {
         this._salonsList.addAll(salonsList);
       }
 
-      _salonsLoadedSubject.add(_salonsList);
+      _topSalonsLoadedSubject.add(_salonsList);
     }
   }
 

@@ -66,5 +66,6 @@
   "didNotReceiveCode": "Не отримали код?",
   "resendCode": "Відправити ще раз",
   "client": "Клієнт",
-  "favouriteSalons": "Улюблені салони"
+  "favouriteSalons": "Улюблені салони",
+  "notifications": "Повідомлення"
 }

@@ -6,7 +6,6 @@ import 'package:salons_app_mobile/prezentation/registration/registration_bloc.da
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_strings.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/widgets/gender_selector.dart';
 

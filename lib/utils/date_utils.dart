@@ -16,6 +16,10 @@ extension DayFormatting on DateTime {
     return DateFormat('yyyy-MM-dd').format(this);
   }
 
+  String formatToddMMYYYY() {
+    return DateFormat('dd.MM.yyyy').format(this);
+  }
+
   String formatToYYYYMMddWithTime() {
     return DateFormat('yyyy-MM-ddTHH:mm:ss').format(this) + 'Z';
   }

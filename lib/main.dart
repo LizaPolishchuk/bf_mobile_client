@@ -4,6 +4,7 @@ import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
 import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
@@ -17,6 +18,7 @@ import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/navigation/routes.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/master_mode.dart';
 import 'package:salons_app_mobile/utils/notifications/firebase_push_notifications_service.dart';
 
 import 'injection_container_app.dart' as appDi;
@@ -59,7 +61,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
@@ -68,55 +69,61 @@ class _MyAppState extends State<MyApp> {
     //   BuildInfo().firebaseInstallationId = value;
     //   debugPrint('Firebase installation id: $value');
     // });
-    FirebasePushNotificationsService.instance.init(onPermissionAsked: (permissionStatus) {
+    FirebasePushNotificationsService.instance.init(
+        onPermissionAsked: (permissionStatus) {
       // AppAnalytics.instance.init();
       // AppAnalytics.instance.setUserId(BuildInfo().firebaseUserId);
     });
     // FirebaseInAppMessaging _ = FirebaseInAppMessaging.instance;
   }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Salons App',
-      theme: mainTheme,
-      onGenerateRoute: onGenerateRoutes,
+    return ChangeNotifierProvider<MasterMode>(
+      create: (context) =>
+          MasterMode(isMaster: getIt<LocalStorage>().isMasterMode),
+      child: MaterialApp(
+        title: 'Salons App',
+        theme: mainTheme,
+        onGenerateRoute: onGenerateRoutes,
 
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: L10n.all,
-      // localeResolutionCallback: (locale, supportedLocales) {
-      //   for (var supportedLocaleLanguage in supportedLocales) {
-      //     if (supportedLocaleLanguage.languageCode == locale!.languageCode &&
-      //         supportedLocaleLanguage.countryCode == locale.countryCode) {
-      //       return supportedLocaleLanguage;
-      //     }
-      //   }
-      //   return supportedLocales.first;
-      // },
-      // localeListResolutionCallback: (locales, supportedLocales) {
-      //   return application.resolveLocale(updatedDeviceLocaleList: locales);
-      // },
-      home: InitialPage(),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: L10n.all,
+        // localeResolutionCallback: (locale, supportedLocales) {
+        //   for (var supportedLocaleLanguage in supportedLocales) {
+        //     if (supportedLocaleLanguage.languageCode == locale!.languageCode &&
+        //         supportedLocaleLanguage.countryCode == locale.countryCode) {
+        //       return supportedLocaleLanguage;
+        //     }
+        //   }
+        //   return supportedLocales.first;
+        // },
+        // localeListResolutionCallback: (locales, supportedLocales) {
+        //   return application.resolveLocale(updatedDeviceLocaleList: locales);
+        // },
+        home: InitialPage(),
+      ),
     );
   }
 
-  // void _onLocaleLoaded() {
-  //   // BlocProvider.of<AuthenticationBloc>(context).add(AppStartedEvent());
-  //   // locator<ConnectedAppsDataService>().onChangeLocale();
-  // }
-  //
-  // void _onLocaleChange(Locale locale) {
-  //   setState(() {
-  //     _newLocaleDelegate = LocalTranslationsDelegate(
-  //       newLocale: locale,
-  //       onLocaleLoaded: _onLocaleLoaded,
-  //     );
-  //   });
-  // }
+// void _onLocaleLoaded() {
+//   // BlocProvider.of<AuthenticationBloc>(context).add(AppStartedEvent());
+//   // locator<ConnectedAppsDataService>().onChangeLocale();
+// }
+//
+// void _onLocaleChange(Locale locale) {
+//   setState(() {
+//     _newLocaleDelegate = LocalTranslationsDelegate(
+//       newLocale: locale,
+//       onLocaleLoaded: _onLocaleLoaded,
+//     );
+//   });
+// }
 }
 
 class InitialPage extends StatefulWidget {

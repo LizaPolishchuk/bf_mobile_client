@@ -44,6 +44,22 @@ class OrdersBloc {
     }
   }
 
+  getOrdersForCurrentMaster(
+      {String? dateFor, String? dateFrom, String? dateTo}) async {
+    String userId = _localStorage.getUserId();
+    final response = await _getOrdersListUseCase(userId, OrderForType.USER,
+        dateFor: dateFor, dateFrom: dateFrom, dateTo: dateTo);
+
+    if (response.isLeft) {
+      _errorSubject.add(response.left.message);
+    } else {
+      _ordersList = response.right;
+      _ordersLoadedSubject.add(_ordersList);
+
+      _localStorage.setOrdersList(_ordersList);
+    }
+  }
+
   getAvailableOrdersByTime(
       String salonId, String serviceId, String masterId, String date) async {
     final response =
