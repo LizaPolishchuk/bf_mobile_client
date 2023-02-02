@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
@@ -82,32 +85,42 @@ class _MyAppState extends State<MyApp> {
     return ChangeNotifierProvider<MasterMode>(
       create: (context) =>
           MasterMode(isMaster: getIt<LocalStorage>().isMasterMode),
-      child: MaterialApp(
-        title: 'Salons App',
-        theme: mainTheme,
-        onGenerateRoute: onGenerateRoutes,
+      child: ValueListenableBuilder(
+          valueListenable: Hive.box(LocalStorage.preferencesBox).listenable(),
+          builder: (BuildContext context, Box<dynamic> box, Widget? child) {
+            final String defaultSystemLocale = Platform.localeName;
+            var locale = Locale(box.get(LocalStorage.currentLanguage,defaultValue: defaultSystemLocale));
+            debugPrint(
+                "defaultSystemLocale: $defaultSystemLocale, currentLanguage: $locale");
 
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: L10n.all,
-        // localeResolutionCallback: (locale, supportedLocales) {
-        //   for (var supportedLocaleLanguage in supportedLocales) {
-        //     if (supportedLocaleLanguage.languageCode == locale!.languageCode &&
-        //         supportedLocaleLanguage.countryCode == locale.countryCode) {
-        //       return supportedLocaleLanguage;
-        //     }
-        //   }
-        //   return supportedLocales.first;
-        // },
-        // localeListResolutionCallback: (locales, supportedLocales) {
-        //   return application.resolveLocale(updatedDeviceLocaleList: locales);
-        // },
-        home: InitialPage(),
-      ),
+            return MaterialApp(
+              title: 'Salons App',
+              theme: mainTheme,
+              onGenerateRoute: onGenerateRoutes,
+              locale: locale,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                LocaleNamesLocalizationsDelegate(),
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: L10n.supportedLocales,
+              // localeResolutionCallback: (locale, supportedLocales) {
+              //   for (var supportedLocaleLanguage in supportedLocales) {
+              //     if (supportedLocaleLanguage.languageCode == locale!.languageCode &&
+              //         supportedLocaleLanguage.countryCode == locale.countryCode) {
+              //       return supportedLocaleLanguage;
+              //     }
+              //   }
+              //   return supportedLocales.first;
+              // },
+              // localeListResolutionCallback: (locales, supportedLocales) {
+              //   return application.resolveLocale(updatedDeviceLocaleList: locales);
+              // },
+              home: InitialPage(),
+            );
+          }),
     );
   }
 

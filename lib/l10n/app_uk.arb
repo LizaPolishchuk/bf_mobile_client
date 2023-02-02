@@ -62,10 +62,11 @@
   "somethingWentWrong": "Упс.. Щось пішло не так",
   "wrongCode": "Не вірний код",
   "welcome": "Раді вітати!",
-  "enterPhoneDescription": "Введіть номер для того, щоб ввійти в додаток",
+  "enterPhoneDescription": "Введіть номер для того, щоб увійти в додаток",
   "didNotReceiveCode": "Не отримали код?",
   "resendCode": "Відправити ще раз",
   "client": "Клієнт",
   "favouriteSalons": "Улюблені салони",
-  "notifications": "Повідомлення"
+  "notifications": "Повідомлення",
+  "language": "Мова"
 }

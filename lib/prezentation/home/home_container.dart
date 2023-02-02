@@ -258,7 +258,7 @@ class _HomeContainerState extends State<HomeContainer> {
               ],
             ),
           ),
-          _buildDrawerItem(AppLocalizations.of(context)!.history, icHistory,
+          _buildDrawerItem(AppLocalizations.of(context)!.ordersHistory, icHistory,
               DrawerItem.history, onClick: () {
             Navigator.of(context).pop();
             Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);

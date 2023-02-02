@@ -2,15 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/l10n/l10n.dart';
 import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
+import 'package:salons_app_mobile/utils/extentions.dart';
 import 'package:salons_app_mobile/utils/widgets/gender_selector.dart';
 
 import '../../injection_container_app.dart';
@@ -213,6 +216,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       onSelectGender: (int selectedGender) {
                         _selectedGender = selectedGender;
                       }),
+                  marginVertical(16),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      AppLocalizations.of(context)!.language,
+                      style: appBarText,
+                    ),
+                  ),
+                  marginVertical(16),
+                  _buildLanguageSelector(),
                   Spacer(),
                   roundedButton(
                       context,
@@ -253,5 +266,55 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       );
     });
+  }
+
+  Locale? _selectedLocale;
+
+  Widget _buildLanguageSelector() {
+    var supportedLocales = L10n.supportedLocales;
+    var currentLocaleName = getIt<LocalStorage>().getLanguage();
+
+    if (currentLocaleName == null) {
+      var localName = Platform.localeName;
+      if (localName.contains("-")) {
+        localName = localName.split("-").first;
+      }
+      currentLocaleName = localName;
+    }
+    _selectedLocale = Locale(currentLocaleName);
+
+    if (!supportedLocales.contains(_selectedLocale)) {
+      _selectedLocale = L10n.defaultLocale;
+    }
+
+    var languages = supportedLocales
+        .map((locale) => RadioListTile<Locale>(
+              value: locale,
+              contentPadding: EdgeInsets.zero,
+              activeColor: primaryColor,
+              title: Text(
+                LocaleNames.of(context)!
+                        .nameOf(locale.languageCode)
+                        ?.capitalize() ??
+                    locale.languageCode,
+                style: bodyText6.copyWith(
+                    color: locale == _selectedLocale ? primaryColor : greyText),
+              ),
+              groupValue: _selectedLocale,
+              onChanged: (Locale? locale) {
+                if (locale != null && _selectedLocale != locale) {
+                  setState(() {
+                    _selectedLocale = locale;
+                  });
+                  getItApp<SwitchLanguageUseCase>().call(locale.languageCode);
+                }
+              },
+            ))
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: languages,
+    );
   }
 }
