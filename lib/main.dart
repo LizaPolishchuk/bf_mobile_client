@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
 import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
+import 'package:salons_app_mobile/event_bus_events/user_done_onboarding_event.dart';
 import 'package:salons_app_mobile/event_bus_events/user_logout_event.dart';
 import 'package:salons_app_mobile/event_bus_events/user_registered_event.dart';
 import 'package:salons_app_mobile/event_bus_events/user_success_logged_in_event.dart';
@@ -19,6 +20,7 @@ import 'package:salons_app_mobile/prezentation/home/home_container.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/navigation/routes.dart';
+import 'package:salons_app_mobile/prezentation/onboarding/onboarding_page.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 import 'package:salons_app_mobile/utils/master_mode.dart';
@@ -172,6 +174,11 @@ class _InitialPageState extends State<InitialPage> {
     });
 
     eventBus.on<UserRegisteredEvent>().listen((event) {
+      _initialPage = const OnboardingPage();
+    });
+
+    eventBus.on<UserDoneOnboardingEvent>().listen((event) {
+      print("UserDoneOnboardingEvent");
       _initialPage = const HomeContainer();
     });
 
