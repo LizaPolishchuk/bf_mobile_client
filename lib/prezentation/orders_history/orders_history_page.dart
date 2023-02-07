@@ -222,6 +222,7 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
 
   Widget _buildEmptyList() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset(emptyListPlaceholder),
         Text(AppLocalizations.of(context)!.nothingFound),

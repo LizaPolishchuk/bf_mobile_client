@@ -258,31 +258,42 @@ class _HomeContainerState extends State<HomeContainer> {
               ],
             ),
           ),
-          _buildDrawerItem(AppLocalizations.of(context)!.ordersHistory, icHistory,
-              DrawerItem.history, onClick: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
-          }),
-          if (!isMasterMode)
-            _buildDrawerItem(AppLocalizations.of(context)!.favouriteSalons,
-                icStarUnchecked, DrawerItem.favourites, onClick: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed(FavouriteSalonsPage.routeName);
-            }),
-          if (!isMasterMode)
-            _buildDrawerItem(
-                AppLocalizations.of(context)!.promo, icPromo, DrawerItem.promo),
-          if (!isMasterMode)
-            _buildDrawerItem(AppLocalizations.of(context)!.bonusCards,
-                icBonusCards, DrawerItem.bonusCards),
-          _buildDrawerItem(AppLocalizations.of(context)!.settings, icSettings,
-              DrawerItem.settings, onClick: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pushNamed(SettingsPage.routeName);
-          }),
-          _buildDrawerItem(
-              AppLocalizations.of(context)!.exit, icExit, DrawerItem.exit,
-              onClick: () => _loginBloc.logout()),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildDrawerItem(AppLocalizations.of(context)!.ordersHistory,
+                      icHistory, DrawerItem.history, onClick: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
+                  }),
+                  if (!isMasterMode)
+                    _buildDrawerItem(
+                        AppLocalizations.of(context)!.favouriteSalons,
+                        icStarUnchecked,
+                        DrawerItem.favourites, onClick: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context)
+                          .pushNamed(FavouriteSalonsPage.routeName);
+                    }),
+                  if (!isMasterMode)
+                    _buildDrawerItem(AppLocalizations.of(context)!.promo, icPromo,
+                        DrawerItem.promo),
+                  if (!isMasterMode)
+                    _buildDrawerItem(AppLocalizations.of(context)!.bonusCards,
+                        icBonusCards, DrawerItem.bonusCards),
+                  _buildDrawerItem(AppLocalizations.of(context)!.settings,
+                      icSettings, DrawerItem.settings, onClick: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed(SettingsPage.routeName);
+                  }),
+                  _buildDrawerItem(
+                      AppLocalizations.of(context)!.exit, icExit, DrawerItem.exit,
+                      onClick: () => _loginBloc.logout()),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -359,8 +370,7 @@ class _HomeContainerState extends State<HomeContainer> {
     );
   }
 
-  void _onClickMasterSwitcher(bool clickedOnMaster, provider){
-
+  void _onClickMasterSwitcher(bool clickedOnMaster, provider) {
     if (_masterSwitcherEnabled) {
       _masterSwitcherEnabled = false;
 
@@ -368,7 +378,7 @@ class _HomeContainerState extends State<HomeContainer> {
       SwitchMasterModeUseCase(getItApp()).call(clickedOnMaster);
     }
 
-    _timer = Timer(Duration(milliseconds: 1000), (){
+    _timer = Timer(Duration(milliseconds: 1000), () {
       _masterSwitcherEnabled = true;
     });
   }

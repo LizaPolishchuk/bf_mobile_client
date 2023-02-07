@@ -100,10 +100,13 @@ class _ComingOrdersWidgetState extends State<ComingOrdersWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(
-          emptyOrdersPlaceholder,
-          height: 188,
-          width: 300,
+        Expanded(
+          child: Image.asset(
+            emptyOrdersPlaceholder,
+            fit: BoxFit.scaleDown,
+            height: 188,
+            width: 300,
+          ),
         ),
         marginVertical(22),
         RichText(
