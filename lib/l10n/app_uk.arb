@@ -68,5 +68,12 @@
   "client": "Клієнт",
   "favouriteSalons": "Улюблені салони",
   "notifications": "Повідомлення",
-  "language": "Мова"
+  "language": "Мова",
+  "createAppointment": "Створити запис",
+  "salonName": "Назва салону",
+  "serviceName": "Назва послуги",
+  "masterName": "Імʼя майстра",
+  "date": "Дата",
+  "time": "Час",
+  "save": "Зберегти"
 }

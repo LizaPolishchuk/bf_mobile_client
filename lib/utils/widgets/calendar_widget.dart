@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:salons_app_mobile/prezentation/create_order/animated_container.dart';
 import 'package:salons_app_mobile/prezentation/create_order/create_order_page.dart';
@@ -14,12 +13,14 @@ class Calendar extends StatefulWidget {
   final CalendarFormat? calendarFormat;
   final double? height;
   final GlobalKey? dateKey;
+  final DateTime? selectedDay;
 
   const Calendar(
       {Key? key,
       this.onSelectDay,
       this.calendarFormat,
       this.height,
+      this.selectedDay,
       this.dateKey})
       : super(key: key);
 
@@ -29,6 +30,13 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   DateTime? _selectedDay;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _selectedDay = widget.selectedDay;
+  }
 
   @override
   Widget build(BuildContext context) {

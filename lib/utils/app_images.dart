@@ -27,6 +27,8 @@ const String icArrowLeftWithShadow =
     'assets/icons/ic_arrow_left_with_shadow.svg';
 const String icStarUnchecked = 'assets/icons/ic_star.svg';
 const String icStarChecked = 'assets/icons/ic_star_filled.svg';
+const String icCreateAppointment = 'assets/icons/ic_create_appointment.svg';
+const String icClock = 'assets/icons/ic_clock.svg';
 
 ///Images
 const String masterPlaceholder = 'assets/images/master_image.png';

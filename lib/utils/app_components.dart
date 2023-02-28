@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,43 +8,50 @@ import 'app_colors.dart';
 import 'app_styles.dart';
 
 ///TextInputs
-Widget textFieldWithBorders(
-  String labelText,
-  TextEditingController controller, {
-  String? hintText,
-  String? errorStr,
-  String? prefixText,
-  Widget? prefixIcon,
-  TextCapitalization? textCapitalization,
-  BoxConstraints? prefixIconConstraints,
-  bool enabled = true,
-  TextInputType? keyboardType,
-  int? maxLength,
-  FocusNode? focusNode,
-  List<TextInputFormatter>? inputFormatters,
-  FormFieldValidator<String>? validator,
-}) {
+Widget textFieldWithBorders(String labelText,
+    TextEditingController controller, {
+      String? hintText,
+      String? errorStr,
+      String? prefixText,
+      Widget? prefixIcon,
+      Widget? suffixIcon,
+      TextCapitalization? textCapitalization,
+      BoxConstraints? prefixIconConstraints,
+      BoxConstraints? suffixIconConstraints,
+      bool enabled = true,
+      TextInputType? keyboardType,
+      int? maxLength,
+      VoidCallback? onTap,
+      FocusNode? focusNode,
+      List<TextInputFormatter>? inputFormatters,
+      FormFieldValidator<String>? validator,
+      FloatingLabelBehavior? floatingLabelBehavior,
+    }) {
   return TextFormField(
     controller: controller,
     style: bodyText1,
     validator: validator,
     maxLength: maxLength,
+    onTap: onTap,
     textCapitalization: textCapitalization ?? TextCapitalization.none,
     focusNode: focusNode,
     inputFormatters: inputFormatters,
     keyboardType: keyboardType ?? TextInputType.text,
+    readOnly: !enabled,
     decoration: InputDecoration(
       prefixIconConstraints: prefixIconConstraints,
+      suffixIconConstraints: suffixIconConstraints,
       prefixText: prefixText,
       labelText: labelText,
       hintText: hintText,
       prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
       errorText: errorStr,
       errorStyle: errorText,
       labelStyle: hintText1,
       prefixStyle: bodyText1,
-      enabled: enabled,
       counterText: "",
+      floatingLabelBehavior: floatingLabelBehavior,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: lightGrey, width: 1),
@@ -127,12 +133,15 @@ Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
         onPressed: onPressed,
         style: buttonColor != null
             ? ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(buttonColor))
-            : Theme.of(context).elevatedButtonTheme.style,
+            backgroundColor: MaterialStateProperty.all(buttonColor))
+            : Theme
+            .of(context)
+            .elevatedButtonTheme
+            .style,
         child: Text(
           text,
           style:
-              textColor != null ? buttonText.copyWith(color: textColor) : null,
+          textColor != null ? buttonText.copyWith(color: textColor) : null,
         ),
       ),
     ),
@@ -141,9 +150,9 @@ Widget roundedButton(BuildContext context, String text, VoidCallback onPressed,
 
 Widget buttonMoreWithRightArrow(BuildContext context,
     {required VoidCallback? onPressed,
-    String? text,
-    Color? color,
-    double? width}) {
+      String? text,
+      Color? color,
+      double? width}) {
   return InkWell(
     child: Row(
       children: [
@@ -184,10 +193,11 @@ Widget imageWithPlaceholder(String? imageUrl, String placeholder) {
           ),
         );
       },
-      errorBuilder: (context, error, stackTrace) => Image.asset(
-        placeholder,
-        fit: BoxFit.cover,
-      ),
+      errorBuilder: (context, error, stackTrace) =>
+          Image.asset(
+            placeholder,
+            fit: BoxFit.cover,
+          ),
     ),
   );
 }

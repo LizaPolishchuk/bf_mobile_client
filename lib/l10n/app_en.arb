@@ -68,5 +68,12 @@
   "client": "Client",
   "favouriteSalons": "Favourite salons",
   "notifications": "Notifications",
-  "language": "Language"
+  "language": "Language",
+  "createAppointment": "Create Appointment",
+  "salonName": "Salon name",
+  "serviceName": "Service name",
+  "masterName": "Master name",
+  "date": "Date",
+  "time": "Time",
+  "save": "Save"
 }

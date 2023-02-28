@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/prezentation/categories/choose_category_page.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/choose_service_page.dart';
 import 'package:salons_app_mobile/prezentation/create_order/create_order_page.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
+import 'package:salons_app_mobile/prezentation/individual_appointments/create_individual_appointment_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_page.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
@@ -39,6 +39,8 @@ MaterialPageRoute onGenerateRoutes(RouteSettings settings) {
       return materialPageRoute(SettingsPage());
     case FavouriteSalonsPage.routeName:
       return materialPageRoute(FavouriteSalonsPage());
+    case CreateIndividualAppointmentPage.routeName:
+      return materialPageRoute(CreateIndividualAppointmentPage());
     default:
       return materialPageRoute(HomePage());
   }

@@ -8,6 +8,7 @@ import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/event_bus_events/go_to_search_salons_event.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
+import 'package:salons_app_mobile/prezentation/individual_appointments/create_individual_appointment_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
 import 'package:salons_app_mobile/prezentation/notifications/notifications_page.dart';
 import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
@@ -111,7 +112,13 @@ class _HomeContainerState extends State<HomeContainer> {
                       _scaffoldKey.currentState?.openEndDrawer();
                     },
                   )
-                : SizedBox.shrink()
+                : IconButton(
+                    icon: SvgPicture.asset(icCreateAppointment),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(CreateIndividualAppointmentPage.routeName);
+
+                    },
+                  )
           ],
           leading: IconButton(
             icon: SvgPicture.asset(icMenu),
@@ -265,7 +272,8 @@ class _HomeContainerState extends State<HomeContainer> {
                   _buildDrawerItem(AppLocalizations.of(context)!.ordersHistory,
                       icHistory, DrawerItem.history, onClick: () {
                     Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed(OrdersHistoryPage.routeName);
+                    Navigator.of(context)
+                        .pushNamed(OrdersHistoryPage.routeName);
                   }),
                   if (!isMasterMode)
                     _buildDrawerItem(
@@ -277,8 +285,8 @@ class _HomeContainerState extends State<HomeContainer> {
                           .pushNamed(FavouriteSalonsPage.routeName);
                     }),
                   if (!isMasterMode)
-                    _buildDrawerItem(AppLocalizations.of(context)!.promo, icPromo,
-                        DrawerItem.promo),
+                    _buildDrawerItem(AppLocalizations.of(context)!.promo,
+                        icPromo, DrawerItem.promo),
                   if (!isMasterMode)
                     _buildDrawerItem(AppLocalizations.of(context)!.bonusCards,
                         icBonusCards, DrawerItem.bonusCards),
@@ -287,8 +295,8 @@ class _HomeContainerState extends State<HomeContainer> {
                     Navigator.of(context).pop();
                     Navigator.of(context).pushNamed(SettingsPage.routeName);
                   }),
-                  _buildDrawerItem(
-                      AppLocalizations.of(context)!.exit, icExit, DrawerItem.exit,
+                  _buildDrawerItem(AppLocalizations.of(context)!.exit, icExit,
+                      DrawerItem.exit,
                       onClick: () => _loginBloc.logout()),
                 ],
               ),
