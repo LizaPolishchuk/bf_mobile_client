@@ -36,7 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
   final _formKeyPhone = GlobalKey<FormState>();
   AlertBuilder _alertBuilder = new AlertBuilder();
 
-  int? _selectedGender;
+  Gender? _selectedGender;
   bool _isEditMode = false;
 
   File? _pickedAvatar;
@@ -91,7 +91,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     _teControllerName.text = user.name ?? "";
     _teControllerPhone.text = user.phone ?? "";
-    _selectedGender = user.gender;
+    _selectedGender = Gender.values.byName(user.gender);
 
     print(_selectedGender);
 
@@ -213,7 +213,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       genderSelectorType: GenderSelectorType.radio_buttons,
                       initialGender: _selectedGender,
                       enabled: _isEditMode,
-                      onSelectGender: (int selectedGender) {
+                      onSelectGender: (Gender selectedGender) {
                         _selectedGender = selectedGender;
                       }),
                   marginVertical(16),
@@ -240,8 +240,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       bool validName = _formKeyName.currentState!.validate();
                       if (validName) {
                         UserEntity userToUpdate = user.copy(
-                          name: _teControllerName.text,
-                          gender: _selectedGender,
+                          firstname: _teControllerName.text,
+                          gender: _selectedGender?.name,
                         );
                         _profileBloc.updateUser(userToUpdate,
                             userAvatar: _pickedAvatar);
@@ -306,7 +306,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   setState(() {
                     _selectedLocale = locale;
                   });
-                  getItApp<SwitchLanguageUseCase>().call(locale.languageCode);
+                  getIt<UserRepository>().setCurrentLanguage(locale.languageCode);
                 }
               },
             ))

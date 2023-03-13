@@ -5,8 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/prezentation/orders/order_item_widget.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
+import 'package:salons_app_mobile/prezentation/appointments/appointment_bloc.dart';
+import 'package:salons_app_mobile/prezentation/appointments/appointment_item_widget.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -16,17 +16,17 @@ import 'package:salons_app_mobile/utils/date_utils.dart';
 import 'package:salons_app_mobile/utils/widgets/calendar_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class OrdersHistoryPage extends StatefulWidget {
+class AppointmentsHistoryPage extends StatefulWidget {
   static const routeName = '/orders-history';
 
-  const OrdersHistoryPage({Key? key}) : super(key: key);
+  const AppointmentsHistoryPage({Key? key}) : super(key: key);
 
   @override
-  _OrdersHistoryPageState createState() => _OrdersHistoryPageState();
+  _AppointmentsHistoryPageState createState() => _AppointmentsHistoryPageState();
 }
 
-class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
-  late OrdersBloc _ordersBloc;
+class _AppointmentsHistoryPageState extends State<AppointmentsHistoryPage> {
+  late AppointmentsBloc _appointmentsBloc;
   final AlertBuilder _alertBuilder = AlertBuilder();
   bool _showCalendar = false;
   DateTime? _selectedDate;
@@ -35,7 +35,7 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
       RefreshController(initialRefresh: true);
 
   void _onRefresh() async {
-    _ordersBloc.getOrdersForCurrentUser(
+    _appointmentsBloc.getAppointmentsForCurrentUser(
         dateFor: _selectedDate?.formatToYYYYMMdd());
   }
 
@@ -43,9 +43,9 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
   void initState() {
     super.initState();
 
-    _ordersBloc = getItApp<OrdersBloc>();
+    _appointmentsBloc = getItApp<AppointmentsBloc>();
 
-    _ordersBloc.errorMessage.listen((errorMsg) {
+    _appointmentsBloc.errorMessage.listen((errorMsg) {
       _alertBuilder.showErrorSnackBar(context, errorMsg);
     });
   }
@@ -98,23 +98,13 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
   }
 
   Widget _buildOrdersList() {
-    return StreamBuilder<List<OrderEntity>>(
-        stream: _ordersBloc.ordersLoaded,
+    return StreamBuilder<List<AppointmentEntity>>(
+        stream: _appointmentsBloc.appointmentsLoaded,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.waiting) {
             SchedulerBinding.instance.addPostFrameCallback((_) {
               if (_refreshController.isRefresh)
                 _refreshController.refreshCompleted();
-
-              if (snapshot.hasError) {
-                String errorMsg = snapshot.error.toString();
-                if (errorMsg == NoInternetException.noInternetCode) {
-                  errorMsg = AppLocalizations.of(context)!.noInternetConnection;
-                } else {
-                  errorMsg = AppLocalizations.of(context)!.somethingWentWrong;
-                }
-                _alertBuilder.showErrorSnackBar(context, errorMsg);
-              }
             });
 
             if (snapshot.data != null && snapshot.data!.length > 0) {
@@ -159,14 +149,14 @@ class _OrdersHistoryPageState extends State<OrdersHistoryPage> {
                         ),
                         marginHorizontal(4),
                         Flexible(
-                          child: OrdersItemWidget(
-                            order: orders[index],
+                          child: AppointmentsItemWidget(
+                            appointment: orders[index],
                             enableSlidebar: false,
                             onPressedPin: (order) {
-                              _ordersBloc.pinOrder(order, index);
+                              _appointmentsBloc.pinAppointment(order, index);
                             },
                             onPressedRemove: (order) {
-                              _ordersBloc.cancelOrder(order);
+                              _appointmentsBloc.cancelAppointment(order);
                             },
                           ),
                         ),

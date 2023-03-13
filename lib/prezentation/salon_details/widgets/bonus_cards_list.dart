@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
 class BonusCardsList extends StatelessWidget {
-  final Stream<List<BonusCard>> cardsStream;
+  final Stream<List<Promo>> cardsStream;
 
   const BonusCardsList({Key? key, required this.cardsStream}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<BonusCard>>(
+    return StreamBuilder<List<Promo>>(
       stream: cardsStream,
       builder: (context, snapshot) {
         var cards = snapshot.data ?? [];
@@ -27,7 +26,7 @@ class BonusCardsList extends StatelessWidget {
     );
   }
 
-  Widget _buildBonusCard(BonusCard bonusCard) {
+  Widget _buildBonusCard(Promo bonusCard) {
     return Container(
       // height: 60,
       padding: EdgeInsets.all(16),

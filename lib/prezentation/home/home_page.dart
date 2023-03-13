@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/prezentation/home/coming_orders_widget.dart';
+import 'package:salons_app_mobile/prezentation/appointments/appointment_bloc.dart';
+import 'package:salons_app_mobile/prezentation/home/coming_appointments_widget.dart';
 import 'package:salons_app_mobile/prezentation/home/top_salons_widget.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -24,7 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late OrdersBloc _ordersBloc;
+  late AppointmentsBloc _appointmentsBloc;
   late SalonsBloc _salonsBloc;
 
   RefreshController _refreshController =
@@ -34,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _ordersBloc = getItApp<OrdersBloc>();
+    _appointmentsBloc = getItApp<AppointmentsBloc>();
     _salonsBloc = getItApp<SalonsBloc>();
 
     Provider.of<MasterMode>(context, listen: false)
@@ -55,10 +54,10 @@ class _HomePageState extends State<HomePage> {
         "_onRefresh: ${Provider.of<MasterMode>(context, listen: false).isMaster}");
 
     if (Provider.of<MasterMode>(context, listen: false).isMaster) {
-      _ordersBloc.getOrdersForCurrentMaster(
+      _appointmentsBloc.getOrdersForCurrentMaster(
           dateFrom: DateTime.now().formatToYYYYMMddWithTime());
     } else {
-      _ordersBloc.getOrdersForCurrentUser(
+      _appointmentsBloc.getAppointmentsForCurrentUser(
           dateFrom: DateTime.now().formatToYYYYMMddWithTime());
       _salonsBloc.loadTopSalons();
     }
@@ -81,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                     : TopSalonsWidget(_salonsBloc)),
             marginVertical(32),
             Expanded(
-              child: ComingOrdersWidget(_ordersBloc, _refreshController),
+              child: ComingOrdersWidget(_appointmentsBloc, _refreshController),
             ),
           ],
         ),

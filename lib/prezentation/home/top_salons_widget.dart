@@ -87,7 +87,7 @@ class _TopSalonsWidgetState extends State<TopSalonsWidget> {
         borderRadius: BorderRadius.circular(25),
         image: DecorationImage(
           fit: BoxFit.fill,
-          image: NetworkImage(salon.photoPath ??
+          image: NetworkImage(salon.photo ??
               "https://vjoy.cc/wp-content/uploads/2019/08/4-20.jpg"),
         ),
       ),

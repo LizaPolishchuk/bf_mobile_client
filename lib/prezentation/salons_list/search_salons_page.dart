@@ -60,8 +60,7 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
     });
 
     eventBus.on<ApplySearchFiltersEvent>().listen((event) {
-      _loadSalonsList(_searchController.text,
-          searchFilters: event.searchFilters);
+      _loadSalonsList(_searchController.text);
     });
 
     _salonsBloc.errorMessage.listen((errorMsg) {
@@ -82,11 +81,11 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
   }
 
   _loadSalonsList(String searchKey,
-      {SearchFilters? searchFilters, bool nextPage = false}) async {
+      { bool nextPage = false}) async {
     var hasConnection = await ConnectivityManager.checkInternetConnection();
     if (hasConnection) {
       _salonsBloc.page = nextPage ? _salonsBloc.page + 1 : 1;
-      _salonsBloc.loadSalons(searchKey.trim(), searchFilters: searchFilters);
+      _salonsBloc.loadSalons(searchKey.trim());
     } else {
       _alertBuilder.showErrorSnackBar(
           context, AppLocalizations.of(context)!.noInternetConnection);
@@ -167,11 +166,11 @@ class _SearchSalonsPageState extends State<SearchSalonsPage> {
                                         arguments: salons[index]);
                                   },
                                   onClickStar: () {
-                                    var salonToUpdate = salons[index];
-                                    salonToUpdate.isFavourite =
-                                        !salonToUpdate.isFavourite;
-                                    _salonsBloc.updateSalon(
-                                        salonToUpdate, index);
+                                    // var salonToUpdate = salons[index];
+                                    // salonToUpdate.isFavourite =
+                                    //     !salonToUpdate.isFavourite;
+                                    // _salonsBloc.updateSalon(
+                                    //     salonToUpdate, index);
                                   },
                                 );
                               },

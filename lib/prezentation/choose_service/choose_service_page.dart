@@ -38,6 +38,9 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
     super.initState();
 
     _serviceBloc = getItApp<ServicesBloc>();
+    _serviceBloc.errorMessage.listen((error) {
+      _alertBuilder.showErrorSnackBar(context, error);
+    });
 
     _chosenService = widget.chosenService;
 
@@ -75,16 +78,6 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
                       SchedulerBinding.instance.addPostFrameCallback((_) {
                         if (_refreshController.isRefresh)
                           _refreshController.refreshCompleted();
-
-                        if (snapshot.hasError) {
-                          String errorMsg = snapshot.error.toString();
-                          if (errorMsg == NoInternetException.noInternetCode) {
-                            errorMsg = AppLocalizations.of(context)!.noInternetConnection;
-                          } else {
-                            errorMsg = AppLocalizations.of(context)!.somethingWentWrong;
-                          }
-                          _alertBuilder.showErrorSnackBar(context, errorMsg);
-                        }
                       });
 
                       var services = snapshot.data ?? [];
@@ -112,7 +105,7 @@ class _ChooseServicePageState extends State<ChooseServicePage> {
               alignment: Alignment.center,
               child: roundedButton(
                 context,
-                  AppLocalizations.of(context)!.next,
+                AppLocalizations.of(context)!.next,
                 () {
                   Navigator.of(context).pop(_chosenService);
                 },

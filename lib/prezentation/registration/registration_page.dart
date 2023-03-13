@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
+import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -23,11 +23,11 @@ class RegistrationPage extends StatefulWidget {
 
 class _RegistrationPageState extends State<RegistrationPage> {
   late TextEditingController _teControllerName;
-  late RegistrationBloc _registrationBloc;
+  late ProfileBloc _profileBloc;
   final _formKey = GlobalKey<FormState>();
   AlertBuilder _alertBuilder = new AlertBuilder();
 
-  int? _selectedGender;
+  Gender? _selectedGender;
   bool? _showGenderError;
   bool _isButtonPressed = false;
 
@@ -35,7 +35,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   void initState() {
     super.initState();
 
-    _registrationBloc = getItApp<RegistrationBloc>();
+    _profileBloc = getItApp<ProfileBloc>();
     _teControllerName = new TextEditingController();
     _teControllerName.addListener(() {
       if (_isButtonPressed) {
@@ -44,11 +44,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
       }
     });
 
-    _registrationBloc.errorMessage.listen((errorMsg) {
+    _profileBloc.errorMessage.listen((errorMsg) {
       _alertBuilder.showErrorSnackBar(context, errorMsg);
     });
 
-    _registrationBloc.isLoading.listen((isLoading) {
+    _profileBloc.isLoading.listen((isLoading) {
       if (isLoading) {
         _alertBuilder.showLoaderDialog(context);
       } else {
@@ -121,7 +121,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           marginVertical(48),
           GenderSelector(
               genderSelectorType: GenderSelectorType.icons,
-              onSelectGender: (int selectedGender) {
+              onSelectGender: (Gender selectedGender) {
                 _selectedGender = selectedGender;
                 if (_showGenderError == true) {
                   setState(() {
@@ -140,10 +140,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   await ConnectivityManager.checkInternetConnection();
               if (hasConnection) {
                 UserEntity userToUpdate = widget.user.copy(
-                  name: _teControllerName.text,
-                  gender: _selectedGender,
+                  firstname: _teControllerName.text,
+                  gender: _selectedGender?.name,
                 );
-                _registrationBloc.updateUser(userToUpdate);
+                _profileBloc.updateUser(userToUpdate);
               } else {
                 _alertBuilder.showErrorSnackBar(context,
                     AppLocalizations.of(context)!.noInternetConnection);

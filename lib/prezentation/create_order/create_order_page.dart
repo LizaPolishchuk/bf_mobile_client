@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/choose_service_page.dart';
 import 'package:salons_app_mobile/prezentation/create_order/animated_container.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
+import 'package:salons_app_mobile/prezentation/orders/appointment_bloc.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -39,7 +39,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
   Service? _selectedService;
   DateTime? _selectedDay;
-  OrderEntity? _selectedOrder;
+  AppointmentEntity? _selectedAppointment;
   Master? _selectedMaster;
 
   final _serviceKey = new GlobalKey<ErrorAnimatedContainerState>();
@@ -80,7 +80,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               style: bodyText4,
             ),
             marginVertical(10),
-            _buildMasterSelector(widget.salon.mastersList),
+            // _buildMasterSelector(widget.salon.mastersList),
             marginVertical(22),
             Text(
               AppLocalizations.of(context)!.chooseDate,
@@ -139,15 +139,15 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 context,
                 AppLocalizations.of(context)!.next,
                 () {
-                  if (_selectedOrder == null) {
+                  if (_selectedAppointment == null) {
                     Fluttertoast.showToast(msg: "Please choose time");
                   } else {
                     UserEntity user = getIt<LocalStorage>().getCurrentUser();
 
-                    _selectedOrder!.clientId = user.id;
-                    _selectedOrder!.clientName = user.name;
+                    _selectedAppointment!.clientId = user.id;
+                    _selectedAppointment!.clientName = user.name;
 
-                    _ordersBloc.updateOrder(_selectedOrder!);
+                    _ordersBloc.updateAppointment(_selectedAppointment!);
 
                     Navigator.of(context).pop();
                   }
@@ -306,7 +306,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   onTap: () {
                     if (!isReserved) {
                       setState(() {
-                        _selectedOrder = order;
+                        _selectedAppointment = order;
                       });
                     } else {
                       print("click on notify");
@@ -318,7 +318,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                     decoration: BoxDecoration(
                       color: isReserved ? Color(0x807c797b) : accentColor,
                       borderRadius: BorderRadius.circular(10),
-                      border: _selectedOrder == order
+                      border: _selectedAppointment == order
                           ? Border.all(width: 2, color: primaryColor)
                           : null,
                     ),

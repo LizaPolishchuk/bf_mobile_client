@@ -7,15 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/event_bus_events/go_to_search_salons_event.dart';
 import 'package:salons_app_mobile/injection_container_app.dart';
+import 'package:salons_app_mobile/prezentation/appoinments_history/orders_history_page.dart';
 import 'package:salons_app_mobile/prezentation/home/home_page.dart';
 import 'package:salons_app_mobile/prezentation/individual_appointments/create_individual_appointment_page.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/prezentation/notifications/notifications_page.dart';
-import 'package:salons_app_mobile/prezentation/orders_history/orders_history_page.dart';
 import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/favourite_salons_page.dart';
 import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
-import 'package:salons_app_mobile/prezentation/search_filters/search_filters_page.dart';
 import 'package:salons_app_mobile/utils/alert_builder.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
 import 'package:salons_app_mobile/utils/app_components.dart';
@@ -46,7 +44,7 @@ class _HomeContainerState extends State<HomeContainer> {
   final List _children = [
     const HomePage(),
     const SearchSalonsPage(),
-    const NotificationsPage()
+    // const NotificationsPage()
   ];
 
   late LoginBloc _loginBloc;
@@ -55,7 +53,7 @@ class _HomeContainerState extends State<HomeContainer> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final AlertBuilder _alertBuilder = AlertBuilder();
 
-  SearchFilters? _searchFilters;
+  // SearchFilters? _searchFilters;
 
   @override
   void initState() {
@@ -73,9 +71,9 @@ class _HomeContainerState extends State<HomeContainer> {
 
     eventBus.on<ApplySearchFiltersEvent>().listen((event) {
       print("catch in home container : ${event.searchFilters?.priceFrom}");
-      setState(() {
-        _searchFilters = event.searchFilters;
-      });
+      // setState(() {
+      //   _searchFilters = event.searchFilters;
+      // });
     });
   }
 
@@ -102,23 +100,23 @@ class _HomeContainerState extends State<HomeContainer> {
         key: _scaffoldKey,
         appBar: AppBar(
           actions: <Widget>[
-            _currentTab == TabItem.search
-                ? IconButton(
-                    icon: SvgPicture.asset(
-                      icFilters,
-                      color: _searchFilters != null ? primaryColor : null,
-                    ),
-                    onPressed: () {
-                      _scaffoldKey.currentState?.openEndDrawer();
-                    },
-                  )
-                : IconButton(
-                    icon: SvgPicture.asset(icCreateAppointment),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(CreateIndividualAppointmentPage.routeName);
-
-                    },
-                  )
+            if (_currentTab == TabItem.home)
+              // ? IconButton(
+              //     icon: SvgPicture.asset(
+              //       icFilters,
+              //       color: _searchFilters != null ? primaryColor : null,
+              //     ),
+              //     onPressed: () {
+              //       _scaffoldKey.currentState?.openEndDrawer();
+              //     },
+              //   )
+              IconButton(
+                icon: SvgPicture.asset(icCreateAppointment),
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamed(CreateIndividualAppointmentPage.routeName);
+                },
+              )
           ],
           leading: IconButton(
             icon: SvgPicture.asset(icMenu),
@@ -129,8 +127,7 @@ class _HomeContainerState extends State<HomeContainer> {
           title: Text(AppLocalizations.of(context)!.appName),
         ),
         drawer: _buildDrawerMenu(Provider.of<MasterMode>(context).isMaster),
-        endDrawer:
-            Drawer(child: SearchFiltersPage(searchFilters: _searchFilters)),
+        // endDrawer: Drawer(child: SearchFiltersPage(searchFilters: _searchFilters)),
         body: _children[_currentTab.index],
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
@@ -273,7 +270,7 @@ class _HomeContainerState extends State<HomeContainer> {
                       icHistory, DrawerItem.history, onClick: () {
                     Navigator.of(context).pop();
                     Navigator.of(context)
-                        .pushNamed(OrdersHistoryPage.routeName);
+                        .pushNamed(AppointmentsHistoryPage.routeName);
                   }),
                   if (!isMasterMode)
                     _buildDrawerItem(
@@ -352,7 +349,7 @@ class _HomeContainerState extends State<HomeContainer> {
             child: InkWell(
               onTap: () {
                 if (!provider.isMaster) {
-                  print("_masterSwitcherEnabled ${_masterSwitcherEnabled}");
+                  print("_masterSwitcherEnabled $_masterSwitcherEnabled");
 
                   _onClickMasterSwitcher(true, provider);
                 }
@@ -383,7 +380,7 @@ class _HomeContainerState extends State<HomeContainer> {
       _masterSwitcherEnabled = false;
 
       provider.setMasterMode(clickedOnMaster);
-      SwitchMasterModeUseCase(getItApp()).call(clickedOnMaster);
+      getIt<UserRepository>().switchMasterMode(clickedOnMaster);
     }
 
     _timer = Timer(Duration(milliseconds: 1000), () {

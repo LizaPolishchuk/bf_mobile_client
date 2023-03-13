@@ -3,15 +3,13 @@ import 'dart:io';
 
 import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/utils/error_parser.dart';
 
 class ProfileBloc {
-  final GetUserUseCase _getUserUseCase;
-  final UpdateUserUseCase _updateUserUseCase;
-  final UpdateUserAvatarUseCase _updateUserAvatarUseCase;
+  final UserRepository _userRepository;
   final LocalStorage _localStorage;
 
-  ProfileBloc(this._getUserUseCase, this._updateUserUseCase,
-      this._updateUserAvatarUseCase, this._localStorage);
+  ProfileBloc(this._userRepository, this._localStorage);
 
   final _profileLoadedSubject = PublishSubject<UserEntity>();
   final _profileUpdatedSubject = PublishSubject<UserEntity>();
@@ -28,48 +26,31 @@ class ProfileBloc {
   Stream<bool> get isLoading => _isLoadingSubject.stream;
 
   loadUserProfile() async {
-    _isLoadingSubject.add(true);
+    try {
+      _isLoadingSubject.add(true);
 
-    String userId = _localStorage.getUserId();
-    final response = await _getUserUseCase(userId);
+      String userId = _localStorage.getUserId();
+      var response = await _userRepository.getUser(userId);
+      _profileLoadedSubject.add(response);
 
-    if (response.isLeft) {
-      _errorSubject.add(response.left.message);
-    } else {
-      _profileLoadedSubject.add(response.right);
+      _isLoadingSubject.add(false);
+    } catch (error) {
+      _isLoadingSubject.add(false);
+      _errorSubject.add(ErrorParser.parseError(error));
     }
-
-    _isLoadingSubject.add(false);
   }
 
   updateUser(UserEntity user, {File? userAvatar}) async {
-    _isLoadingSubject.add(true);
+    try {
+      _isLoadingSubject.add(true);
 
-    UserEntity userToUpdate = user;
+      var response = await _userRepository.updateUser(user);
+      _profileUpdatedSubject.add(user);
 
-    if (userAvatar != null) {
-      final response = await _updateUserAvatarUseCase(userAvatar!);
-
-      if (response.isLeft) {
-        _errorSubject.add(response.left.message);
-      } else {
-        String url = response.right;
-
-        if (url.isEmpty) {
-          _errorSubject.add("error");
-        } else {
-          userToUpdate.avatar = url;
-          final updateResult = await _updateUserUseCase(userToUpdate);
-
-          if (updateResult.isLeft) {
-            _errorSubject.add(updateResult.left.message);
-          } else {
-            _profileUpdatedSubject.add(updateResult.right);
-          }
-        }
-      }
+      _isLoadingSubject.add(false);
+    } catch (error) {
+      _isLoadingSubject.add(false);
+      _errorSubject.add(ErrorParser.parseError(error));
     }
-
-    _isLoadingSubject.add(false);
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_mobile/utils/app_colors.dart';
@@ -9,18 +8,18 @@ import 'package:salons_app_mobile/utils/app_components.dart';
 import 'package:salons_app_mobile/utils/app_images.dart';
 import 'package:salons_app_mobile/utils/app_styles.dart';
 
-class OrdersItemWidget extends StatelessWidget {
-  OrdersItemWidget({
+class AppointmentsItemWidget extends StatelessWidget {
+  AppointmentsItemWidget({
     Key? key,
-    required this.order,
+    required this.appointment,
     required this.onPressedPin,
     required this.onPressedRemove,
     this.enableSlidebar = true,
   }) : super(key: key);
 
-  final OrderEntity order;
-  final Function(OrderEntity order) onPressedPin;
-  final Function(OrderEntity order) onPressedRemove;
+  final AppointmentEntity appointment;
+  final Function(AppointmentEntity) onPressedPin;
+  final Function(AppointmentEntity) onPressedRemove;
   final bool enableSlidebar;
 
   @override
@@ -44,29 +43,29 @@ class OrdersItemWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                        '${order.serviceName} ${AppLocalizations.of(context)!.inTxt} ${order.salonName}',
+                        '${appointment.serviceName} ${AppLocalizations.of(context)!.inTxt} ${appointment.salonName}',
                         style: bodyText3.copyWith(fontSize: 16)),
                   ),
-                  Text(DateFormat('EE dd MMMM', "ru").format(order.date),
+                  Text(DateFormat('EE dd MMMM', "ru").format(appointment.date),
                       overflow: TextOverflow.clip,
                       style: bodyText3.copyWith(fontSize: 12)),
-                  if (order.isPinned == true)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: SvgPicture.asset(
-                        icPin,
-                        color: Colors.black,
-                        width: 10,
-                        height: 10,
-                      ),
-                    ),
+                  // if (appointment.isPinned == true)
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(left: 4),
+                  //     child: SvgPicture.asset(
+                  //       icPin,
+                  //       color: Colors.black,
+                  //       width: 10,
+                  //       height: 10,
+                  //     ),
+                  //   ),
                 ],
               ),
               Row(
                 children: [
-                  imageWithPlaceholder(order.masterAvatar, masterPlaceholder),
+                  imageWithPlaceholder(appointment.masterPhoto, masterPlaceholder),
                   marginHorizontal(8),
-                  Text('${AppLocalizations.of(context)!.master} ${order.masterName}',
+                  Text('${AppLocalizations.of(context)!.master} ${appointment.masterName}',
                       style: bodyText3.copyWith(fontSize: 12)),
                   Spacer(),
                   // Text('${order.price} ${tr(AppStrings.uah)}',

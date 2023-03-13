@@ -158,11 +158,11 @@ class _FavouriteSalonsPageState extends State<FavouriteSalonsPage> {
                                           arguments: salons[index]);
                                     },
                                     onClickStar: () {
-                                      var salonToUpdate = salons[index];
-                                      salonToUpdate.isFavourite =
-                                          !salonToUpdate.isFavourite;
-                                      _salonsBloc.updateSalon(
-                                          salonToUpdate, index);
+                                      // var salonToUpdate = salons[index];
+                                      // salonToUpdate.isFavourite =
+                                      //     !salonToUpdate.isFavourite;
+                                      // _salonsBloc.updateSalon(
+                                      //     salonToUpdate, index);
                                     },
                                   );
                                 },

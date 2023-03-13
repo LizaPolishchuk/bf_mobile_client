@@ -2,19 +2,17 @@ import 'dart:async';
 
 import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+import 'package:salons_app_mobile/utils/error_parser.dart';
 
 class SalonDetailsBloc {
-  final GetSalonByIdUseCase _getSalonByIdUseCase;
-  final GetPromoListUseCase _getPromoListUseCase;
-  final GetBonusCardListUseCase _getBonusCardListUseCase;
-  final UpdateSalonUseCase _updateSalonUseCase;
+  final SalonRepository _salonRepository;
+  final PromoRepository _promoRepository;
 
-  SalonDetailsBloc(this._getSalonByIdUseCase, this._getPromoListUseCase,
-      this._getBonusCardListUseCase, this._updateSalonUseCase);
+  SalonDetailsBloc(this._salonRepository, this._promoRepository);
 
   final _salonLoadedSubject = PublishSubject<Salon>();
   final _promosLoadedSubject = PublishSubject<List<Promo>>();
-  final _bonusCardsLoadedSubject = PublishSubject<List<BonusCard>>();
+  final _bonusCardsLoadedSubject = PublishSubject<List<Promo>>();
   final _errorSubject = PublishSubject<String>();
   final _isLoadingSubject = PublishSubject<bool>();
 
@@ -23,62 +21,55 @@ class SalonDetailsBloc {
 
   Stream<List<Promo>> get promosLoaded => _promosLoadedSubject.stream;
 
-  Stream<List<BonusCard>> get bonusCardsLoaded =>
-      _bonusCardsLoadedSubject.stream;
+  Stream<List<Promo>> get bonusCardsLoaded => _bonusCardsLoadedSubject.stream;
 
   Stream<String> get errorMessage => _errorSubject.stream;
 
   Stream<bool> get isLoading => _isLoadingSubject.stream;
 
   loadSalonById(String salonId) async {
-    _isLoadingSubject.add(true);
+    try {
+      _isLoadingSubject.add(true);
 
-    final response = await _getSalonByIdUseCase(salonId);
+      var response = await _salonRepository.getSalon(salonId);
+      _salonLoadedSubject.add(response);
 
-    if (response.isLeft) {
-      _errorSubject.add(response.left.message);
-    } else {
-      _salonLoadedSubject.add(response.right);
+      _isLoadingSubject.add(false);
+    } catch (error) {
+      _isLoadingSubject.add(false);
+      _errorSubject.add(ErrorParser.parseError(error));
     }
-
-    _isLoadingSubject.add(false);
   }
 
-  loadPromos(String salonId) async {
-    // _isLoadingSubject.add(true);
-
-    final response = await _getPromoListUseCase(salonId);
-
-    if (response.isLeft) {
-      _errorSubject.add(response.left.message);
-    } else {
-      _promosLoadedSubject.add(response.right);
+  loadPromos(String salonId, PromoType promoType) async {
+    try {
+      var response = await _promoRepository.getSalonPromos(salonId);
+      _promosLoadedSubject.add(response);
+    } catch (error) {
+      _errorSubject.add(ErrorParser.parseError(error));
     }
-
-    // _isLoadingSubject.add(false);
   }
 
-  loadBonusCards(String salonId) async {
-    // _isLoadingSubject.add(true);
-
-    final response = await _getBonusCardListUseCase(salonId);
-
-    if (response.isLeft) {
-      _errorSubject.add(response.left.message);
-    } else {
-      _bonusCardsLoadedSubject.add(response.right);
-    }
-
-    // _isLoadingSubject.add(false);
-  }
+  // loadBonusCards(String salonId) async {
+  //   // _isLoadingSubject.add(true);
+  //
+  //   final response = await _getBonusCardListUseCase(salonId);
+  //
+  //   if (response.isLeft) {
+  //     _errorSubject.add(response.left.message);
+  //   } else {
+  //     _bonusCardsLoadedSubject.add(response.right);
+  //   }
+  //
+  //   // _isLoadingSubject.add(false);
+  // }
 
   updateSalon(Salon salon) async {
-    final response = await _updateSalonUseCase(salon);
-
-    if (response.isLeft) {
-      _errorSubject.add(response.left.message);
-    } else {
+    try {
+      var response = await _salonRepository.updateSalon(salon);
       _salonLoadedSubject.add(salon);
+    } catch (error) {
+      _errorSubject.add(ErrorParser.parseError(error));
     }
   }
 }

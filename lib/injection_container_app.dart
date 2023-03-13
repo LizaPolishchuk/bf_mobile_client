@@ -3,7 +3,7 @@ import 'package:salons_app_mobile/prezentation/categories/categories_bloc.dart';
 import 'package:salons_app_mobile/prezentation/choose_service/services_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/code_verification_bloc.dart';
 import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/prezentation/orders/orders_bloc.dart';
+import 'package:salons_app_mobile/prezentation/orders/appointment_bloc.dart';
 import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
 import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
 import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.dart';

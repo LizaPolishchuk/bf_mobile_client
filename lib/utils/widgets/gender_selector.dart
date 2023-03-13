@@ -10,11 +10,12 @@ import 'package:salons_app_mobile/utils/app_images.dart';
 import '../app_styles.dart';
 
 enum GenderSelectorType { icons, radio_buttons }
+enum Gender { man, woman, undefined }
 
 class GenderSelector extends StatefulWidget {
   final GenderSelectorType genderSelectorType;
-  final Function(int selectedGender) onSelectGender;
-  final int? initialGender;
+  final Function(Gender selectedGender) onSelectGender;
+  final Gender? initialGender;
   final bool enabled;
 
   const GenderSelector(
@@ -30,7 +31,7 @@ class GenderSelector extends StatefulWidget {
 }
 
 class _GenderSelectorState extends State<GenderSelector> {
-  int? _selectedGender;
+  Gender? _selectedGender;
 
   @override
   void initState() {
@@ -49,30 +50,30 @@ class _GenderSelectorState extends State<GenderSelector> {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildGenderItem(AppLocalizations.of(context)!.man, icMan, 0),
+        _buildGenderItem(AppLocalizations.of(context)!.man, icMan, Gender.man),
         marginHorizontal(52),
-        _buildGenderItem(AppLocalizations.of(context)!.woman, icWoman, 1),
+        _buildGenderItem(AppLocalizations.of(context)!.woman, icWoman, Gender.woman),
       ],
     );
   }
 
-  Widget _buildGenderItem(String name, String image, int genderIndex) {
+  Widget _buildGenderItem(String name, String image, Gender gender) {
     return GestureDetector(
       child: widget.genderSelectorType == GenderSelectorType.icons
-          ? _buildGenderIconItem(name, image, genderIndex)
-          : _buildGenderRadioItem(name, genderIndex),
+          ? _buildGenderIconItem(name, image, gender)
+          : _buildGenderRadioItem(name, gender),
       onTap: () {
         if (widget.enabled) {
-          widget.onSelectGender(genderIndex);
+          widget.onSelectGender(gender);
           setState(() {
-            _selectedGender = genderIndex;
+            _selectedGender = gender;
           });
         }
       },
     );
   }
 
-  Widget _buildGenderIconItem(String name, String image, int genderIndex) {
+  Widget _buildGenderIconItem(String name, String image, Gender genderIndex) {
     return Stack(
       children: [
         Column(
@@ -112,7 +113,7 @@ class _GenderSelectorState extends State<GenderSelector> {
     );
   }
 
-  Widget _buildGenderRadioItem(String name, int genderIndex) {
+  Widget _buildGenderRadioItem(String name, Gender genderIndex) {
     return Container(
       height: 55,
       width: 135,
