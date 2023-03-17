@@ -1,15 +1,15 @@
 import 'dart:async';
 
+import 'package:bf_mobile_client/build_info.dart';
+import 'package:bf_mobile_client/event_bus_events/event_bus.dart';
+import 'package:bf_mobile_client/event_bus_events/user_success_logged_in_event.dart';
+import 'package:bf_mobile_client/prezentation/login/login_bloc.dart';
+import 'package:bf_mobile_client/utils/notifications/notifications_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/build_info.dart';
-import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
-import 'package:salons_app_mobile/event_bus_events/user_success_logged_in_event.dart';
-import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/utils/notifications/notifications_manager.dart';
 
 class CodeVerifyBloc {
   LoginWithPhoneVerifyCodeUseCase _verifyCodeUseCase;

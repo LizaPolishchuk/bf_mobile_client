@@ -2,10 +2,10 @@
 // import 'package:flutter/widgets.dart';
 // import 'package:intl/intl.dart';
 // import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-// import 'package:salons_app_mobile/injection_container_app.dart';
-// import 'package:salons_app_mobile/prezentation/notifications/notifications_bloc.dart';
-// import 'package:salons_app_mobile/utils/app_colors.dart';
-// import 'package:salons_app_mobile/utils/app_styles.dart';
+// import 'package:bf_mobile_client/injection_container_app.dart';
+// import 'package:bf_mobile_client/prezentation/notifications/notifications_bloc.dart';
+// import 'package:bf_mobile_client/utils/app_colors.dart';
+// import 'package:bf_mobile_client/utils/app_styles.dart';
 //
 // class NotificationsPage extends StatefulWidget {
 //   const NotificationsPage({Key? key}) : super(key: key);

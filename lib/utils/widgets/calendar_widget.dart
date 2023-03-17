@@ -1,8 +1,8 @@
+import 'package:bf_mobile_client/prezentation/create_order/animated_container.dart';
+import 'package:bf_mobile_client/prezentation/create_order/create_order_page.dart';
+import 'package:bf_mobile_client/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:salons_app_mobile/prezentation/create_order/animated_container.dart';
-import 'package:salons_app_mobile/prezentation/create_order/create_order_page.dart';
-import 'package:salons_app_mobile/utils/date_utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../app_colors.dart';

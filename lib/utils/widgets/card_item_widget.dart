@@ -1,10 +1,10 @@
+import 'package:bf_mobile_client/utils/app_colors.dart';
+import 'package:bf_mobile_client/utils/app_components.dart';
+import 'package:bf_mobile_client/utils/app_images.dart';
+import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
 
 class CardItemWidget extends StatelessWidget {
   final BaseEntity item;

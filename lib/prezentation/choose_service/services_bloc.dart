@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:bf_mobile_client/utils/error_parser.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/utils/error_parser.dart';
 
 class ServicesBloc {
   final ServiceRepository _serviceRepository;

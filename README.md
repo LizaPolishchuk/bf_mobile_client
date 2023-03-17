@@ -1,4 +1,4 @@
-# salons_app_mobile
+# bf_mobile_client
 
 A new Flutter project.
 

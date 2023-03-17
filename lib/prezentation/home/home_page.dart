@@ -1,17 +1,17 @@
+import 'package:bf_mobile_client/injection_container_app.dart';
+import 'package:bf_mobile_client/prezentation/appointments/appointment_bloc.dart';
+import 'package:bf_mobile_client/prezentation/home/coming_appointments_widget.dart';
+import 'package:bf_mobile_client/prezentation/home/top_salons_widget.dart';
+import 'package:bf_mobile_client/prezentation/salons_list/salons_bloc.dart';
+import 'package:bf_mobile_client/utils/app_colors.dart';
+import 'package:bf_mobile_client/utils/app_components.dart';
+import 'package:bf_mobile_client/utils/app_styles.dart';
+import 'package:bf_mobile_client/utils/date_utils.dart';
+import 'package:bf_mobile_client/utils/master_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/prezentation/appointments/appointment_bloc.dart';
-import 'package:salons_app_mobile/prezentation/home/coming_appointments_widget.dart';
-import 'package:salons_app_mobile/prezentation/home/top_salons_widget.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
-import 'package:salons_app_mobile/utils/date_utils.dart';
-import 'package:salons_app_mobile/utils/master_mode.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';

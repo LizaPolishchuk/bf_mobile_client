@@ -1,14 +1,14 @@
+import 'package:bf_mobile_client/prezentation/categories/categories_bloc.dart';
+import 'package:bf_mobile_client/prezentation/choose_service/services_bloc.dart';
+import 'package:bf_mobile_client/prezentation/login/code_verification_bloc.dart';
+import 'package:bf_mobile_client/prezentation/login/login_bloc.dart';
+import 'package:bf_mobile_client/prezentation/orders/appointment_bloc.dart';
+import 'package:bf_mobile_client/prezentation/profile/profile_bloc.dart';
+import 'package:bf_mobile_client/prezentation/registration/registration_bloc.dart';
+import 'package:bf_mobile_client/prezentation/salon_details/salon_details_bloc.dart';
+import 'package:bf_mobile_client/prezentation/salons_list/salons_bloc.dart';
+import 'package:bf_mobile_client/prezentation/search_filters/search_filters_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:salons_app_mobile/prezentation/categories/categories_bloc.dart';
-import 'package:salons_app_mobile/prezentation/choose_service/services_bloc.dart';
-import 'package:salons_app_mobile/prezentation/login/code_verification_bloc.dart';
-import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/prezentation/orders/appointment_bloc.dart';
-import 'package:salons_app_mobile/prezentation/profile/profile_bloc.dart';
-import 'package:salons_app_mobile/prezentation/registration/registration_bloc.dart';
-import 'package:salons_app_mobile/prezentation/salon_details/salon_details_bloc.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
-import 'package:salons_app_mobile/prezentation/search_filters/search_filters_bloc.dart';
 
 import 'prezentation/notifications/notifications_bloc.dart';
 

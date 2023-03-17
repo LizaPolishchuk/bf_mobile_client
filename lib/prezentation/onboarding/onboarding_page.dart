@@ -1,7 +1,7 @@
+import 'package:bf_mobile_client/event_bus_events/event_bus.dart';
+import 'package:bf_mobile_client/event_bus_events/user_done_onboarding_event.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
-import 'package:salons_app_mobile/event_bus_events/user_done_onboarding_event.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({Key? key}) : super(key: key);

@@ -1,15 +1,15 @@
+import 'package:bf_mobile_client/prezentation/choose_service/services_bloc.dart';
+import 'package:bf_mobile_client/utils/alert_builder.dart';
+import 'package:bf_mobile_client/utils/app_colors.dart';
+import 'package:bf_mobile_client/utils/app_components.dart';
+import 'package:bf_mobile_client/utils/app_images.dart';
+import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/prezentation/choose_service/services_bloc.dart';
-import 'package:salons_app_mobile/utils/alert_builder.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
 
 import '../../injection_container_app.dart';
 

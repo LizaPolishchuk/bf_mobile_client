@@ -1,27 +1,27 @@
 import 'dart:async';
 
+import 'package:bf_mobile_client/event_bus_events/go_to_search_salons_event.dart';
+import 'package:bf_mobile_client/injection_container_app.dart';
+import 'package:bf_mobile_client/prezentation/appoinments_history/orders_history_page.dart';
+import 'package:bf_mobile_client/prezentation/home/home_page.dart';
+import 'package:bf_mobile_client/prezentation/individual_appointments/create_individual_appointment_page.dart';
+import 'package:bf_mobile_client/prezentation/login/login_bloc.dart';
+import 'package:bf_mobile_client/prezentation/profile/settings_page.dart';
+import 'package:bf_mobile_client/prezentation/salons_list/favourite_salons_page.dart';
+import 'package:bf_mobile_client/prezentation/salons_list/search_salons_page.dart';
+import 'package:bf_mobile_client/utils/alert_builder.dart';
+import 'package:bf_mobile_client/utils/app_colors.dart';
+import 'package:bf_mobile_client/utils/app_components.dart';
+import 'package:bf_mobile_client/utils/app_images.dart';
+import 'package:bf_mobile_client/utils/app_styles.dart';
+import 'package:bf_mobile_client/utils/events/apply_search_filters_events.dart';
+import 'package:bf_mobile_client/utils/events/event_bus.dart';
+import 'package:bf_mobile_client/utils/master_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/event_bus_events/go_to_search_salons_event.dart';
-import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/prezentation/appoinments_history/orders_history_page.dart';
-import 'package:salons_app_mobile/prezentation/home/home_page.dart';
-import 'package:salons_app_mobile/prezentation/individual_appointments/create_individual_appointment_page.dart';
-import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/prezentation/profile/settings_page.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/favourite_salons_page.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/search_salons_page.dart';
-import 'package:salons_app_mobile/utils/alert_builder.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
-import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
-import 'package:salons_app_mobile/utils/events/event_bus.dart';
-import 'package:salons_app_mobile/utils/master_mode.dart';
 
 enum TabItem { home, search, notifications }
 

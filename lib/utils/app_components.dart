@@ -1,8 +1,8 @@
+import 'package:bf_mobile_client/utils/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salons_app_mobile/utils/app_images.dart';
 
 import 'app_colors.dart';
 import 'app_styles.dart';

@@ -1,11 +1,11 @@
 import 'dart:ui';
 
+import 'package:bf_mobile_client/utils/app_colors.dart';
+import 'package:bf_mobile_client/utils/app_components.dart';
+import 'package:bf_mobile_client/utils/app_images.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_images.dart';
 
 import '../app_styles.dart';
 

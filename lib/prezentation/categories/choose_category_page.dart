@@ -5,13 +5,13 @@
 // import 'package:flutter_svg/svg.dart';
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
 // import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-// import 'package:salons_app_mobile/prezentation/categories/categories_bloc.dart';
-// import 'package:salons_app_mobile/prezentation/create_order/create_order_page.dart';
-// import 'package:salons_app_mobile/utils/alert_builder.dart';
-// import 'package:salons_app_mobile/utils/app_components.dart';
-// import 'package:salons_app_mobile/utils/app_images.dart';
-// import 'package:salons_app_mobile/utils/app_styles.dart';
-// import 'package:salons_app_mobile/utils/widgets/card_item_widget.dart';
+// import 'package:bf_mobile_client/prezentation/categories/categories_bloc.dart';
+// import 'package:bf_mobile_client/prezentation/create_order/create_order_page.dart';
+// import 'package:bf_mobile_client/utils/alert_builder.dart';
+// import 'package:bf_mobile_client/utils/app_components.dart';
+// import 'package:bf_mobile_client/utils/app_images.dart';
+// import 'package:bf_mobile_client/utils/app_styles.dart';
+// import 'package:bf_mobile_client/utils/widgets/card_item_widget.dart';
 //
 // import '../../injection_container_app.dart';
 //

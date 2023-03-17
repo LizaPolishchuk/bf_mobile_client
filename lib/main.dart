@@ -1,5 +1,20 @@
 import 'dart:io';
 
+import 'package:bf_mobile_client/event_bus_events/event_bus.dart';
+import 'package:bf_mobile_client/event_bus_events/user_done_onboarding_event.dart';
+import 'package:bf_mobile_client/event_bus_events/user_logout_event.dart';
+import 'package:bf_mobile_client/event_bus_events/user_registered_event.dart';
+import 'package:bf_mobile_client/event_bus_events/user_success_logged_in_event.dart';
+import 'package:bf_mobile_client/l10n/l10n.dart';
+import 'package:bf_mobile_client/prezentation/home/home_container.dart';
+import 'package:bf_mobile_client/prezentation/login/login_bloc.dart';
+import 'package:bf_mobile_client/prezentation/login/login_page.dart';
+import 'package:bf_mobile_client/prezentation/navigation/routes.dart';
+import 'package:bf_mobile_client/prezentation/onboarding/onboarding_page.dart';
+import 'package:bf_mobile_client/prezentation/registration/registration_page.dart';
+import 'package:bf_mobile_client/utils/app_styles.dart';
+import 'package:bf_mobile_client/utils/master_mode.dart';
+import 'package:bf_mobile_client/utils/notifications/firebase_push_notifications_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -10,21 +25,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
-import 'package:salons_app_mobile/event_bus_events/event_bus.dart';
-import 'package:salons_app_mobile/event_bus_events/user_done_onboarding_event.dart';
-import 'package:salons_app_mobile/event_bus_events/user_logout_event.dart';
-import 'package:salons_app_mobile/event_bus_events/user_registered_event.dart';
-import 'package:salons_app_mobile/event_bus_events/user_success_logged_in_event.dart';
-import 'package:salons_app_mobile/l10n/l10n.dart';
-import 'package:salons_app_mobile/prezentation/home/home_container.dart';
-import 'package:salons_app_mobile/prezentation/login/login_bloc.dart';
-import 'package:salons_app_mobile/prezentation/login/login_page.dart';
-import 'package:salons_app_mobile/prezentation/navigation/routes.dart';
-import 'package:salons_app_mobile/prezentation/onboarding/onboarding_page.dart';
-import 'package:salons_app_mobile/prezentation/registration/registration_page.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
-import 'package:salons_app_mobile/utils/master_mode.dart';
-import 'package:salons_app_mobile/utils/notifications/firebase_push_notifications_service.dart';
 
 import 'injection_container_app.dart' as appDi;
 

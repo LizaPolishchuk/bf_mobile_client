@@ -1,13 +1,13 @@
+import 'package:bf_mobile_client/utils/app_colors.dart';
+import 'package:bf_mobile_client/utils/app_components.dart';
+import 'package:bf_mobile_client/utils/app_images.dart';
+import 'package:bf_mobile_client/utils/app_styles.dart';
+import 'package:bf_mobile_client/utils/date_utils.dart';
+import 'package:bf_mobile_client/utils/widgets/calendar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
-import 'package:salons_app_mobile/utils/date_utils.dart';
-import 'package:salons_app_mobile/utils/widgets/calendar_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CreateIndividualAppointmentPage extends StatefulWidget {

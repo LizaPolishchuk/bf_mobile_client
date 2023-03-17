@@ -1,7 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
+import 'package:bf_mobile_client/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
 
 class AlertBuilder {
   bool _isLoaderDialogShowed = false;

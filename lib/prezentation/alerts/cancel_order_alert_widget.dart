@@ -1,5 +1,5 @@
+import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
 
 class CancelOrderAlertWidget extends StatelessWidget {
   CancelOrderAlertWidget({

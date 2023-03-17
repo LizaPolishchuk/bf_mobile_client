@@ -1,11 +1,11 @@
+import 'package:bf_mobile_client/prezentation/salon_details/salon_details_page.dart';
+import 'package:bf_mobile_client/prezentation/salons_list/salons_bloc.dart';
+import 'package:bf_mobile_client/utils/alert_builder.dart';
+import 'package:bf_mobile_client/utils/app_components.dart';
+import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/prezentation/salon_details/salon_details_page.dart';
-import 'package:salons_app_mobile/prezentation/salons_list/salons_bloc.dart';
-import 'package:salons_app_mobile/utils/alert_builder.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
 
 //   var salons = [
 //     Salon("","Good girl", null, null, "", "Nails studio. Cherkasy", true),

@@ -2,15 +2,15 @@
 // import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 // import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-// import 'package:salons_app_mobile/injection_container_app.dart';
-// import 'package:salons_app_mobile/prezentation/search_filters/search_filters_bloc.dart';
-// import 'package:salons_app_mobile/utils/alert_builder.dart';
-// import 'package:salons_app_mobile/utils/app_colors.dart';
-// import 'package:salons_app_mobile/utils/app_components.dart';
-// import 'package:salons_app_mobile/utils/app_images.dart';
-// import 'package:salons_app_mobile/utils/app_styles.dart';
-// import 'package:salons_app_mobile/utils/events/apply_search_filters_events.dart';
-// import 'package:salons_app_mobile/utils/events/event_bus.dart';
+// import 'package:bf_mobile_client/injection_container_app.dart';
+// import 'package:bf_mobile_client/prezentation/search_filters/search_filters_bloc.dart';
+// import 'package:bf_mobile_client/utils/alert_builder.dart';
+// import 'package:bf_mobile_client/utils/app_colors.dart';
+// import 'package:bf_mobile_client/utils/app_components.dart';
+// import 'package:bf_mobile_client/utils/app_images.dart';
+// import 'package:bf_mobile_client/utils/app_styles.dart';
+// import 'package:bf_mobile_client/utils/events/apply_search_filters_events.dart';
+// import 'package:bf_mobile_client/utils/events/event_bus.dart';
 //
 // enum FilterType { categories, services, price }
 //

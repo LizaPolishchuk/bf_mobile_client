@@ -1,14 +1,14 @@
+import 'package:bf_mobile_client/injection_container_app.dart';
+import 'package:bf_mobile_client/prezentation/login/code_verification_page.dart';
+import 'package:bf_mobile_client/utils/alert_builder.dart';
+import 'package:bf_mobile_client/utils/app_colors.dart';
+import 'package:bf_mobile_client/utils/app_components.dart';
+import 'package:bf_mobile_client/utils/app_images.dart';
+import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_mobile/injection_container_app.dart';
-import 'package:salons_app_mobile/prezentation/login/code_verification_page.dart';
-import 'package:salons_app_mobile/utils/alert_builder.dart';
-import 'package:salons_app_mobile/utils/app_colors.dart';
-import 'package:salons_app_mobile/utils/app_components.dart';
-import 'package:salons_app_mobile/utils/app_images.dart';
-import 'package:salons_app_mobile/utils/app_styles.dart';
 
 import 'login_bloc.dart';
 
