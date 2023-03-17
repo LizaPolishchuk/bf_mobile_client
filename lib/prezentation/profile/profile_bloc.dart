@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bf_mobile_client/utils/error_parser.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 class ProfileBloc {
   final UserRepository _userRepository;

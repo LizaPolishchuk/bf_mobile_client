@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+// import 'package:bf_network_module/bf_network_module.dart';
 // import 'package:bf_mobile_client/injection_container_app.dart';
 // import 'package:bf_mobile_client/prezentation/search_filters/search_filters_bloc.dart';
 // import 'package:bf_mobile_client/utils/alert_builder.dart';

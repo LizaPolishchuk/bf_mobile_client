@@ -4,7 +4,7 @@
 // import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // import 'package:flutter_svg/svg.dart';
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
-// import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+// import 'package:bf_network_module/bf_network_module.dart';
 // import 'package:bf_mobile_client/prezentation/categories/categories_bloc.dart';
 // import 'package:bf_mobile_client/prezentation/create_order/create_order_page.dart';
 // import 'package:bf_mobile_client/utils/alert_builder.dart';

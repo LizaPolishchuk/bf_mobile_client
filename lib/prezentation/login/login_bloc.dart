@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bf_mobile_client/event_bus_events/event_bus.dart';
 import 'package:bf_mobile_client/event_bus_events/user_logout_event.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 class LoginBloc {
   LoginWithPhoneUseCase _loginWithPhoneUseCase;

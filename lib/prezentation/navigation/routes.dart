@@ -9,8 +9,8 @@ import 'package:bf_mobile_client/prezentation/profile/settings_page.dart';
 import 'package:bf_mobile_client/prezentation/salon_details/salon_details_page.dart';
 import 'package:bf_mobile_client/prezentation/salons_list/favourite_salons_page.dart';
 import 'package:bf_mobile_client/prezentation/salons_list/search_salons_page.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:flutter/material.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 MaterialPageRoute onGenerateRoutes(RouteSettings settings) {
   switch (settings.name) {

@@ -8,12 +8,12 @@ import 'package:bf_mobile_client/utils/app_components.dart';
 import 'package:bf_mobile_client/utils/app_images.dart';
 import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:bf_mobile_client/utils/events/event_bus.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 
 class ComingOrdersWidget extends StatefulWidget {

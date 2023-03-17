@@ -1,6 +1,6 @@
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 class NotificationsManager {
   static final NotificationsManager _instance = NotificationsManager._internal();

@@ -8,10 +8,10 @@ import 'package:bf_mobile_client/utils/app_components.dart';
 import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:bf_mobile_client/utils/date_utils.dart';
 import 'package:bf_mobile_client/utils/master_mode.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';

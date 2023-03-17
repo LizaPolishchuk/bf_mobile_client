@@ -15,6 +15,8 @@ import 'package:bf_mobile_client/prezentation/registration/registration_page.dar
 import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:bf_mobile_client/utils/master_mode.dart';
 import 'package:bf_mobile_client/utils/notifications/firebase_push_notifications_service.dart';
+import 'package:bf_network_module/bf_network_module.dart';
+import 'package:bf_network_module/bf_network_module.dart' as di;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -23,8 +25,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart' as di;
 
 import 'injection_container_app.dart' as appDi;
 

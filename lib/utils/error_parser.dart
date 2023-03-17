@@ -1,6 +1,6 @@
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 class ErrorParser {
   static final ErrorParser _singleton = ErrorParser._internal();

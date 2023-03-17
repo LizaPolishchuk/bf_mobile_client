@@ -9,13 +9,13 @@ import 'package:bf_mobile_client/utils/app_components.dart';
 import 'package:bf_mobile_client/utils/app_images.dart';
 import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:bf_mobile_client/utils/widgets/calendar_widget.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 import '../../injection_container_app.dart';
 

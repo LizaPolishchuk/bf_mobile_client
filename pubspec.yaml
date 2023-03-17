@@ -22,7 +22,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  salons_app_flutter_module:
+  bf_network_module:
     path: ../bf_network_module/
 
   # Bloc for state management

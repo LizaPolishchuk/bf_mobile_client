@@ -17,11 +17,11 @@ import 'package:bf_mobile_client/utils/app_styles.dart';
 import 'package:bf_mobile_client/utils/events/apply_search_filters_events.dart';
 import 'package:bf_mobile_client/utils/events/event_bus.dart';
 import 'package:bf_mobile_client/utils/master_mode.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 enum TabItem { home, search, notifications }
 

@@ -7,10 +7,10 @@ import 'package:bf_mobile_client/utils/app_colors.dart';
 import 'package:bf_mobile_client/utils/app_components.dart';
 import 'package:bf_mobile_client/utils/app_images.dart';
 import 'package:bf_mobile_client/utils/app_styles.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum ContentTab { INFO, PROMO, BONUSES }

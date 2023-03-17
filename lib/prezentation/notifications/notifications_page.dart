@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
 // import 'package:intl/intl.dart';
-// import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
+// import 'package:bf_network_module/bf_network_module.dart';
 // import 'package:bf_mobile_client/injection_container_app.dart';
 // import 'package:bf_mobile_client/prezentation/notifications/notifications_bloc.dart';
 // import 'package:bf_mobile_client/utils/app_colors.dart';

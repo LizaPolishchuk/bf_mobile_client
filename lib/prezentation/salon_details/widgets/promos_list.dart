@@ -1,6 +1,6 @@
 import 'package:bf_mobile_client/utils/widgets/card_item_widget.dart';
+import 'package:bf_network_module/bf_network_module.dart';
 import 'package:flutter/widgets.dart';
-import 'package:salons_app_flutter_module/salons_app_flutter_module.dart';
 
 class PromosList extends StatelessWidget {
   final Stream<List<Promo>> promosStream;
